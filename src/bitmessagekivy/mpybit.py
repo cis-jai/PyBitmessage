@@ -177,15 +177,12 @@ class Inbox(Screen):
 
     def delete(self, data_index, instance, *args):
         """Delete inbox mail from inbox listing."""
-        sqlExecute(
-            "UPDATE inbox SET folder = 'trash' WHERE msgid = ?;", str(
-                data_index))
+        sqlExecute("UPDATE inbox SET folder = 'trash' WHERE msgid = ?;", str(
+            data_index))
         try:
-            msg_count_objs = \
-                self.parent.parent.parent.parent.children[2].children[0].ids
-        except Exception as e:
-            msg_count_objs = \
-                self.parent.parent.parent.parent.parent.children[2].children[0].ids
+            msg_count_objs = self.parent.parent.parent.parent.children[2].children[0].ids
+        except Exception:
+            msg_count_objs = self.parent.parent.parent.parent.parent.children[2].children[0].ids
         if int(state.inbox_count) > 0:
             msg_count_objs.inbox_cnt.badge_text = str(
                 int(state.inbox_count) - 1)
@@ -460,15 +457,14 @@ class DropDownWidget(BoxLayout):
         if sendMessageToPeople:
             if toAddress != '' and subject and message:
                 from addresses import decodeAddress
-                status, addressVersionNumber, streamNumber, ripe = \
-                    decodeAddress(toAddress)
+                status, addressVersionNumber, streamNumber, ripe = decodeAddress(toAddress)
                 if status == 'success':
                     if state.detailPageType == 'draft' and state.send_draft_mail:
                         sqlExecute(
-                            "UPDATE sent SET toaddress = ? \
-                            , fromaddress = ? , subject = ?\
-                            , message = ?, folder = 'sent'\
-                            WHERE ackdata = ?;",
+                            "UPDATE sent SET toaddress = ?"
+                            " , fromaddress = ? , subject = ?"
+                            " , message = ?, folder = 'sent'"
+                            " WHERE ackdata = ?;",
                             toAddress,
                             fromAddress,
                             subject,
@@ -483,8 +479,8 @@ class DropDownWidget(BoxLayout):
                         toAddress = addBMIfNotPresent(toAddress)
                         statusIconColor = 'red'
                         if addressVersionNumber > 4 or addressVersionNumber <= 1:
-                            print("addressVersionNumber > 4 \
-                            or addressVersionNumber <= 1")
+                            print(
+                                "addressVersionNumber > 4 or addressVersionNumber <= 1")
                         if streamNumber > 1 or streamNumber == 0:
                             print("streamNumber > 1 or streamNumber == 0")
                         if statusIconColor == 'red':
@@ -495,8 +491,7 @@ class DropDownWidget(BoxLayout):
                         ackdata = genAckPayload(streamNumber, stealthLevel)
                         t = ()
                         sqlExecute(
-                            '''INSERT INTO sent VALUES
-                            (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+                            '''INSERT INTO sent VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                             '',
                             toAddress,
                             ripe,
@@ -736,8 +731,7 @@ class Sent(Screen):
         data = []
         queryreturn = kivy_helper_search.search_sql(
             xAddress, account, "sent", where, what, False)
-        if state.msg_counter_objs and state.association == \
-                state.check_sent_acc:
+        if state.msg_counter_objs and state.association == state.check_sent_acc:
             state.msg_counter_objs.send_cnt.badge_text = str(len(queryreturn))
             state.sent_count = str(int(state.sent_count) + 1)
             state.all_count = str(int(state.all_count) + 1)
@@ -828,8 +822,8 @@ class Sent(Screen):
             state.trash_count = str(int(state.trash_count) + 1)
             state.all_count = str(int(state.all_count) - 1)
         sqlExecute(
-            "UPDATE sent SET folder = 'trash' \
-            WHERE ackdata = ?;", str(data_index))
+            "UPDATE sent SET folder = 'trash'"
+            " WHERE ackdata = ?;", str(data_index))
         self.ids.ml.remove_widget(instance.parent.parent)
         toast('Deleted')
         self.update_trash()
@@ -837,8 +831,8 @@ class Sent(Screen):
     def archive(self, data_index, instance, *args):
         """Archive sent mail from sent mail listing."""
         sqlExecute(
-            "UPDATE sent SET folder = 'trash' \
-            WHERE ackdata = ?;", str(data_index))
+            "UPDATE sent SET folder = 'trash'"
+            " WHERE ackdata = ?;", str(data_index))
         self.ids.ml.remove_widget(instance.parent.parent)
         self.update_trash()
 
@@ -871,12 +865,12 @@ class Trash(Screen):
                 state.association = BMConfigParser().addresses()[0]
 
         inbox = sqlQuery(
-            "SELECT toaddress, fromaddress, subject, message, folder, received from \
-            inbox WHERE folder = 'trash' and toaddress = '{}';".format(
+            "SELECT toaddress, fromaddress, subject, message, folder, received from"
+            " inbox WHERE folder = 'trash' and toaddress = '{}';".format(
                 state.association))
         sent = sqlQuery(
-            "SELECT toaddress, fromaddress, subject, message, folder, lastactiontime from \
-            sent WHERE folder = 'trash' and fromaddress = '{}';".format(
+            "SELECT toaddress, fromaddress, subject, message, folder, lastactiontime from"
+            " sent WHERE folder = 'trash' and fromaddress = '{}';".format(
                 state.association))
         trash_data = inbox + sent
 
@@ -1025,24 +1019,25 @@ class NavigateApp(App):     # pylint: disable=too-many-public-methods
         self.root.ids.sc1.loadMessagelist(state.association)
         self.root.ids.scr_mngr.current = 'inbox'
 
-        msg_counter_objs = \
-            self.root_window.children[1].children[2].children[0].ids
+        msg_counter_objs = self.root_window.children[1].children[2].children[0].ids
         state.sent_count = str(
             sqlQuery(
-                "SELECT COUNT(*) FROM sent WHERE fromaddress = '{}' and \
-                folder = 'sent' ;".format(state.association))[0][0])
+                "SELECT COUNT(*) FROM sent WHERE fromaddress = '{}' and"
+                " folder = 'sent' ;".format(state.association))[0][0])
         state.inbox_count = str(
             sqlQuery(
-                "SELECT COUNT(*) FROM inbox WHERE toaddress = '{}' and \
-                folder = 'inbox' ;".format(state.association))[0][0])
-        state.trash_count = str(sqlQuery("SELECT (SELECT count(*) FROM  sent \
-            where fromaddress = '{0}' and  folder = 'trash' ) \
-            +(SELECT count(*) FROM inbox where toaddress = '{0}' and  \
-            folder = 'trash') AS SumCount".format(state.association))[0][0])
+                "SELECT COUNT(*) FROM inbox WHERE toaddress = '{}' and"
+                " folder = 'inbox' ;".format(state.association))[0][0])
+        state.trash_count = str(
+            sqlQuery(
+                "SELECT (SELECT count(*) FROM  sent"
+                " where fromaddress = '{0}' and  folder = 'trash' )"
+                " +(SELECT count(*) FROM inbox where toaddress = '{0}' and"
+                " folder = 'trash') AS SumCount".format(state.association))[0][0])
         state.draft_count = str(
             sqlQuery(
-                "SELECT COUNT(*) FROM sent WHERE fromaddress = '{}' and \
-                folder = 'draft' ;".format(state.association))[0][0])
+                "SELECT COUNT(*) FROM sent WHERE fromaddress = '{}' and"
+                " folder = 'draft' ;".format(state.association))[0][0])
         state.all_count = str(int(state.sent_count) + int(state.inbox_count))
 
         if msg_counter_objs:
@@ -1163,10 +1158,10 @@ class NavigateApp(App):     # pylint: disable=too-many-public-methods
 
     def back_press(self):
         """Method used for going back from composer to previous page."""
-        self.root.ids.toolbar.right_action_items = \
-            [['account-plus', lambda x: self.addingtoaddressbook()]]
-        self.root.ids.toolbar.left_action_items = \
-            [['menu', lambda x: self.root.toggle_nav_drawer()]]
+        self.root.ids.toolbar.right_action_items = [
+            ['account-plus', lambda x: self.addingtoaddressbook()]]
+        self.root.ids.toolbar.left_action_items = [
+            ['menu', lambda x: self.root.toggle_nav_drawer()]]
         self.root.ids.scr_mngr.current = 'inbox' \
             if state.in_composer else 'allmails'\
             if state.is_allmail else state.detailPageType\
@@ -1230,7 +1225,7 @@ class NavigateApp(App):     # pylint: disable=too-many-public-methods
             self.root.ids.sc1.ids.ml.clear_widgets()
             try:
                 self.root.ids.sc1.children[2].children[1].ids.search_field.text = ''
-            except Exception as e:
+            except Exception:
                 self.root.ids.sc1.children[1].children[1].ids.search_field.text = ''
             self.root.ids.sc1.loadMessagelist(state.association)
         elif instance.text == 'Draft':
@@ -1250,7 +1245,7 @@ class NavigateApp(App):     # pylint: disable=too-many-public-methods
             self.root.ids.sc10.ids.ml.clear_widgets()
             try:
                 self.root.ids.sc10.children[1].children[1].ids.search_field.text = ''
-            except Exception as e:
+            except Exception:
                 self.root.ids.sc10.children[2].children[1].ids.search_field.text = ''
             self.root.ids.sc10.init_ui()
         return
@@ -1426,16 +1421,16 @@ class MailDetail(Screen):
         self.page_type = state.detailPageType if state.detailPageType else ''
         if state.detailPageType == 'sent' or state.detailPageType == 'draft':
             data = sqlQuery(
-                "select toaddress, fromaddress, subject, message, status, \
-                ackdata from sent where ackdata = ?;", state.mail_id)
+                "select toaddress, fromaddress, subject, message, status,"
+                " ackdata from sent where ackdata = ?;", state.mail_id)
             state.status = self
             state.ackdata = data[0][5]
             self.assign_mail_details(data)
             state.kivyapp.set_mail_detail_header()
         elif state.detailPageType == 'inbox':
             data = sqlQuery(
-                "select toaddress, fromaddress, subject, message from inbox \
-                where msgid = ?;", str(state.mail_id))
+                "select toaddress, fromaddress, subject, message from inbox"
+                " where msgid = ?;", str(state.mail_id))
             self.assign_mail_details(data)
             state.kivyapp.set_mail_detail_header()
 
@@ -1458,16 +1453,16 @@ class MailDetail(Screen):
         msg_count_objs = state.kivyapp.root.children[2].children[0].ids
         if state.detailPageType == 'sent':
             sqlExecute(
-                "UPDATE sent SET folder = 'trash' WHERE \
-                ackdata = ?;", str(state.mail_id))
+                "UPDATE sent SET folder = 'trash' WHERE"
+                " ackdata = ?;", str(state.mail_id))
             msg_count_objs.send_cnt.badge_text = str(int(state.sent_count) - 1)
             state.sent_count = str(int(state.sent_count) - 1)
             self.parent.screens[3].ids.ml.clear_widgets()
             self.parent.screens[3].loadSent(state.association)
         elif state.detailPageType == 'inbox':
             sqlExecute(
-                "UPDATE inbox SET folder = 'trash' WHERE \
-                msgid = ?;", str(state.mail_id))
+                "UPDATE inbox SET folder = 'trash' WHERE"
+                " msgid = ?;", str(state.mail_id))
             msg_count_objs.inbox_cnt.badge_text = str(int(state.inbox_count) - 1)
             state.inbox_count = str(int(state.inbox_count) - 1)
             self.parent.screens[0].ids.ml.clear_widgets()
@@ -1496,8 +1491,8 @@ class MailDetail(Screen):
     def inbox_reply(self):
         """Method used for replying inbox messages."""
         data = sqlQuery(
-            "select toaddress, fromaddress, subject, message from inbox where \
-            msgid = ?;", str(state.mail_id))
+            "select toaddress, fromaddress, subject, message from inbox where"
+            " msgid = ?;", str(state.mail_id))
         composer_obj = self.parent.screens[2].children[0].ids
         composer_obj.ti.text = data[0][0]
         composer_obj.btn.text = data[0][0]
@@ -1515,8 +1510,7 @@ class MailDetail(Screen):
     def write_msg(self, navApp):
         """Method used to write on draft mail."""
         state.send_draft_mail = state.mail_id
-        composer_ids = \
-            self.parent.parent.parent.parent.ids.sc3.children[0].ids
+        composer_ids = self.parent.parent.parent.parent.ids.sc3.children[0].ids
         composer_ids.ti.text = state.write_msg['from_addr']
         composer_ids.btn.text = state.write_msg['from_addr']
         composer_ids.txt_input.text = state.write_msg['to_addr']
@@ -1586,8 +1580,9 @@ class AddbookDetailPopup(Popup):
     def update_addbook_label(self, address):
         """Updating the label of address book address."""
         if str(self.ids.add_label.text):
-            sqlExecute("UPDATE addressbook SET label = '{}' WHERE \
-                address = '{}';".format(str(self.ids.add_label.text), address))
+            sqlExecute(
+                "UPDATE addressbook SET label = '{}' WHERE"
+                " address = '{}';".format(str(self.ids.add_label.text), address))
             self.parent.children[1].ids.sc11.ids.ml.clear_widgets()
             self.parent.children[1].ids.sc11.loadAddresslist(None, 'All', '')
             self.dismiss()
@@ -1718,8 +1713,7 @@ class Draft(Screen):
         sqlExecute("DELETE FROM sent WHERE ackdata = ?;", str(
             data_index))
         try:
-            msg_count_objs = \
-                self.parent.parent.parent.parent.children[2].children[0].ids
+            msg_count_objs = self.parent.parent.parent.parent.children[2].children[0].ids
         except Exception:
             msg_count_objs = self.parent.parent.parent.parent.parent.children[
                 2].children[0].ids
@@ -1744,8 +1738,7 @@ class Draft(Screen):
         sendMessageToPeople = True
         if sendMessageToPeople:
             from addresses import decodeAddress
-            status, addressVersionNumber, streamNumber, ripe = \
-                decodeAddress(toAddress)
+            status, addressVersionNumber, streamNumber, ripe = decodeAddress(toAddress)
             from addresses import addBMIfNotPresent
             toAddress = addBMIfNotPresent(toAddress)
             statusIconColor = 'red'
@@ -1755,8 +1748,7 @@ class Draft(Screen):
             ackdata = genAckPayload(streamNumber, stealthLevel)
             t = ()
             sqlExecute(
-                '''INSERT INTO sent VALUES
-                (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+                '''INSERT INTO sent VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                 '',
                 toAddress,
                 ripe,
