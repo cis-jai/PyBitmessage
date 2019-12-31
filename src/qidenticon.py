@@ -59,14 +59,14 @@ class IdenticonRendererBase(object):
         # side patch
         kwds['foreColor'] = foreColor
         kwds['patch_type'] = side[0]
-        for i in xrange(4):
+        for i in range(4):
             pos = [(1, 0), (2, 1), (1, 2), (0, 1)][i]
             image = self.drawPatchQt(pos, side[2] + 1 + i, side[1], **kwds)
 
         # corner patch
         kwds['foreColor'] = secondColor
         kwds['patch_type'] = corner[0]
-        for i in xrange(4):
+        for i in range(4):
             pos = [(0, 0), (2, 0), (2, 2), (0, 2)][i]
             image = self.drawPatchQt(pos, corner[2] + 1 + i, corner[1], **kwds)
 
@@ -170,7 +170,7 @@ class DonRenderer(IdenticonRendererBase):
     MIDDLE_PATCH_SET = [0, 4, 8, 15]
 
     # modify path set
-    for idx in xrange(len(PATH_SET)):
+    for idx in range(len(PATH_SET)):
         if PATH_SET[idx]:
             p = [(vec[0] / 4.0, vec[1] / 4.0) for vec in PATH_SET[idx]]
             PATH_SET[idx] = p + p[:1]

@@ -37,9 +37,8 @@ def userInput(message):
     """Checks input for exit or quit. Also formats for input, etc"""
 
     global usrPrompt
-
-    print '\n' + message
-    uInput = raw_input('> ')
+    print('\n' + message)
+    uInput = input('> ')
 
     if uInput.lower() == 'exit':  # Returns the user to the main menu
         usrPrompt = 1
@@ -1874,7 +1873,7 @@ def main():
         usrPrompt = 2
 
     try:
-        UI((raw_input('>').lower()).replace(" ", ""))
+        UI((input('>').lower()).replace(" ", ""))
     except EOFError:
         UI("quit")
 
