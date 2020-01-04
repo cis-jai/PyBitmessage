@@ -1283,7 +1283,6 @@ class NavigateApp(App):  # pylint: disable=too-many-public-methods
 
     def build(self):
         """Method builds the widget"""
-        print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSss")
         print(os.path.join(os.path.dirname(__file__), 'main.kv'))
         main_widget = Builder.load_file(
             os.path.join(os.path.dirname(__file__), 'main.kv'))

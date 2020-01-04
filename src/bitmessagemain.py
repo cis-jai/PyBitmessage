@@ -245,11 +245,10 @@ class Main(object):
 
         set_thread_name("PyBitmessage")
 
-        state.dandelion = config.safeGetInt('network', 'dandelion')
+        state.dandelion = config.safeGet('network', 'dandelion')
         # dandelion requires outbound connections, without them,
         # stem objects will get stuck forever
-        if state.dandelion and not config.safeGetBoolean(
-                'bitmessagesettings', 'sendoutgoingconnections'):
+        if state.dandelion and not (config.safeGet('bitmessagesettings', 'sendoutgoingconnections') == 'True'):
             state.dandelion = 0
 
         if state.testmode or config.safeGetBoolean(
