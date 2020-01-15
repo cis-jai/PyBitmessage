@@ -171,7 +171,7 @@ def decreaseRating(peer):
 def trimKnownNodes(recAddrStream=1):
     """Triming Knownnodes"""
     if len(knownNodes[recAddrStream]) < \
-            int(BMConfigParser().safeGet("knownnodes", "maxnodes")):
+            BMConfigParser().safeGetInt("knownnodes", "maxnodes"):
         return
     with knownNodesLock:
         oldestList = sorted(
