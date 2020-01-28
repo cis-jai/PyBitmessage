@@ -1,7 +1,8 @@
 """
 Select which node to connect to
 """
-# pylint: disable=too-many-branches, logging-format-interpolation, unidiomatic-typecheck
+# pylint: disable=too-many-branches, logging-format-interpolation
+# pylint: disable=unidiomatic-typecheck
 import logging
 import random  # nosec
 
@@ -44,7 +45,8 @@ def chooseConnection(stream):
         # discovered peers are already filtered by allowed streams
         return getDiscoveredPeer()
     for _ in range(50):
-        peer = random.choice([key for key in knownnodes.knownNodes[stream].keys()])
+        peer = random.choice(
+            [key for key in knownnodes.knownNodes[stream].keys()])
         try:
             peer_info = knownnodes.knownNodes[stream][peer]
             if peer_info.get('self'):

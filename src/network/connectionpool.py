@@ -18,7 +18,9 @@ from network.connectionchooser import chooseConnection
 from network.proxy import Proxy
 
 from network.tcp import (
-    TCPServer, Socks5BMConnection, Socks4aBMConnection, TCPConnection, bootstrap)
+    TCPServer, Socks5BMConnection, Socks4aBMConnection,
+    TCPConnection, bootstrap
+)
 from network.udp import UDPSocket
 from singleton import Singleton
 from .node import Peer
@@ -77,8 +79,12 @@ class BMConnectionPool(object):
         Shortcut for combined list of connections from
         `inboundConnections` and `outboundConnections` dicts
         """
-        inboundConnections = [inboundConnections for inboundConnections in self.inboundConnections.values()]
-        outboundConnections = [outboundConnections for outboundConnections in self.outboundConnections.values()]
+        inboundConnections = [
+            inboundConnections
+            for inboundConnections in self.inboundConnections.values()]
+        outboundConnections = [
+            outboundConnections
+            for outboundConnections in self.outboundConnections.values()]
         return [connections for connections in inboundConnections + outboundConnections]
 
     def establishedConnections(self):
@@ -115,16 +121,6 @@ class BMConnectionPool(object):
 
     def isAlreadyConnected(self, nodeid):
         """Check if we're already connected to this peer"""
-
-        # for i in (
-        #         self.inboundConnections.values() +
-        #         self.outboundConnections.values()
-        # ):
-        # for i in (
-        #         [inboundConnections for inboundConnections  in self.inboundConnections.values()] +
-        #         [outboundConnections for outboundConnections in self.outboundConnections.values()]
-        # ):
-
         for i in self.connections():
             try:
                 if nodeid == i.nodeid:

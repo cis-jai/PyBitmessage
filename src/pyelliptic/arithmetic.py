@@ -33,8 +33,10 @@ def get_code_string(base):
     elif base == 58:
         return "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
     elif base == 256:
-        # raw_unicode_escape is used because in the python3 after range(161) its genreate
-        # the speical character so avoiding that function we have used the raw_unicode method
+        # raw_unicode_escape is used because in the
+        # python3 after range(161) its genreate
+        # the speical character so avoiding that function
+        # we have used the raw_unicode method
         return bytes(range(0, 256))
     else:
         raise ValueError("Invalid base!")
@@ -42,6 +44,7 @@ def get_code_string(base):
 
 def encode(val, base, minlen=0):
     """Returns the encoded string"""
+    # pylint: disable=unidiomatic-typecheck
     code_string = get_code_string(base)
     result = str.encode('') if type(code_string) is bytes else ''
     while val > 0:

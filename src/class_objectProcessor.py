@@ -35,7 +35,7 @@ from fallback import RIPEMD160Hash
 
 import l10n
 # pylint: disable=too-many-locals, too-many-return-statements
-# pylint: disable=too-many-branches, too-many-statements
+# pylint: disable=too-many-branches, too-many-statements, too-many-lines
 
 logger = logging.getLogger('default')
 

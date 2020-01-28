@@ -8,7 +8,6 @@ from struct import pack, unpack
 
 from debug import logger
 
-
 ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
 
@@ -68,11 +67,11 @@ def encodeVarint(integer):
         raise varintEncodeError('varint cannot be < 0')
     if integer < 253:
         return pack('>B', integer)
-    if integer >= 253 and integer < 65536:
+    if integer in range(253, 65536):
         return pack('>B', 253) + pack('>H', integer)
-    if integer >= 65536 and integer < 4294967296:
+    if integer in range(65536, 4294967296):
         return pack('>B', 254) + pack('>I', integer)
-    if integer >= 4294967296 and integer < 18446744073709551616:
+    if integer in range(4294967296, 18446744073709551616):
         return pack('>B', 255) + pack('>Q', integer)
     if integer >= 18446744073709551616:
         raise varintEncodeError('varint cannot be >= 18446744073709551616')
@@ -144,7 +143,7 @@ def calculateInventoryHash(data):
 
 def encodeAddress(version, stream, ripe):
     """Convert ripe to address"""
-    if version >= 2 and version < 4:
+    if version in range(2, 4):
         if len(ripe) != 20:
             raise Exception(
                 'Programming error in encodeAddress: The length of'

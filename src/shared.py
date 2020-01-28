@@ -24,7 +24,7 @@ from addresses import decodeAddress, encodeVarint
 from bmconfigparser import BMConfigParser
 from debug import logger
 from helper_sql import sqlQuery
-# pylint: disable=logging-format-interpolation
+# pylint: disable=logging-format-interpolation, inconsistent-return-statements
 
 verbose = 1
 # This is obsolete with the change to protocol v3
@@ -103,7 +103,6 @@ def isAddressInMyAddressBookSubscriptionsListOrWhitelist(address):
 
 
 def decodeWalletImportFormat(WIFstring):
-    # pylint: disable=inconsistent-return-statements
     """
     Convert private key from base58 that's used in the config file to
     8-bit binary string
@@ -285,4 +284,5 @@ def openKeysFile():
     if 'linux' in sys.platform:
         subprocess.call(["xdg-open", state.appdata + 'keys.dat'])
     else:
+        # pylint: disable=no-member
         os.startfile(state.appdata + 'keys.dat')

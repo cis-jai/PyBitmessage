@@ -250,7 +250,8 @@ class Main(object):
         state.dandelion = config.safeGet('network', 'dandelion')
         # dandelion requires outbound connections, without them,
         # stem objects will get stuck forever
-        if state.dandelion and not (config.safeGet('bitmessagesettings', 'sendoutgoingconnections') == 'True'):
+        # if state.dandelion and not (config.safeGet('bitmessagesettings', 'sendoutgoingconnections') == 'True'):
+        if state.dandelion and (config.safeGet('bitmessagesettings', 'sendoutgoingconnections' != 'True')):
             state.dandelion = 0
 
         if state.testmode or config.safeGetBoolean(
@@ -410,7 +411,6 @@ class Main(object):
                 # wait until grandchild ready
                 while True:
                     time.sleep(1)
-
                 os._exit(0)  # pylint: disable=protected-access
         except AttributeError:
             # fork not implemented

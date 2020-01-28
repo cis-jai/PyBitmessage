@@ -68,7 +68,8 @@ def get_version(library):
             cflags = library.SSLeay_version(SSLEAY_CFLAGS)
             hexversion = library.SSLeay()
         except AttributeError:
-            # raise NotImplementedError('Cannot determine version of this OpenSSL library.')
+            # raise NotImplementedError(
+            #      'Cannot determine version of this OpenSSL library.')
             pass
     return (version, hexversion, cflags)
 

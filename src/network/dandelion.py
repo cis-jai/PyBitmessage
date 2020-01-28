@@ -108,7 +108,9 @@ class Dandelion(object):
             # if not [hasmap for hasmap in  self.hashMap.items()] ==[]:
             try:
                 for k, v in {
-                        k: v for k, v in iter([hasmap for hasmap in self.hashMap.items()])
+                        k: v
+                        for k, v in iter(
+                            [hasmap for hasmap in self.hashMap.items()])
                         if v.child is None
                 }.items():
                     self.hashMap[k] = Stem(
@@ -129,13 +131,15 @@ class Dandelion(object):
                 # active mappings to pointing to the removed node
 
                 for k in (
-                        k for k, v in iter(self.nodeMap.items()) if v == connection
-                        # k for k, v in self.nodeMap.iteritems()
-                        # if v == connection
+                        k
+                        for k, v in iter(
+                            self.nodeMap.items()) if v == connection
                 ):
                     self.nodeMap[k] = None
                 for k, v in {
-                        k: v for k, v in iter(iter([hasmap for hasmap in self.hashMap.items()]))
+                        k: v
+                        for k, v in iter(
+                            iter([hasmap for hasmap in self.hashMap.items()]))
                         if v.child == connection
                 }.items():
                     self.hashMap[k] = Stem(

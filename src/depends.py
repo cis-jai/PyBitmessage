@@ -249,6 +249,7 @@ def check_openssl():
         paths = ['libeay32.dll']
         if getattr(sys, 'frozen', False):
             import os.path
+            # pylint: disable=no-member
             paths.insert(0, os.path.join(sys._MEIPASS, 'libeay32.dll'))
     elif state.kivy:
         return True

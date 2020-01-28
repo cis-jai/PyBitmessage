@@ -471,6 +471,7 @@ class singleWorker(StoppableThread):
 
     def sendOnionPeerObj(self, peer=None):
         """Send onionpeer object representing peer"""
+        # pylint: disable=redefined-argument-from-local
         if not peer:  # find own onionhostname
             for peer in state.ownAddresses:
                 if peer.host.endswith('.onion'):

@@ -175,7 +175,8 @@ class Inbox(Screen):
                 valign='top')
             self.ids.ml.add_widget(content)
 
-    def set_inboxCount(self, msgCnt):  # pylint: disable=no-self-use
+    @staticmethod
+    def set_inboxCount(msgCnt):
         """This method is used to sent inbox message count"""
         src_mng_obj = state.kivyapp.root.ids.content_drawer.ids.inbox_cnt
         src_mng_obj.children[0].children[0].text = showLimitedCnt(int(msgCnt))
@@ -1214,7 +1215,8 @@ class Trash(Screen):
             " ORDER BY actionTime DESC limit {1}, {2}".format(
                 state.association, start_indx, end_indx))
 
-    def set_TrashCnt(self, Count):  # pylint: disable=no-self-use
+    @staticmethod
+    def set_TrashCnt(Count):
         """This method is used to set trash message count"""
         trashCnt_obj = state.kivyapp.root.ids.content_drawer.ids.trash_cnt
         trashCnt_obj.children[0].children[0].text = showLimitedCnt(int(Count))
@@ -1730,7 +1732,6 @@ class NavigateApp(MDApp):
 
     def refreshScreen(self):
         """Method show search button only on inbox or sent screen"""
-        # pylint: disable=unused-variable
         state.searcing_text = ''
         if state.search_screen == 'inbox':
             try:
@@ -1821,7 +1822,8 @@ class NavigateApp(MDApp):
             except Exception:
                 self.root.ids.sc17.children[0].children[1].active = False
 
-    def on_request_close(self, *args):  # pylint: disable=no-self-use
+    @staticmethod
+    def on_request_close(*args):
         """This method is for app closing request"""
         AppClosingPopup().open()
         return True
@@ -2275,7 +2277,8 @@ class Draft(Screen):
             xAddress, self.account, "draft", where, what,
             False, start_indx, end_indx)
 
-    def set_draftCnt(self, Count):  # pylint: disable=no-self-use
+    @staticmethod
+    def set_draftCnt(Count):
         """This method set the count of draft mails"""
         draftCnt_obj = state.kivyapp.root.ids.content_drawer.ids.draft_cnt
         draftCnt_obj.children[0].children[0].text = showLimitedCnt(int(Count))
@@ -2480,7 +2483,8 @@ class Allmails(Screen):
             " ORDER BY actionTime DESC limit {1}, {2}".format(
                 self.account, start_indx, end_indx))
 
-    def set_AllmailCnt(self, Count):  # pylint: disable=no-self-use
+    @staticmethod
+    def set_AllmailCnt(Count):
         """This method is used to set allmails message count"""
         allmailCnt_obj = state.kivyapp.root.ids.content_drawer.ids.allmail_cnt
         allmailCnt_obj.children[0].children[0].text = showLimitedCnt(int(Count))

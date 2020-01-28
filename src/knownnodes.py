@@ -8,6 +8,7 @@ import os
 import pickle
 import threading
 import time
+from collections import OrderedDict
 
 import state
 from bmconfigparser import BMConfigParser
@@ -53,7 +54,6 @@ def json_serialize_knownnodes(output):
             if type(peer[0]) != bytes:
                 _serialized.append({'stream': stream, 'peer': peer._asdict(), 'info': info})
             else:
-                from collections import OrderedDict
                 _serialized.append({
                     'stream': stream,
                     'peer': OrderedDict({'host': str(peer[0].decode()), 'port': int(peer[1])}),

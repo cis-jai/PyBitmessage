@@ -84,7 +84,7 @@ def codePath():
         return os.path.dirname(__file__)
     return (
         os.environ.get('RESOURCEPATH')
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access, no-member
         if frozen == "macosx_app" else sys._MEIPASS)
 
 

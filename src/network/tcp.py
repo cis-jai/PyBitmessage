@@ -73,7 +73,8 @@ class TCPConnection(BMProto, TLSDispatcher):
                     socket.SOCK_STREAM)
             except TypeError:
                 self.create_socket(
-                    socket.AF_INET6 if ':'.encode() in address.host else socket.AF_INET,
+                    socket.AF_INET6
+                    if ':'.encode() in address.host else socket.AF_INET,
                     socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             TLSDispatcher.__init__(self, sock, server_side=False)
@@ -167,7 +168,8 @@ class TCPConnection(BMProto, TLSDispatcher):
         addrs = {}
         for stream in self.streams:
             with knownnodes.knownNodesLock:
-                for nitro, sitro in enumerate((stream, stream * 2, stream * 2 + 1)):
+                for nitro, sitro in enumerate(
+                        (stream, stream * 2, stream * 2 + 1)):
                     nodes = knownnodes.knownNodes.get(sitro)
                     if not nodes:
                         continue
