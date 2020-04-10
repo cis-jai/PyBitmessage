@@ -1,16 +1,13 @@
 """
-src/helper_startup.py
-=====================
-
-Helper Start performs all the startup operations.
+Startup operations.
 """
 # pylint: disable=too-many-branches,too-many-statements
-from __future__ import print_function
 
-import ConfigParser
+import logging
 import os
 import platform
 import sys
+import time
 from distutils.version import StrictVersion
 
 import defaults
@@ -19,26 +16,17 @@ import paths
 import state
 from bmconfigparser import BMConfigParser
 
+try:
+    from plugins.plugin import get_plugin
+except ImportError:
+    get_plugin = None
+
+
+logger = logging.getLogger('default')
+
 # The user may de-select Portable Mode in the settings if they want
 # the config files to stay in the application data folder.
 StoreConfigFilesInSameDirectoryAsProgramByDefault = False
-
-
-def _loadTrustedPeer():
-    try:
-        trustedPeer = BMConfigParser().get('bitmessagesettings', 'trustedpeer')
-    except ConfigParser.Error:
-        # This probably means the trusted peer wasn't specified so we
-        # can just leave it as None
-        return
-    try:
-        host, port = trustedPeer.split(':')
-    except ValueError:
-        sys.exit(
-            'Bad trustedpeer config setting! It should be set as'
-            ' trustedpeer=<hostname>:<portnumber>'
-        )
-    state.trustedPeer = state.Peer(host, int(port))
 
 
 def loadConfig():
@@ -51,14 +39,14 @@ def loadConfig():
         needToCreateKeysFile = config.safeGet(
             'bitmessagesettings', 'settingsversion') is None
         if not needToCreateKeysFile:
-            print(
+            logger.info(
                 'Loading config files from directory specified'
-                ' on startup: %s' % state.appdata)
+                ' on startup: %s', state.appdata)
     else:
         config.read(paths.lookupExeFolder() + 'keys.dat')
         try:
             config.get('bitmessagesettings', 'settingsversion')
-            print('Loading config files from same directory as program.')
+            logger.info('Loading config files from same directory as program.')
             needToCreateKeysFile = False
             state.appdata = paths.lookupExeFolder()
         except:
@@ -69,7 +57,8 @@ def loadConfig():
             needToCreateKeysFile = config.safeGet(
                 'bitmessagesettings', 'settingsversion') is None
             if not needToCreateKeysFile:
-                print('Loading existing config files from', state.appdata)
+                logger.info(
+                    'Loading existing config files from %s', state.appdata)
 
     if needToCreateKeysFile:
 
@@ -124,9 +113,10 @@ def loadConfig():
             # Just use the same directory as the program and forget about
             # the appdata folder
             state.appdata = ''
-            print('Creating new config files in same directory as program.')
+            logger.info(
+                'Creating new config files in same directory as program.')
         else:
-            print('Creating new config files in', state.appdata)
+            logger.info('Creating new config files in %s', state.appdata)
             if not os.path.exists(state.appdata):
                 os.makedirs(state.appdata)
         if not sys.platform.startswith('win'):
@@ -134,8 +124,6 @@ def loadConfig():
         config.save()
     else:
         updateConfig()
-
-    _loadTrustedPeer()
 
 
 def updateConfig():
@@ -278,7 +266,7 @@ def updateConfig():
             'bitmessagesettings', 'hidetrayconnectionnotifications', 'false')
     if config.safeGetInt('bitmessagesettings', 'maxoutboundconnections') < 1:
         config.set('bitmessagesettings', 'maxoutboundconnections', '8')
-        print('WARNING: your maximum outbound connections must be a number.')
+        logger.warning('Your maximum outbound connections must be a number.')
 
     # TTL is now user-specifiable. Let's add an option to save
     # whatever the user selects.
@@ -301,3 +289,26 @@ def isOurOperatingSystemLimitedToHavingVeryFewHalfOpenConnections():
         return False
     except Exception:
         pass
+
+
+def start_proxyconfig():
+    """Check socksproxytype and start any proxy configuration plugin"""
+    if not get_plugin:
+        return
+    config = BMConfigParser()
+    proxy_type = config.safeGet('bitmessagesettings', 'socksproxytype')
+    if proxy_type and proxy_type not in ('none', 'SOCKS4a', 'SOCKS5'):
+        try:
+            proxyconfig_start = time.time()
+            if not get_plugin('proxyconfig', name=proxy_type)(config):
+                raise TypeError()
+        except TypeError:
+            # cannot import shutdown here ):
+            logger.error(
+                'Failed to run proxy config plugin %s',
+                proxy_type, exc_info=True)
+            os._exit(0)  # pylint: disable=protected-access
+        else:
+            logger.info(
+                'Started proxy config plugin %s in %s sec',
+                proxy_type, time.time() - proxyconfig_start)

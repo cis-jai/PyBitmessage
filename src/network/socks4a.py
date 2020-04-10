@@ -1,12 +1,11 @@
 """
-src/network/socks4a.py
-=================================
+SOCKS4a proxy module
 """
 # pylint: disable=attribute-defined-outside-init
 import socket
 import struct
 
-from proxy import Proxy, ProxyError, GeneralProxyError
+from proxy import GeneralProxyError, Proxy, ProxyError
 
 
 class Socks4aError(ProxyError):

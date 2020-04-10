@@ -1,43 +1,22 @@
 
 #:import Toolbar kivymd.toolbar.Toolbar
-#:import ThemeManager kivymd.theming.ThemeManager
-#:import MDNavigationDrawer kivymd.navigationdrawer.MDNavigationDrawer
 #:import NavigationLayout kivymd.navigationdrawer.NavigationLayout
 #:import NavigationDrawerDivider kivymd.navigationdrawer.NavigationDrawerDivider
-#:import NavigationDrawerToolbar kivymd.navigationdrawer.NavigationDrawerToolbar
 #:import NavigationDrawerSubheader kivymd.navigationdrawer.NavigationDrawerSubheader
 #:import MDCheckbox kivymd.selectioncontrols.MDCheckbox
-#:import MDSwitch kivymd.selectioncontrols.MDSwitch
 #:import MDList kivymd.list.MDList
 #:import OneLineListItem kivymd.list.OneLineListItem
-#:import TwoLineListItem kivymd.list.TwoLineListItem
-#:import ThreeLineListItem kivymd.list.ThreeLineListItem
-#:import OneLineAvatarListItem kivymd.list.OneLineAvatarListItem
-#:import OneLineIconListItem kivymd.list.OneLineIconListItem
-#:import OneLineAvatarIconListItem kivymd.list.OneLineAvatarIconListItem
 #:import MDTextField kivymd.textfields.MDTextField
-#:import MDSpinner kivymd.spinner.MDSpinner
-#:import MDCard kivymd.card.MDCard
-#:import MDSeparator kivymd.card.MDSeparator
-#:import MDDropdownMenu kivymd.menu.MDDropdownMenu
 #:import get_color_from_hex kivy.utils.get_color_from_hex
 #:import colors kivymd.color_definitions.colors
-#:import SmartTile kivymd.grid.SmartTile
-#:import MDSlider kivymd.slider.MDSlider
 #:import MDTabbedPanel kivymd.tabs.MDTabbedPanel
 #:import MDTab kivymd.tabs.MDTab
-#:import MDProgressBar kivymd.progressbar.MDProgressBar
-#:import MDAccordion kivymd.accordion.MDAccordion
-#:import MDAccordionItem kivymd.accordion.MDAccordionItem
-#:import MDAccordionSubItem kivymd.accordion.MDAccordionSubItem
-#:import MDThemePicker kivymd.theme_picker.MDThemePicker
-#:import MDBottomNavigation kivymd.tabs.MDBottomNavigation
-#:import MDBottomNavigationItem kivymd.tabs.MDBottomNavigationItem
 #:import MDFloatingActionButton kivymd.button.MDFloatingActionButton
 #:import Factory kivy.factory.Factory
-#:import MDTextButton kivymd.button.MDTextButton
-#:import FadeTransition kivy.uix.screenmanager.FadeTransition
 #:import MDScrollViewRefreshLayout kivymd.refreshlayout.MDScrollViewRefreshLayout
+#:import MDSpinner kivymd.spinner.MDSpinner
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+#:import MDSeparator kivymd.card.MDSeparator
 
 #:set color_button (0.784, 0.443, 0.216, 1)  # brown
 #:set color_button_pressed (0.659, 0.522, 0.431, 1)  # darker brown
@@ -53,10 +32,9 @@
     color: color_font
 
 <ContentNavigationDrawer@Navigatorss>:
-    drawer_logo: app.address_identicon()
+    drawer_logo: './images/drawer_logo1.png'
     NavigationDrawerDivider:
-    
-    NavigationDrawerTwoLineListItem:
+    NavigationDrawerSubheader:
         text: "Accounts"
     NavigationDrawerIconButton:
         CustomSpinner:
@@ -82,52 +60,47 @@
         text: "Inbox"
         on_release: app.root.ids.scr_mngr.current = 'inbox'
         badge_text: "0"
-        on_press: app.refreshScreen(self)
+        on_press: app.load_screen(self)
     NavigationDrawerIconButton:
         id: send_cnt
         icon: 'send'
         text: "Sent"
         on_release: app.root.ids.scr_mngr.current = 'sent'
         badge_text: "0"
-        on_press: app.refreshScreen(self)
     NavigationDrawerIconButton:
         id: draft_cnt
         icon: 'message-draw'
         text: "Draft"
         on_release: app.root.ids.scr_mngr.current = 'draft'
         badge_text: "0"
-        on_press: app.refreshScreen(self)
-    NavigationDrawerIconButton: 
-        text: "Starred"
-        icon:'star'
-        on_release: app.root.ids.scr_mngr.current = 'starred'
-        on_press: app.refreshScreen(self)
-    NavigationDrawerIconButton:
-        icon: 'archive'
-        text: "Archieve"
-        on_release: app.root.ids.scr_mngr.current = 'archieve'
-        badge_text: "0"
-        on_press: app.refreshScreen(self)
-    NavigationDrawerIconButton:
-        icon: 'email-open-outline'
-        text: "Spam"
-        on_release: app.root.ids.scr_mngr.current = 'spam'
-        badge_text: "0"
-        on_press: app.refreshScreen(self)
+    #NavigationDrawerIconButton:
+        #text: "Starred"
+        #icon:'star'
+        #on_release: app.root.ids.scr_mngr.current = 'starred'
+        #badge_text: "0"
+    #NavigationDrawerIconButton:
+        #icon: 'archive'
+        #text: "Archieve"
+        #on_release: app.root.ids.scr_mngr.current = 'archieve'
+        #badge_text: "0"
+    #NavigationDrawerIconButton:
+        #icon: 'email-open-outline'
+        #text: "Spam"
+        #on_release: app.root.ids.scr_mngr.current = 'spam'
+        #badge_text: "0"
     NavigationDrawerIconButton:
         id: trash_cnt
         icon: 'delete'
         text: "Trash"
         on_release: app.root.ids.scr_mngr.current = 'trash'
         badge_text: "0"
-        on_press: app.refreshScreen(self)
     NavigationDrawerIconButton:
         id: allmail_cnt
         text: "All Mails"
         icon:'contact-mail'
         on_release: app.root.ids.scr_mngr.current = 'allmails'
         badge_text: "0"
-        on_press: app.refreshScreen(self)
+        on_press: app.load_screen(self)
     NavigationDrawerDivider:
     NavigationDrawerSubheader:
         text: "All labels"
@@ -135,37 +108,30 @@
         text: "Address Book"
         icon:'book-multiple'
         on_release: app.root.ids.scr_mngr.current = 'addressbook' 
-        on_press: app.refreshScreen(self)
     NavigationDrawerIconButton: 
         text: "Settings"
         icon:'settings'
         on_release: app.root.ids.scr_mngr.current = 'set'
-        on_press: app.refreshScreen(self)                                   
     NavigationDrawerIconButton: 
         text: "Subscriptions/Payment"
-        icon:'wallet'
+        icon:'bell'
         on_release: app.root.ids.scr_mngr.current = 'payment'
-        on_press: app.refreshScreen(self)
     NavigationDrawerIconButton: 
         text: "Credits"
         icon:'wallet'
         on_release: app.root.ids.scr_mngr.current = 'credits'
-        on_press: app.refreshScreen(self)
     NavigationDrawerIconButton: 
         text: "new address"
         icon:'account-plus'
         on_release: app.root.ids.scr_mngr.current = 'login'
-        on_press: app.refreshScreen(self)
     NavigationDrawerIconButton: 
         text: "Network Status"
         icon:'server-network'
         on_release: app.root.ids.scr_mngr.current = 'networkstat'
-        on_press: app.refreshScreen(self)
     NavigationDrawerIconButton: 
         text: "My Addresses"
         icon:'account-multiple'
         on_release: app.root.ids.scr_mngr.current = 'myaddress'
-        on_press: app.refreshScreen(self)
 
 NavigationLayout:
     id: nav_layout
@@ -173,107 +139,173 @@ NavigationLayout:
     ContentNavigationDrawer:
         id: nav_drawer
 
-    BoxLayout:
-        id: box_layout
-        orientation: 'vertical'
-        Toolbar:
-            id: toolbar
-            title: app.current_address_label()
-            opacity: 1 if app.addressexist() else 0
-            disabled: False if app.addressexist() else True
-            md_bg_color: app.theme_cls.primary_color
-            background_palette: 'Primary'
-            background_hue: '500'
-            left_action_items: [['menu', lambda x: app.root.toggle_nav_drawer()]]
-            right_action_items: [['account-plus', lambda x: app.addingtoaddressbook()]]
+    FloatLayout:
+        id: float_box
+        BoxLayout:
+            id: box_layout
+            orientation: 'vertical'
+            Toolbar:
+                id: toolbar
+                title: app.current_address_label()
+                opacity: 1 if app.addressexist() else 0
+                disabled: False if app.addressexist() else True
+                md_bg_color: app.theme_cls.primary_color
+                background_palette: 'Primary'
+                background_hue: '500'
+                left_action_items: [['menu', lambda x: app.root.toggle_nav_drawer()]]
+                right_action_items: [['account-plus', lambda x: app.addingtoaddressbook()]]
 
-        ScreenManager:
-            id: scr_mngr
-            Inbox:
-                id:sc1
-            Page:
-                id:sc2
-            Create:
-                id:sc3
-            Sent:
-                id:sc4
-            Trash:
-                id:sc5
-            Login:
-                id:sc6
-            Random:
-                id:sc7
-            AddressSuccessful:
-                id:sc8
-            Setting:
-                id:sc9
-            MyAddress:
-                id:sc10
-            AddressBook:
-                id:sc11
-            Payment:
-                id:sc12
-            NetworkStat:
-                id:sc13
-            MailDetail:
-                id:sc14
-            ShowQRCode:
-                id:sc15
-            Draft:
-                id:sc16
-            Allmails:
-                id:sc17
-            Credits:
-                id:sc18
-            Starred:
-                id:sc19
-            Archieve:
-                id:sc20
-            Spam:
-                id:sc21
+            ScreenManager:
+                id: scr_mngr
+                Inbox:
+                    id:sc1
+                Page:
+                    id:sc2
+                Create:
+                    id:sc3
+                Sent:
+                    id:sc4
+                Trash:
+                    id:sc5
+                Login:
+                    id:sc6
+                Random:
+                    id:sc7
+                Spam:
+                    id:sc8
+                Setting:
+                    id:sc9
+                MyAddress:
+                    id:sc10
+                AddressBook:
+                    id:sc11
+                Payment:
+                    id:sc12
+                NetworkStat:
+                    id:sc13
+                MailDetail:
+                    id:sc14
+                ShowQRCode:
+                    id:sc15
+                Draft:
+                    id:sc16
+                Allmails:
+                    id:sc17
+                Credits:
+                    id:sc18
+                Starred:
+                    id:sc19
+                Archieve:
+                    id:sc20
 
 <Inbox>:
     name: 'inbox'
+    transition: NoTransition()
     BoxLayout:
         orientation: 'vertical'
-        spacing: dp(10)
+        spacing: dp(5)
         SearchBar:
-        FloatLayout:
-            MDScrollViewRefreshLayout:
-                id: refresh_layout
-                refresh_callback: root.refresh_callback
-                root_layout: root
+        GridLayout:
+            id: identi_tag
+            padding: [20, 0, 0, 5]
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+            MDLabel:
+                text: ''
+                font_style: 'Body1'
+                bold: True
+        #FloatLayout:
+        #    MDScrollViewRefreshLayout:
+        #        id: refresh_layout
+        #        refresh_callback: root.refresh_callback
+        #        root_layout: root.set_root_layout()
+        #        MDList:
+        #            id: ml
+        BoxLayout:
+            orientation:'vertical'
+            ScrollView:
+                id: scroll_y
+                do_scroll_x: False
                 MDList:
                     id: ml
+    Loader:
     ComposerButton:
 
 <Sent>:
     name: 'sent'
     BoxLayout:
         orientation: 'vertical'
+        spacing: dp(5)
         SearchBar:
+        GridLayout:
+            id: identi_tag
+            padding: [20, 0, 0, 5]
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+            MDLabel:
+                text: ''
+                font_style: 'Body1'
+                bold: True
         BoxLayout:
             orientation:'vertical'
             ScrollView:
+                id: scroll_y
                 do_scroll_x: False
                 MDList:
                     id: ml
+    Loader:
     ComposerButton:
 
 <Trash>:
     name: 'trash'
-    ScrollView:
-        do_scroll_x: False
-        MDList:
-            id: ml
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(5)
+        GridLayout:
+            id: identi_tag
+            padding: [20, 20, 0, 5]
+            spacing: dp(5)
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+            MDLabel:
+                text: ''
+                font_style: 'Body1'
+                bold: True
+        BoxLayout:
+            orientation:'vertical'
+            ScrollView:
+                id: scroll_y
+                do_scroll_x: False
+                MDList:
+                    id: ml
+    Loader:
     ComposerButton:
-    
+ 
 <Draft>:
     name: 'draft'
-    ScrollView:
-        do_scroll_x: False
-        MDList:
-            id: ml
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(5)
+        GridLayout:
+            id: identi_tag
+            padding: [20, 20, 0, 5]
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+            MDLabel:
+                text: ''
+                font_style: 'Body1'
+                bold: True
+        BoxLayout:
+            orientation:'vertical'
+            ScrollView:
+                id: scroll_y
+                do_scroll_x: False
+                MDList:
+                    id: ml
     ComposerButton:
 
 <Starred>:
@@ -302,13 +334,35 @@ NavigationLayout:
 
 <Allmails>:
     name: 'allmails'
-    FloatLayout:
-        MDScrollViewRefreshLayout:
-            id: refresh_layout
-            refresh_callback: root.refresh_callback
-            root_layout: root
-            MDList:
-                id: ml
+    #FloatLayout:
+    #    MDScrollViewRefreshLayout:
+    #        id: refresh_layout
+    #        refresh_callback: root.refresh_callback
+    #        root_layout: root.set_root_layout()
+    #        MDList:
+    #            id: ml
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(5)
+        GridLayout:
+            id: identi_tag
+            padding: [20, 20, 0, 5]
+            spacing: dp(5)
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+            MDLabel:
+                text: ''
+                font_style: 'Body1'
+                bold: True
+        BoxLayout:
+            orientation:'vertical'
+            ScrollView:
+                id: scroll_y
+                do_scroll_x: False
+                MDList:
+                    id: ml
+    Loader:
     ComposerButton:
     
 <Test>:
@@ -325,6 +379,7 @@ NavigationLayout:
 
 <Create>:
     name: 'create'
+    Loader:
 
 <Credits>:
     name: 'credits'
@@ -394,7 +449,8 @@ NavigationLayout:
                     size_hint_y: None
                     font_size: '13sp'
                     height: self.parent.height/2
-                    hint_text: 'type or search recipients address starting with BM-'
+                    #hint_text: 'type or search recipients address starting with BM-'
+                    hint_text: 'type, select or scan QR code for recipients address'
                 RV:
                     id: rv
             MDTextField:
@@ -417,17 +473,6 @@ NavigationLayout:
                 helper_text_mode: "on_error"
             BoxLayout:
                 spacing:50
-                AnchorLayout:
-                    MDRaisedButton:
-                        size_hint: 1, None
-                        height: dp(40)
-                        on_press: root.reset_composer()
-                        MDLabel:
-                            font_style: 'Title'
-                            text: 'reset'
-                            font_size: '13sp'
-                            color: (1,1,1,1)
-                            halign: 'center'
 
 <MyTextInput>:
     readonly: False
@@ -517,9 +562,9 @@ NavigationLayout:
             BoxLayout:
                 AnchorLayout:
                     MDRaisedButton:
-                        size_hint: .5, .35
                         height: dp(40)
                         on_press: app.root.ids.scr_mngr.current = 'random'
+                        on_press: app.root.ids.sc7.reset_address_label()
                         MDLabel:
                             font_style: 'Title'
                             text: 'proceed'
@@ -558,10 +603,10 @@ NavigationLayout:
                 hint_text: "Label"
                 required: True
                 helper_text_mode: "on_error"
+                on_text: root.add_validation(self)
             BoxLayout:
                 AnchorLayout:
                     MDRaisedButton:
-                        size_hint: .5, None
                         height: dp(40)
                         on_release: root.generateaddress(app)
                         opposite_colors: True
@@ -571,12 +616,6 @@ NavigationLayout:
                             font_size: '13sp'
                             color: (1,1,1,1)
                             halign: 'center'
-
-<AddressSuccessful>:
-    name: 'add_sucess'
-    Label:
-        text: 'Successfully created a new bit address'
-        color: 0,0,0,1
 
 <Setting>:
     name: 'set'
@@ -653,27 +692,52 @@ NavigationLayout:
     name: 'myaddress'
     BoxLayout:
         orientation: 'vertical'
+        spacing: dp(5)
         SearchBar:
+        GridLayout:
+            id: identi_tag
+            padding: [20, 0, 0, 5]
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+            MDLabel:
+                text: 'My Addresses'
+                font_style: 'Body1'
+                bold: True
         FloatLayout:
             MDScrollViewRefreshLayout:
                 id: refresh_layout
                 refresh_callback: root.refresh_callback
-                root_layout: root
+                root_layout: root.set_root_layout()
                 MDList:
                     id: ml
+    Loader:
     ComposerButton:
 
 <AddressBook>:
     name: 'addressbook'
     BoxLayout:
         orientation: 'vertical'
+        spacing: dp(5)
         SearchBar:
+        GridLayout:
+            id: identi_tag
+            padding: [20, 0, 0, 5]
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+            MDLabel:
+                text: ''
+                font_style: 'Body1'
+                bold: True
         BoxLayout:
             orientation:'vertical'
             ScrollView:
+                id: scroll_y
                 do_scroll_x: False
                 MDList:
                     id: ml
+    Loader:
     ComposerButton:
 
 <Payment>:
@@ -682,7 +746,7 @@ NavigationLayout:
         do_scroll_x: False
         BoxLayout:
             orientation: 'vertical'
-            padding: [dp(app.window_size[0]/16 if app.window_size[0] <= 720 else app.window_size[0]/4*1.1), dp(10)] 
+            padding: [dp(app.window_size[0]/16 if app.window_size[0] <= 720 else app.window_size[0]/6 if app.window_size[0] <= 800 else app.window_size[0]/18), dp(10)]
             spacing: 12
             size_hint_y: None
             height: self.minimum_height + dp(app.window_size[1]) if app.window_size[1] > app.window_size[0] else dp(app.window_size[0])
@@ -826,7 +890,7 @@ NavigationLayout:
     id: popup
     size_hint : (None,None)
     height: 2*(label.height + address.height) + 10
-    width :app.window_size[0] - app.window_size[0]/10
+    width :app.window_size[0] - (app.window_size[0]/10 if app.app_platform == 'android' else app.window_size[0]/4)
     title: 'add contact\'s'
     background: './images/popup.jpeg'
     title_size: sp(20)
@@ -846,6 +910,7 @@ NavigationLayout:
                 hint_text: "Label"
                 required: True
                 helper_text_mode: "on_error"
+                on_text: root.checkLabel_valid(self)
             MDTextField:
                 id: address
                 hint_text: "Address"
@@ -1023,6 +1088,7 @@ NavigationLayout:
                 orientation: 'vertical'
                 size_hint_y: None
                 height: dp(100) + self.minimum_height
+    Loader:
 
 <CopyTextBtn@Button>:
     id: cpyButton
@@ -1057,7 +1123,7 @@ NavigationLayout:
     id: myadd_popup
     size_hint : (None,None)
     height: 4.5*(myaddr_label.height+ my_add_btn.children[0].height)
-    width :app.window_size[0] - app.window_size[0]/10
+    width :app.window_size[0] - (app.window_size[0]/10 if app.app_platform == 'android' else app.window_size[0]/4)
     background: './images/popup.jpeg'
     auto_dismiss: False
     separator_height: 0 
@@ -1137,7 +1203,7 @@ NavigationLayout:
     id: addbook_popup
     size_hint : (None,None)
     height: 4*(add_label.height)
-    width :app.window_size[0] - app.window_size[0]/10
+    width :app.window_size[0] - (app.window_size[0]/10 if app.app_platform == 'android' else app.window_size[0]/4)
     background: './images/popup.jpeg'
     separator_height: 0 
     auto_dismiss: False
@@ -1165,6 +1231,7 @@ NavigationLayout:
                 theme_text_color: 'Primary'
                 required: True
                 helper_text_mode: "on_error"
+                on_text: root.checkLabel_valid(self)
             MDLabel:
                 font_style: 'Title'
                 theme_text_color: 'Primary'
@@ -1172,6 +1239,7 @@ NavigationLayout:
                 font_size: '17sp'
                 halign: 'left'
             MDLabel:
+                id: address
                 font_style: 'Subhead'
                 theme_text_color: 'Primary'
                 text: root.address
@@ -1240,3 +1308,25 @@ NavigationLayout:
         id: search_field
         hint_text: 'Search'
         on_text: app.searchQuery(self)
+
+
+<LoadingPopup>:
+    separator_color: 1, 1, 1, 1
+    background: "White.png"
+    Button:
+        id: btn
+        disabled: True
+        background_disabled_normal: "White.png"
+        Image:
+            source: './images/loader.zip'
+            anim_delay: 0
+            #mipmap: True
+            size: root.size
+
+
+<Loader@MDSpinner>:
+    id: spinner
+    size_hint: None, None
+    size: dp(46), dp(46)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    active: False

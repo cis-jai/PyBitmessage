@@ -1,18 +1,14 @@
+#!/usr/bin/python2.7
 """
-src/bitmessagemain.py
-=================================
+The PyBitmessage startup script
 """
-# !/usr/bin/python2.7
 # Copyright (c) 2012-2016 Jonathan Warren
-# Copyright (c) 2012-2019 The Bitmessage developers
+# Copyright (c) 2012-2020 The Bitmessage developers
 # Distributed under the MIT/X11 software license. See the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 # Right now, PyBitmessage only support connecting to stream 1. It doesn't
 # yet contain logic to expand into further streams.
-
-# The software version variable is now held in shared.py
-
 import os
 import sys
 import ctypes
@@ -26,41 +22,30 @@ import time
 import traceback
 from struct import pack
 
-from helper_startup import (
-    isOurOperatingSystemLimitedToHavingVeryFewHalfOpenConnections
-)
-from singleinstance import singleinstance
-
 import defaults
 import depends
 import shared
-import knownnodes
-import state
 import shutdown
-from debug import logger
-
-# Classes
-from class_sqlThread import sqlThread
-from class_singleCleaner import singleCleaner
-from class_objectProcessor import objectProcessor
-from class_singleWorker import singleWorker
-from class_addressGenerator import addressGenerator
+import state
 from bmconfigparser import BMConfigParser
-
+from debug import logger  # this should go before any threads
+from helper_startup import (
+    isOurOperatingSystemLimitedToHavingVeryFewHalfOpenConnections,
+    start_proxyconfig
+)
 from inventory import Inventory
-
-from network.connectionpool import BMConnectionPool
-from network.dandelion import Dandelion
-from network.networkthread import BMNetworkThread
-from network.receivequeuethread import ReceiveQueueThread
-from network.announcethread import AnnounceThread
-from network.invthread import InvThread
-from network.addrthread import AddrThread
-from network.downloadthread import DownloadThread
-from network.uploadthread import UploadThread
-
-# Helper Functions
-import helper_threading
+from knownnodes import readKnownNodes
+# Network objects and threads
+from network import (
+    BMConnectionPool, Dandelion, AddrThread, AnnounceThread, BMNetworkThread,
+    InvThread, ReceiveQueueThread, DownloadThread, UploadThread
+)
+from singleinstance import singleinstance
+# Synchronous threads
+from threads import (
+    set_thread_name, addressGenerator, objectProcessor, singleCleaner,
+    singleWorker, sqlThread
+)
 
 app_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(app_dir)
@@ -70,7 +55,7 @@ depends.check_dependencies()
 
 
 def connectToStream(streamNumber):
-    """Method helps us to connect with the stream"""
+    """Connect to a stream"""
     state.streamsInWhichIAmParticipating.append(streamNumber)
 
     if isOurOperatingSystemLimitedToHavingVeryFewHalfOpenConnections():
@@ -86,14 +71,6 @@ def connectToStream(streamNumber):
             state.maximumNumberOfHalfOpenConnections = 4
     except:
         pass
-
-    with knownnodes.knownNodesLock:
-        if streamNumber not in knownnodes.knownNodes:
-            knownnodes.knownNodes[streamNumber] = {}
-        if streamNumber * 2 not in knownnodes.knownNodes:
-            knownnodes.knownNodes[streamNumber * 2] = {}
-        if streamNumber * 2 + 1 not in knownnodes.knownNodes:
-            knownnodes.knownNodes[streamNumber * 2 + 1] = {}
 
     BMConnectionPool().connectToStream(streamNumber)
 
@@ -111,7 +88,8 @@ def _fixSocket():
         addressToString = ctypes.windll.ws2_32.WSAAddressToStringA
 
         def inet_ntop(family, host):
-            """Method converts an IP address in packed binary format to string format"""
+            """Converting an IP address in packed
+            binary format to string format"""
             if family == socket.AF_INET:
                 if len(host) != 4:
                     raise ValueError("invalid IPv4 host")
@@ -133,7 +111,8 @@ def _fixSocket():
         stringToAddress = ctypes.windll.ws2_32.WSAStringToAddressA
 
         def inet_pton(family, host):
-            """Method converts an IP address in string format to a packed binary format"""
+            """Converting an IP address in string format
+            to a packed binary format"""
             buf = "\0" * 28
             lengthBuf = pack("I", len(buf))
             if stringToAddress(str(host),
@@ -174,8 +153,8 @@ def signal_handler(signum, frame):
     if thread.name not in ("PyBitmessage", "MainThread"):
         return
     logger.error("Got signal %i", signum)
-    # there are possible non-UI variants to run bitmessage which should shutdown
-    # especially test-mode
+    # there are possible non-UI variants to run bitmessage
+    # which should shutdown especially test-mode
     if shared.thisapp.daemon or not state.enableGUI:
         shutdown.doCleanShutdown()
     else:
@@ -188,40 +167,18 @@ def signal_handler(signum, frame):
         because the UI captures the signal.'
 
 
-class Main:     # pylint: disable=no-init, old-style-class
-    """Method starts the proxy config plugin"""
-
-    @staticmethod
-    def start_proxyconfig(config):
-        """Check socksproxytype and start any proxy configuration plugin"""
-        proxy_type = config.safeGet('bitmessagesettings', 'socksproxytype')
-        if proxy_type not in ('none', 'SOCKS4a', 'SOCKS5'):
-            # pylint: disable=relative-import
-            from plugins.plugin import get_plugin
-            try:
-                proxyconfig_start = time.time()
-                if not get_plugin('proxyconfig', name=proxy_type)(config):
-                    raise TypeError
-            except TypeError:
-                logger.error(
-                    'Failed to run proxy config plugin %s',
-                    proxy_type, exc_info=True)
-                shutdown.doCleanShutdown()
-                sys.exit(2)
-            else:
-                logger.info(
-                    'Started proxy config plugin %s in %s sec',
-                    proxy_type, time.time() - proxyconfig_start)
-
-    def start(self):        # pylint: disable=too-many-statements, too-many-branches, too-many-locals
-        """This method helps to start the daemon"""
+class Main(object):
+    """Main PyBitmessage class"""
+    def start(self):
+        """Start main application"""
+        # pylint: disable=too-many-statements,too-many-branches,too-many-locals
         _fixSocket()
 
         config = BMConfigParser()
         daemon = config.safeGetBoolean('bitmessagesettings', 'daemon')
 
         try:
-            opts, args = getopt.getopt(
+            opts, _ = getopt.getopt(
                 sys.argv[1:], "hcdt",
                 ["help", "curses", "daemon", "test"])
 
@@ -229,7 +186,7 @@ class Main:     # pylint: disable=no-init, old-style-class
             self.usage()
             sys.exit(2)
 
-        for opt, arg in opts:
+        for opt, _ in opts:
             if opt in ("-h", "--help"):
                 self.usage()
                 sys.exit()
@@ -287,7 +244,7 @@ class Main:     # pylint: disable=no-init, old-style-class
 
         self.setSignalHandler()
 
-        helper_threading.set_thread_name("PyBitmessage")
+        set_thread_name("PyBitmessage")
 
         state.dandelion = config.safeGetInt('network', 'dandelion')
         # dandelion requires outbound connections, without them,
@@ -302,7 +259,10 @@ class Main:     # pylint: disable=no-init, old-style-class
                 defaults.networkDefaultProofOfWorkNonceTrialsPerByte / 100)
             defaults.networkDefaultPayloadLengthExtraBytes = int(
                 defaults.networkDefaultPayloadLengthExtraBytes / 100)
-        knownnodes.readKnownNodes()
+
+        readKnownNodes()
+
+
         # Not needed if objproc is disabled
         if state.enableObjProc:
 
@@ -368,7 +328,7 @@ class Main:     # pylint: disable=no-init, old-style-class
                 singleAPIThread.start()
         # start network components if networking is enabled
         if state.enableNetwork:
-            self.start_proxyconfig(config)
+            start_proxyconfig()
             BMConnectionPool()
             asyncoreThread = BMNetworkThread()
             asyncoreThread.daemon = True
@@ -423,11 +383,15 @@ class Main:     # pylint: disable=no-init, old-style-class
         if daemon:
             while state.shutdown == 0:
                 time.sleep(1)
-                if (state.testmode and time.time() - state.last_api_response >= 30):
+                if (
+                    state.testmode and time.time() -
+                    state.last_api_response >= 30
+                ):
                     self.stop()
         elif not state.enableGUI:
-            from tests import core as test_core  # pylint: disable=relative-import
-            test_core_result = test_core.run(self)
+            # pylint: disable=relative-import
+            from tests import core as test_core
+            test_core_result = test_core.run()
             state.enableGUI = True
             self.stop()
             test_core.cleanup()
@@ -449,7 +413,8 @@ class Main:     # pylint: disable=no-init, old-style-class
                 # wait until grandchild ready
                 while True:
                     time.sleep(1)
-                os._exit(0)     # pylint: disable=protected-access
+
+                os._exit(0)  # pylint: disable=protected-access
         except AttributeError:
             # fork not implemented
             pass
@@ -470,7 +435,7 @@ class Main:     # pylint: disable=no-init, old-style-class
                 # wait until child ready
                 while True:
                     time.sleep(1)
-                os._exit(0)     # pylint: disable=protected-access
+                os._exit(0)  # pylint: disable=protected-access
         except AttributeError:
             # fork not implemented
             pass
@@ -491,7 +456,8 @@ class Main:     # pylint: disable=no-init, old-style-class
             os.kill(parentPid, signal.SIGTERM)
             os.kill(grandfatherPid, signal.SIGTERM)
 
-    def setSignalHandler(self):      # pylint: disable=no-self-use
+    @staticmethod
+    def setSignalHandler():
         """Setting the Signal Handler"""
         signal.signal(signal.SIGINT, signal_handler)
         signal.signal(signal.SIGTERM, signal_handler)
@@ -499,9 +465,9 @@ class Main:     # pylint: disable=no-init, old-style-class
 
     @staticmethod
     def usage():
-        """After passing argument, method displays the usages"""
-        print 'Usage: ' + sys.argv[0] + ' [OPTIONS]'
-        print '''
+        """Displaying the usages"""
+        print('Usage: ' + sys.argv[0] + ' [OPTIONS]')
+        print('''
 Options:
   -h, --help            show this help message and exit
   -c, --curses          use curses (text mode) interface
@@ -509,17 +475,19 @@ Options:
   -t, --test            dryrun, make testing
 
 All parameters are optional.
-'''
+''')
 
-    def stop(self):         # pylint: disable=no-self-use
-        """Method helps to stop the Bitmessage Deamon"""
+    @staticmethod
+    def stop():
+        """Stop main application"""
         with shared.printLock:
             print 'Stopping Bitmessage Deamon.'
         shutdown.doCleanShutdown()
 
-    # ..todo: nice function but no one is using this
-    def getApiAddress(self):        # pylint: disable=no-self-use
-        """This method returns the Api Addresses"""
+    # .. todo:: nice function but no one is using this
+    @staticmethod
+    def getApiAddress():
+        """This function returns API address and port"""
         if not BMConfigParser().safeGetBoolean(
                 'bitmessagesettings', 'apienabled'):
             return None
@@ -529,7 +497,7 @@ All parameters are optional.
 
 
 def main():
-    """Start of the main thread"""
+    """Triggers main module"""
     mainprogram = Main()
     mainprogram.start()
 

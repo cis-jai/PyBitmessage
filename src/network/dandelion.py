@@ -1,15 +1,14 @@
 """
-src/network/dandelion.py
-========================
+Dandelion class definition, tracks stages
 """
+import logging
 from collections import namedtuple
-from random import choice, sample, expovariate
+from random import choice, expovariate, sample
 from threading import RLock
 from time import time
 
 import connectionpool
 import state
-from debug import logging
 from queues import invQueue
 from singleton import Singleton
 
@@ -24,9 +23,11 @@ MAX_STEMS = 2
 
 Stem = namedtuple('Stem', ['child', 'stream', 'timeout'])
 
+logger = logging.getLogger('default')
+
 
 @Singleton
-class Dandelion():      # pylint: disable=old-style-class
+class Dandelion:  # pylint: disable=old-style-class
     """Dandelion class for tracking stem/fluff stages."""
     def __init__(self):
         # currently assignable child stems
@@ -72,9 +73,10 @@ class Dandelion():      # pylint: disable=old-style-class
 
     def removeHash(self, hashId, reason="no reason specified"):
         """Switch inventory vector from stem to fluff mode"""
-        logging.debug(
-            "%s entering fluff mode due to %s.",
-            ''.join('%02x' % ord(i) for i in hashId), reason)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(
+                '%s entering fluff mode due to %s.',
+                ''.join('%02x' % ord(i) for i in hashId), reason)
         with self.lock:
             try:
                 del self.hashMap[hashId]
@@ -120,7 +122,8 @@ class Dandelion():      # pylint: disable=old-style-class
                 self.stem.remove(connection)
                 # active mappings to pointing to the removed node
                 for k in (
-                        k for k, v in self.nodeMap.iteritems() if v == connection
+                        k for k, v in self.nodeMap.iteritems()
+                        if v == connection
                 ):
                     self.nodeMap[k] = None
                 for k, v in {

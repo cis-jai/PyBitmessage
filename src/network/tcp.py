@@ -1,9 +1,8 @@
+"""
+TCP protocol handler
+"""
 # pylint: disable=too-many-ancestors
-"""
-src/network/tcp.py
-==================
-"""
-
+import logging
 import math
 import random
 import socket
@@ -18,23 +17,26 @@ import protocol
 import shared
 import state
 from bmconfigparser import BMConfigParser
-from debug import logger
 from helper_random import randomBytes
 from inventory import Inventory
 from network.advanceddispatcher import AdvancedDispatcher
+from network.assemble import assemble_addr
 from network.bmproto import BMProto
+from network.constants import MAX_OBJECT_COUNT
 from network.dandelion import Dandelion
 from network.objectracker import ObjectTracker
 from network.socks4a import Socks4aConnection
 from network.socks5 import Socks5Connection
 from network.tls import TLSDispatcher
-from queues import UISignalQueue, invQueue, receiveDataQueue
+from node import Peer
+from queues import invQueue, receiveDataQueue, UISignalQueue
+
+logger = logging.getLogger('default')
 
 
 class TCPConnection(BMProto, TLSDispatcher):
     # pylint: disable=too-many-instance-attributes
     """
-
     .. todo:: Look to understand and/or fix the non-parent-init-called
     """
 
@@ -47,7 +49,7 @@ class TCPConnection(BMProto, TLSDispatcher):
         self.connectedAt = 0
         self.skipUntil = 0
         if address is None and sock is not None:
-            self.destination = state.Peer(*sock.getpeername())
+            self.destination = Peer(*sock.getpeername())
             self.isOutbound = False
             TLSDispatcher.__init__(self, sock, server_side=True)
             self.connectedAt = time.time()
@@ -80,7 +82,9 @@ class TCPConnection(BMProto, TLSDispatcher):
                 not protocol.checkSocksIP(self.destination.host)
             )
         except socket.error:
-            pass  # it's probably a hostname
+            # it's probably a hostname
+            pass
+        self.network_group = protocol.network_group(self.destination.host)
         ObjectTracker.__init__(self)  # pylint: disable=non-parent-init-called
         self.bm_proto_reset()
         self.set_state("bm_header", expectBytes=protocol.Header.size)
@@ -134,10 +138,9 @@ class TCPConnection(BMProto, TLSDispatcher):
         if not self.isOutbound and not self.local:
             shared.clientHasReceivedIncomingConnections = True
             UISignalQueue.put(('setStatusIcon', 'green'))
-        UISignalQueue.put((
-            'updateNetworkStatusTab',
-            (self.isOutbound, True, self.destination)
-        ))
+        UISignalQueue.put(
+            ('updateNetworkStatusTab', (
+                self.isOutbound, True, self.destination)))
         self.antiIntersectionDelay(True)
         self.fullyEstablished = True
         if self.isOutbound:
@@ -179,7 +182,7 @@ class TCPConnection(BMProto, TLSDispatcher):
             for peer, params in addrs[substream]:
                 templist.append((substream, peer, params["lastseen"]))
         if templist:
-            self.append_write_buf(BMProto.assembleAddr(templist))
+            self.append_write_buf(assemble_addr(templist))
 
     def sendBigInv(self):
         """
@@ -209,8 +212,8 @@ class TCPConnection(BMProto, TLSDispatcher):
                     bigInvList[objHash] = 0
         objectCount = 0
         payload = b''
-        # Now let us start appending all of these hashes together. They will be
-        # sent out in a big inv message to our new peer.
+        # Now let us start appending all of these hashes together.
+        # They will be sent out in a big inv message to our new peer.
         for obj_hash, _ in bigInvList.items():
             payload += obj_hash
             objectCount += 1
@@ -218,7 +221,7 @@ class TCPConnection(BMProto, TLSDispatcher):
             # Remove -1 below when sufficient time has passed for users to
             # upgrade to versions of PyBitmessage that accept inv with 50,000
             # items
-            if objectCount >= BMProto.maxObjectCount - 1:
+            if objectCount >= MAX_OBJECT_COUNT - 1:
                 sendChunk()
                 payload = b''
                 objectCount = 0
@@ -332,7 +335,7 @@ def bootstrap(connection_class):
         _connection_base = connection_class
 
         def __init__(self, host, port):
-            self._connection_base.__init__(self, state.Peer(host, port))
+            self._connection_base.__init__(self, Peer(host, port))
             self.close_reason = self._succeed = False
 
         def bm_command_addr(self):
@@ -369,6 +372,7 @@ class TCPServer(AdvancedDispatcher):
         for attempt in range(50):
             try:
                 if attempt > 0:
+                    logger.warning('Failed to bind on port %s', port)
                     port = random.randint(32767, 65535)
                 self.bind((host, port))
             except socket.error as e:
@@ -376,11 +380,12 @@ class TCPServer(AdvancedDispatcher):
                     continue
             else:
                 if attempt > 0:
+                    logger.warning('Setting port to %s', port)
                     BMConfigParser().set(
                         'bitmessagesettings', 'port', str(port))
                     BMConfigParser().save()
                 break
-        self.destination = state.Peer(host, port)
+        self.destination = Peer(host, port)
         self.bound = True
         self.listen(5)
 
@@ -398,7 +403,7 @@ class TCPServer(AdvancedDispatcher):
         except (TypeError, IndexError):
             return
 
-        state.ownAddresses[state.Peer(*sock.getsockname())] = True
+        state.ownAddresses[Peer(*sock.getsockname())] = True
         if (
             len(connectionpool.BMConnectionPool().inboundConnections) +
             len(connectionpool.BMConnectionPool().outboundConnections) >

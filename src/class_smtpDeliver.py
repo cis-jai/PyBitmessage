@@ -1,11 +1,9 @@
 """
-src/class_smtpDeliver.py
-========================
+SMTP client thread for delivering emails
 """
 # pylint: disable=unused-variable
 
 import smtplib
-import sys
 import urlparse
 from email.header import Header
 from email.mime.text import MIMEText
@@ -13,8 +11,7 @@ from email.mime.text import MIMEText
 import queues
 import state
 from bmconfigparser import BMConfigParser
-from debug import logger
-from helper_threading import StoppableThread
+from network.threads import StoppableThread
 
 SMTPDOMAIN = "bmaddr.lan"
 
@@ -25,8 +22,9 @@ class smtpDeliver(StoppableThread):
     _instance = None
 
     def stopThread(self):
+        # pylint: disable=no-member
         try:
-            queues.UISignallerQueue.put(("stopThread", "data"))  # pylint: disable=no-member
+            queues.UISignallerQueue.put(("stopThread", "data"))
         except:
             pass
         super(smtpDeliver, self).stopThread()
@@ -40,6 +38,7 @@ class smtpDeliver(StoppableThread):
 
     def run(self):
         # pylint: disable=too-many-branches,too-many-statements,too-many-locals
+        # pylint: disable=deprecated-lambda
         while state.shutdown == 0:
             command, data = queues.UISignalQueue.get()
             if command == 'writeNewAddressToTable':
@@ -62,9 +61,9 @@ class smtpDeliver(StoppableThread):
                     msg = MIMEText(body, 'plain', 'utf-8')
                     msg['Subject'] = Header(subject, 'utf-8')
                     msg['From'] = fromAddress + '@' + SMTPDOMAIN
-                    toLabel = map(  # pylint: disable=deprecated-lambda
+                    toLabel = map(
                         lambda y: BMConfigParser().safeGet(y, "label"),
-                        filter(  # pylint: disable=deprecated-lambda
+                        filter(
                             lambda x: x == toAddress, BMConfigParser().addresses())
                     )
                     if toLabel:
@@ -75,10 +74,12 @@ class smtpDeliver(StoppableThread):
                     client.starttls()
                     client.ehlo()
                     client.sendmail(msg['From'], [to], msg.as_string())
-                    logger.info("Delivered via SMTP to %s through %s:%i ...", to, u.hostname, u.port)
+                    self.logger.info(
+                        'Delivered via SMTP to %s through %s:%i ...',
+                        to, u.hostname, u.port)
                     client.quit()
                 except:
-                    logger.error("smtp delivery error", exc_info=True)
+                    self.logger.error('smtp delivery error', exc_info=True)
             elif command == 'displayNewSentMessage':
                 toAddress, fromLabel, fromAddress, subject, message, ackdata = data
             elif command == 'updateNetworkStatusTab':
@@ -112,5 +113,5 @@ class smtpDeliver(StoppableThread):
             elif command == 'stopThread':
                 break
             else:
-                sys.stderr.write(
-                    'Command sent to smtpDeliver not recognized: %s\n' % command)
+                self.logger.warning(
+                    'Command sent to smtpDeliver not recognized: %s', command)

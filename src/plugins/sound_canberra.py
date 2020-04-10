@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-src/plugins/proxyconfig_stem.py
-===================================
+Sound theme plugin using pycanberra
 """
 
-from pybitmessage.bitmessageqt import sound
-
 import pycanberra
+from pybitmessage.bitmessageqt import sound
 
 _canberra = pycanberra.Canberra()
 
@@ -18,7 +16,7 @@ _theme = {
 }
 
 
-def connect_plugin(category, label=None):    # pylint: disable=unused-argument
+def connect_plugin(category, label=None):  # pylint: disable=unused-argument
     """This function implements the entry point."""
     try:
         _canberra.play(0, pycanberra.CA_PROP_EVENT_ID, _theme[category], None)

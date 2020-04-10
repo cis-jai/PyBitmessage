@@ -2,7 +2,9 @@
 
 import os
 import random
+
 from pyelliptic.openssl import OpenSSL
+
 NoneType = type(None)
 
 
@@ -56,8 +58,7 @@ def randomrandrange(x, y=None):
     """
     if isinstance(y, NoneType):
         return random.randrange(x)  # nosec
-    else:
-        return random.randrange(x, y)  # nosec
+    return random.randrange(x, y)  # nosec
 
 
 def randomchoice(population):

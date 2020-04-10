@@ -1,6 +1,5 @@
 """
-src/network/stats.py
-====================
+Network statistics
 """
 import time
 
@@ -19,16 +18,7 @@ currentSentSpeed = 0
 
 def connectedHostsList():
     """List of all the connected hosts"""
-    retval = []
-    for i in BMConnectionPool().inboundConnections.values() + \
-            BMConnectionPool().outboundConnections.values():
-        if not i.fullyEstablished:
-            continue
-        try:
-            retval.append(i)
-        except AttributeError:
-            pass
-    return retval
+    return BMConnectionPool().establishedConnections()
 
 
 def sentBytes():
@@ -43,7 +33,9 @@ def uploadSpeed():
     currentTimestamp = time.time()
     if int(lastSentTimestamp) < int(currentTimestamp):
         currentSentBytes = asyncore.sentBytes
-        currentSentSpeed = int((currentSentBytes - lastSentBytes) / (currentTimestamp - lastSentTimestamp))
+        currentSentSpeed = int(
+            (currentSentBytes - lastSentBytes) / (
+                currentTimestamp - lastSentTimestamp))
         lastSentBytes = currentSentBytes
         lastSentTimestamp = currentTimestamp
     return currentSentSpeed
@@ -62,7 +54,8 @@ def downloadSpeed():
     if int(lastReceivedTimestamp) < int(currentTimestamp):
         currentReceivedBytes = asyncore.receivedBytes
         currentReceivedSpeed = int(
-            (currentReceivedBytes - lastReceivedBytes) / (currentTimestamp - lastReceivedTimestamp))
+            (currentReceivedBytes - lastReceivedBytes) / (
+                currentTimestamp - lastReceivedTimestamp))
         lastReceivedBytes = currentReceivedBytes
         lastReceivedTimestamp = currentTimestamp
     return currentReceivedSpeed
@@ -71,12 +64,6 @@ def downloadSpeed():
 def pendingDownload():
     """Getting pending downloads"""
     return len(missingObjects)
-    # tmp = {}
-    # for connection in BMConnectionPool().inboundConnections.values() + \
-    #         BMConnectionPool().outboundConnections.values():
-    #     for k in connection.objectsNewToMe.keys():
-    #         tmp[k] = True
-    # return len(tmp)
 
 
 def pendingUpload():
