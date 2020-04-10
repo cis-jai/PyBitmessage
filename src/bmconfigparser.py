@@ -2,7 +2,14 @@
 BMConfigParser class definition and default configuration settings
 """
 
-import ConfigParser
+import sys
+if sys.version_info[0] ==2:
+    import ConfigParser as ConfigParser
+    from  ConfigParser import SafeConfigParser as configparse
+else:
+    import configparser as ConfigParser
+    from  configparser import ConfigParser as configparse
+
 import os
 import shutil
 from datetime import datetime
@@ -42,7 +49,7 @@ BMConfigDefaults = {
 
 
 @Singleton
-class BMConfigParser(ConfigParser.SafeConfigParser):
+class BMConfigParser(configparse):
     """
     Singleton class inherited from :class:`ConfigParser.SafeConfigParser`
     with additional methods specific to bitmessage config.
@@ -50,6 +57,10 @@ class BMConfigParser(ConfigParser.SafeConfigParser):
     # pylint: disable=too-many-ancestors
 
     _temp = {}
+
+    def __getitem__(self, section, option = ''):
+        #working of this condtion
+        return self.get(section, option)
 
     def set(self, section, option, value=None):
         if self._optcre is self.OPTCRE or value:
@@ -59,21 +70,21 @@ class BMConfigParser(ConfigParser.SafeConfigParser):
             raise ValueError("Invalid value %s" % value)
         return ConfigParser.ConfigParser.set(self, section, option, value)
 
-    def get(self, section, option, raw=False, variables=None):
-        # pylint: disable=arguments-differ
+    def get(self, section, option, raw=False, vars=None):
+            # pylint: disable=unused-argument
         try:
             if section == "bitmessagesettings" and option == "timeformat":
                 return ConfigParser.ConfigParser.get(
-                    self, section, option, raw, variables)
+                    self, section, option, raw=True, vars=vars)
             try:
                 return self._temp[section][option]
             except KeyError:
                 pass
             return ConfigParser.ConfigParser.get(
-                self, section, option, True, variables)
+                self, section, option, raw=True, vars=vars)
         except ConfigParser.InterpolationError:
             return ConfigParser.ConfigParser.get(
-                self, section, option, True, variables)
+                self, section, option, raw=True, vars=vars)
         except (ConfigParser.NoSectionError, ConfigParser.NoOptionError) as e:
             try:
                 return BMConfigDefaults[section][option]
@@ -131,7 +142,7 @@ class BMConfigParser(ConfigParser.SafeConfigParser):
                 try:
                     if not self.validate(
                         section, option,
-                        ConfigParser.ConfigParser.get(self, section, option)
+                        self[section][option]
                     ):
                         try:
                             newVal = BMConfigDefaults[section][option]

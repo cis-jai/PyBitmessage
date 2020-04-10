@@ -158,14 +158,13 @@ def signal_handler(signum, frame):
     if shared.thisapp.daemon or not state.enableGUI:
         shutdown.doCleanShutdown()
     else:
-        print '# Thread: %s(%d)' % (thread.name, thread.ident)
+        print ('# Thread: {}({})'.format(thread.name, thread.ident))
         for filename, lineno, name, line in traceback.extract_stack(frame):
-            print 'File: "%s", line %d, in %s' % (filename, lineno, name)
+            print('File: "%s", line %d, in %s' % (filename, lineno, name))
             if line:
-                print '  %s' % line.strip()
-        print 'Unfortunately you cannot use Ctrl+C when running the UI \
-        because the UI captures the signal.'
-
+                print ('{}'.format(line.strip()))
+        print ('Unfortunately you cannot use Ctrl+C when running the UI \
+        because the UI captures the signal.')
 
 class Main(object):
     """Main PyBitmessage class"""
@@ -239,7 +238,7 @@ class Main(object):
 
         if daemon:
             with shared.printLock:
-                print 'Running as a daemon. Send TERM signal to end.'
+                print('Running as a daemon. Send TERM signal to end.')
             self.daemonize()
 
         self.setSignalHandler()
@@ -365,7 +364,7 @@ class Main(object):
             if state.curses:
                 if not depends.check_curses():
                     sys.exit()
-                print 'Running with curses'
+                print('Running with curses')
                 import bitmessagecurses
                 bitmessagecurses.runwrapper()
 
@@ -481,7 +480,7 @@ All parameters are optional.
     def stop():
         """Stop main application"""
         with shared.printLock:
-            print 'Stopping Bitmessage Deamon.'
+            print('Stopping Bitmessage Deamon.')
         shutdown.doCleanShutdown()
 
     # .. todo:: nice function but no one is using this

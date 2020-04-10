@@ -10,9 +10,17 @@ Asymmetric cryptography using elliptic curves
 from hashlib import sha512
 from struct import pack, unpack
 
-from cipher import Cipher
-from hash import equals, hmac_sha256
-from openssl import OpenSSL
+import sys
+
+if sys.version_info[0]==2:
+    from cipher import Cipher
+    from hash import equals, hmac_sha256
+    from openssl import OpenSSL
+else:
+    from pyelliptic.cipher import Cipher
+    from pyelliptic.hash import equals, hmac_sha256
+    from pyelliptic.openssl import OpenSSL
+
 
 
 class ECC(object):

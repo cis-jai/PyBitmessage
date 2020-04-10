@@ -34,8 +34,12 @@ but only in the top level modules.
 Logging is thread-safe so you don't have to worry about locks,
 just import and log.
 """
+import sys
+if sys.version_info[0] ==2:
+    import ConfigParser
+else:
+    import configparser as ConfigParser
 
-import ConfigParser
 import logging
 import logging.config
 import os
