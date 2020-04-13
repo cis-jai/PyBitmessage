@@ -15,8 +15,11 @@ SQLite objects can only be used from one thread.
    I checked, there is no reliable way to check whether the library is
    or isn't thread-safe.
 """
-
-import Queue
+import sys
+if sys.version_info[0] ==2:
+    import Queue
+else:
+    import queue as Queue     
 import threading
 
 sqlSubmitQueue = Queue.Queue()

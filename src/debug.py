@@ -71,8 +71,8 @@ def configureLogging():
     fail_msg = ''
     try:
         logging_config = os.path.join(state.appdata, 'logging.dat')
-        logging.config.fileConfig(
-            logging_config, disable_existing_loggers=False)
+        # logging.config.fileConfig(
+        #     logging_config, disable_existing_loggers=False)
         return (
             False,
             'Loaded logger configuration from %s' % logging_config
@@ -92,7 +92,7 @@ def configureLogging():
         'version': 1,
         'formatters': {
             'default': {
-                'format': u'%(asctime)s - %(levelname)s - %(message)s',
+                'format': '{}(asctime)s - {}(levelname)s -{}(message)s',
             },
         },
         'handlers': {

@@ -5,7 +5,7 @@ BMConfigParser class definition and default configuration settings
 import sys
 if sys.version_info[0] ==2:
     import ConfigParser as ConfigParser
-    from  ConfigParser import SafeConfigParser as configparse
+    from  ConfigParser import SafeConfigParser as configparse 
 else:
     import configparser as ConfigParser
     from  configparser import ConfigParser as configparse
@@ -26,7 +26,8 @@ BMConfigDefaults = {
         "maxtotalconnections": 200,
         "maxuploadrate": 0,
         "apiinterface": "127.0.0.1",
-        "apiport": 8442
+        "apiport": 8442,
+        "default" :''
     },
     "threads": {
         "receive": 3,
@@ -58,14 +59,16 @@ class BMConfigParser(configparse):
 
     _temp = {}
 
-    def __getitem__(self, section, option = ''):
-        #working of this condtion
-        return self.get(section, option)
-
     def set(self, section, option, value=None):
         if self._optcre is self.OPTCRE or value:
-            if not isinstance(value, basestring):
-                raise TypeError("option values must be strings")
+            try:
+                #basestring is depracted on python3
+                if not isinstance(value, basestring):
+                    raise TypeError("option values must be strings")
+            except NameError:
+                if not isinstance(value, str):
+                    raise TypeError("option values must be strings")
+
         if not self.validate(section, option, value):
             raise ValueError("Invalid value %s" % value)
         return ConfigParser.ConfigParser.set(self, section, option, value)
@@ -142,7 +145,7 @@ class BMConfigParser(configparse):
                 try:
                     if not self.validate(
                         section, option,
-                        self[section][option]
+                        self.get(section,option)
                     ):
                         try:
                             newVal = BMConfigDefaults[section][option]
@@ -169,8 +172,12 @@ class BMConfigParser(configparse):
             # didn't exist before.
             fileNameExisted = False
         # write the file
-        with open(fileName, 'wb') as configfile:
-            self.write(configfile)
+        if sys.version_info[0]==2:
+            with open(fileName, 'wb') as configfile:
+                self.write(configfile)
+        else:
+            with open(fileName, 'w') as configfile:
+                self.write(configfile)
         # delete the backup
         if fileNameExisted:
             os.remove(fileNameBak)
