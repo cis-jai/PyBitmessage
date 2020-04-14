@@ -69,15 +69,16 @@ def configureLogging():
     """
     sys.excepthook = log_uncaught_exceptions
     fail_msg = ''
+
     try:
-        logging_config = os.path.join(state.appdata, 'logging.dat')
-        # logging.config.fileConfig(
-        #     logging_config, disable_existing_loggers=False)
+        logging_config = os.path.join('logging.dat')
+        logging.config.fileConfig(
+            logging_config,defaults=None, disable_existing_loggers=True)
         return (
             False,
             'Loaded logger configuration from %s' % logging_config
         )
-    except (OSError, ConfigParser.NoSectionError):
+    except (OSError, ConfigParser.NoSectionError) as e:
         if os.path.isfile(logging_config):
             fail_msg = \
                 'Failed to load logger configuration from %s, using default' \
@@ -131,7 +132,6 @@ def configureLogging():
             'handlers': ['console'],
         },
     }
-
     logging_config['loggers']['default'] = logging_config['loggers'][
         'file_only' if '-c' in sys.argv else 'both']
     logging.config.dictConfig(logging_config)
@@ -152,7 +152,20 @@ def resetLogging():
 
 
 # !
-preconfigured, msg = configureLogging()
-logger = logging.getLogger('default')
-if msg:
-    logger.log(logging.WARNING if preconfigured else logging.INFO, msg)
+if sys.version_info[0] ==2:
+    preconfigured, msg = configureLogging()
+    logger = logging.getLogger('default')
+    if msg:
+        logger.log(logging.WARNING if preconfigured else logging.INFO, msg)
+
+else:
+    try:
+        preconfigured, msg = configureLogging()
+        if msg:
+            logger.log(logging.WARNING if preconfigured else logging.INFO, msg)
+
+    except:
+        pass
+    logger = logging.getLogger('default')
+
+

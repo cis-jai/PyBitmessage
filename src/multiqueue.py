@@ -3,7 +3,13 @@ A queue with multiple internal subqueues.
 Elements are added into a random subqueue, and retrieval rotates
 """
 
-import Queue
+import sys
+
+if sys.version_info[0] ==2:
+    import Queue
+else:
+    import queue as Queue
+
 from collections import deque
 
 import helper_random

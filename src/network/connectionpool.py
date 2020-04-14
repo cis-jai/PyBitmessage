@@ -7,16 +7,22 @@ import re
 import socket
 import sys
 import time
+import sys
 
-import asyncore_pollchoose as asyncore
+# if sys.version_info[0] == 2:
+#     import asyncore_pollchoose as asyncore
+#     from connectionchooser import chooseConnection
+#     from node import Peer
+# else:
+from network import asyncore_pollchoose as asyncore
+from network.connectionchooser import chooseConnection
+
 import helper_random
 import knownnodes
 import protocol
 import state
 from bmconfigparser import BMConfigParser
-from connectionchooser import chooseConnection
-from node import Peer
-from proxy import Proxy
+from network.proxy import Proxy
 from singleton import Singleton
 from tcp import (
     bootstrap, Socks4aBMConnection, Socks5BMConnection,

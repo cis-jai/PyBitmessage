@@ -6,8 +6,12 @@ import time
 from threading import RLock
 
 from helper_sql import SqlBulkExecute, sqlExecute, sqlQuery
-from storage import InventoryItem, InventoryStorage
 
+import sys
+if sys.version_info[0] ==2:
+    from storage import InventoryItem, InventoryStorage
+else:
+    from storage.storage import InventoryStorage, InventoryItem
 
 class SqliteInventory(InventoryStorage):  # pylint: disable=too-many-ancestors
     """Inventory using SQLite"""

@@ -1,7 +1,12 @@
 """
 Announce addresses as they are received from other hosts
 """
-import Queue
+import sys
+
+if sys.version_info[0] == 2:
+    import Queue
+else:
+    import queue as Queue
 
 import state
 from helper_random import randomshuffle

@@ -1,6 +1,12 @@
 """Most of the queues used by bitmessage threads are defined here."""
 
-import Queue
+import sys
+
+if sys.version_info[0] ==2:
+    import Queue
+else:
+    import queue as Queue
+
 import threading
 import time
 

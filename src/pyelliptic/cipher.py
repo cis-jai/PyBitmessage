@@ -7,10 +7,10 @@ Symmetric Encryption
 #  See LICENSE for details.
 import sys
 
-if sys.version_info[0]==2:
-    from openssl import OpenSSL
-else:
-    from .openssl import OpenSSL
+# if sys.version_info[0]==2:
+#     from openssl import OpenSSL
+# else:
+from .openssl import OpenSSL
 
 # pylint: disable=redefined-builtin
 class Cipher(object):

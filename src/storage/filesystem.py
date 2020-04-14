@@ -8,8 +8,11 @@ from os import listdir, makedirs, path, remove, rmdir
 from threading import RLock
 
 from paths import lookupAppdataFolder
-from storage import InventoryItem, InventoryStorage
-
+import sys
+if sys.version_info[0] == 2:
+    from storage import InventoryItem, InventoryStorage
+else:
+    from storage.storage import InventoryStorage, InventoryItem
 
 class FilesystemInventory(InventoryStorage):
     """Filesystem for inventory storage"""
@@ -162,7 +165,7 @@ class FilesystemInventory(InventoryStorage):
                     newInventory[streamNumber][hashId] = InventoryItem(
                         objectType, streamNumber, None, expiresTime, tag)
             except KeyError:
-                print "error loading %s" % (hexlify(hashId))
+                print ("error loading {}".format(hexlify(hashId)))
         self._inventory = newInventory
 #        for i, v in self._inventory.items():
 #            print "loaded stream: %s, %i items" % (i, len(v))
