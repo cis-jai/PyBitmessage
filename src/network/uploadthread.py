@@ -8,8 +8,9 @@ import protocol
 from inventory import Inventory
 from network.connectionpool import BMConnectionPool
 from network.dandelion import Dandelion
-from randomtrackingdict import RandomTrackingDict
-from threads import StoppableThread
+from network.randomtrackingdict import RandomTrackingDict
+from network.threads import StoppableThread
+
 
 
 class UploadThread(StoppableThread):

@@ -5,7 +5,8 @@ import network.asyncore_pollchoose as asyncore
 import state
 from network.connectionpool import BMConnectionPool
 from queues import excQueue
-from threads import StoppableThread
+from network.threads import StoppableThread
+
 
 
 class BMNetworkThread(StoppableThread):

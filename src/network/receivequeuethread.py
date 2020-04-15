@@ -2,14 +2,20 @@
 Process data incoming from network
 """
 import errno
-import Queue
+import sys
+
+if sys.version_info[0] ==2:
+    import Queue
+else:
+    import queue as Queue
 import socket
 
 import state
 from network.advanceddispatcher import UnknownStateError
 from network.connectionpool import BMConnectionPool
 from queues import receiveDataQueue
-from threads import StoppableThread
+from network.threads import StoppableThread
+
 
 
 class ReceiveQueueThread(StoppableThread):

@@ -24,10 +24,10 @@ import state
 from bmconfigparser import BMConfigParser
 from network.proxy import Proxy
 from singleton import Singleton
-from tcp import (
+from network.tcp import (
     bootstrap, Socks4aBMConnection, Socks5BMConnection,
     TCPConnection, TCPServer)
-from udp import UDPSocket
+from network.udp import UDPSocket
 
 logger = logging.getLogger('default')
 

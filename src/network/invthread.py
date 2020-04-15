@@ -1,7 +1,12 @@
 """
 Thread to send inv annoucements
 """
-import Queue
+import sys
+
+if sys.version_info[0]==2:
+    import Queue
+else:
+    import queue as Queue
 import random
 from time import time
 
@@ -11,7 +16,7 @@ import state
 from network.connectionpool import BMConnectionPool
 from network.dandelion import Dandelion
 from queues import invQueue
-from threads import StoppableThread
+from network.threads import StoppableThread
 
 
 def handleExpiredDandelion(expired):

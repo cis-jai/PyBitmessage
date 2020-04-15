@@ -7,7 +7,7 @@ from random import choice, expovariate, sample
 from threading import RLock
 from time import time
 
-import connectionpool
+import network.connectionpool
 import state
 from queues import invQueue
 from singleton import Singleton
@@ -185,11 +185,11 @@ class Dandelion:  # pylint: disable=old-style-class
             try:
                 # random two connections
                 self.stem = sample(
-                    connectionpool.BMConnectionPool(
+                    network.connectionpool.BMConnectionPool(
                     ).outboundConnections.values(), MAX_STEMS)
             # not enough stems available
             except ValueError:
-                self.stem = connectionpool.BMConnectionPool(
+                self.stem = network.connectionpool.BMConnectionPool(
                 ).outboundConnections.values()
             self.nodeMap = {}
             # hashMap stays to cater for pending stems

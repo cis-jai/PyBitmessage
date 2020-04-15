@@ -9,8 +9,8 @@ import socket
 import time
 
 import addresses
-import asyncore_pollchoose as asyncore
-import connectionpool
+import network.asyncore_pollchoose as asyncore
+import network.connectionpool
 import helper_random
 import knownnodes
 import protocol
@@ -28,7 +28,7 @@ from network.objectracker import ObjectTracker
 from network.socks4a import Socks4aConnection
 from network.socks5 import Socks5Connection
 from network.tls import TLSDispatcher
-from node import Peer
+from network.node import Peer
 from queues import invQueue, receiveDataQueue, UISignalQueue
 
 logger = logging.getLogger('default')
@@ -244,7 +244,7 @@ class TCPConnection(BMProto, TLSDispatcher):
         self.append_write_buf(
             protocol.assembleVersionMessage(
                 self.destination.host, self.destination.port,
-                connectionpool.BMConnectionPool().streams,
+                network.connectionpool.BMConnectionPool().streams,
                 False, nodeid=self.nodeid))
         self.connectedAt = time.time()
         receiveDataQueue.put(self.destination)
@@ -298,7 +298,7 @@ class Socks5BMConnection(Socks5Connection, TCPConnection):
         self.append_write_buf(
             protocol.assembleVersionMessage(
                 self.destination.host, self.destination.port,
-                connectionpool.BMConnectionPool().streams,
+                network.connectionpool.BMConnectionPool().streams,
                 False, nodeid=self.nodeid))
         self.set_state("bm_header", expectBytes=protocol.Header.size)
         return True
@@ -322,7 +322,7 @@ class Socks4aBMConnection(Socks4aConnection, TCPConnection):
         self.append_write_buf(
             protocol.assembleVersionMessage(
                 self.destination.host, self.destination.port,
-                connectionpool.BMConnectionPool().streams,
+                network.connectionpool.BMConnectionPool().streams,
                 False, nodeid=self.nodeid))
         self.set_state("bm_header", expectBytes=protocol.Header.size)
         return True
@@ -405,8 +405,8 @@ class TCPServer(AdvancedDispatcher):
 
         state.ownAddresses[Peer(*sock.getsockname())] = True
         if (
-            len(connectionpool.BMConnectionPool().inboundConnections) +
-            len(connectionpool.BMConnectionPool().outboundConnections) >
+            len(network.connectionpool.BMConnectionPool().inboundConnections) +
+            len(network.connectionpool.BMConnectionPool().outboundConnections) >
             BMConfigParser().safeGetInt(
                 'bitmessagesettings', 'maxtotalconnections') +
             BMConfigParser().safeGetInt(
@@ -418,7 +418,7 @@ class TCPServer(AdvancedDispatcher):
             sock.close()
             return
         try:
-            connectionpool.BMConnectionPool().addConnection(
+            network.connectionpool.BMConnectionPool().addConnection(
                 TCPConnection(sock=sock))
         except socket.error:
             pass

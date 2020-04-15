@@ -11,13 +11,13 @@ import time
 from binascii import hexlify
 
 import addresses
-import connectionpool
+import network.connectionpool
 import knownnodes
 import protocol
 import state
 from bmconfigparser import BMConfigParser
-from inventory import Inventory
 from network.advanceddispatcher import AdvancedDispatcher
+from inventory import Inventory
 from network.bmobject import (
     BMObject, BMObjectAlreadyHaveError, BMObjectExpiredError,
     BMObjectInsufficientPOWError, BMObjectInvalidDataError,
@@ -29,10 +29,10 @@ from network.constants import (
 )
 from network.dandelion import Dandelion
 from network.proxy import ProxyError
-from node import Node, Peer
-from objectracker import ObjectTracker, missingObjects
+from network.node import Node, Peer
+from network.objectracker import ObjectTracker, missingObjects
 from queues import invQueue, objectProcessorQueue, portCheckerQueue
-from randomtrackingdict import RandomTrackingDict
+from network.randomtrackingdict import RandomTrackingDict
 
 logger = logging.getLogger('default')
 
