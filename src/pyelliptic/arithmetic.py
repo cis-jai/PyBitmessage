@@ -3,6 +3,7 @@ Arithmetic Expressions
 """
 import hashlib
 import re
+import sys
 
 P = 2**256 - 2**32 - 2**9 - 2**8 - 2**7 - 2**6 - 2**4 - 1
 A = 0
@@ -29,29 +30,46 @@ def get_code_string(base):
     elif base == 10:
         return '0123456789'
     elif base == 16:
-        return "0123456789abcdef"
+        if sys.version_info[0]==2:
+            return "0123456789abcdef"
+        else:
+            return ("0123456789abcdef").encode()
     elif base == 58:
         return "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
     elif base == 256:
-        return ''.join([chr(x) for x in range(256)])
+        if sys.version_info[0]==2:
+            return ''.join([chr(x) for x in range(256)])
+        else:
+            return bytes(range(0, 256))
     else:
         raise ValueError("Invalid base!")
 
 
 def encode(val, base, minlen=0):
     """Returns the encoded string"""
-    code_string = get_code_string(base)
-    result = ""
-    while val > 0:
-        result = code_string[val % base] + result
-        val /= base
-    if len(result) < minlen:
-        result = code_string[0] * (minlen - len(result)) + result
-    return result
+    if sys.version_info[0] == 2:
+        code_string = get_code_string(base)
+        result = ""
+        while val > 0:
+            result = code_string[val % base] + result
+            val /= base
+        if len(result) < minlen:
+            result = code_string[0] * (minlen - len(result)) + result
+        return result
+    else:
+        code_string = get_code_string(base)
+        result = str.encode('') if type(code_string) is bytes else ''
+        while val > 0:
+            result = code_string[val % base:val % base + 1] + result
+            val = val // base
+        if len(result) < minlen:
+            result = code_string[0] * (minlen - len(result)) + result
+        return result
 
 
 def decode(string, base):
     """Returns the decoded string"""
+
     code_string = get_code_string(base)
     result = 0
     if base == 16:

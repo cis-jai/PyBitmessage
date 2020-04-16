@@ -6,7 +6,7 @@ High level cryptographic functions based on `.pyelliptic` OpenSSL bindings.
   We must upgrade PyBitmessage gracefully.
   `More discussion. <https://github.com/yann2192/pyelliptic/issues/32>`_
 """
-
+import sys
 from binascii import hexlify
 
 import pyelliptic
@@ -19,8 +19,13 @@ def makeCryptor(privkey):
     """Return a private `.pyelliptic.ECC` instance"""
     private_key = a.changebase(privkey, 16, 256, minlen=32)
     public_key = pointMult(private_key)
-    privkey_bin = '\x02\xca\x00\x20' + private_key
-    pubkey_bin = '\x02\xca\x00\x20' + public_key[1:-32] + '\x00\x20' + public_key[-32:]
+    if sys.version_info[0] ==2:
+        privkey_bin = '\x02\xca\x00\x20' + private_key
+        pubkey_bin = '\x02\xca\x00\x20' + public_key[1:-32] + '\x00\x20' + public_key[-32:]
+    else:
+        privkey_bin = '\x02\xca\x00\x20'.encode('raw_unicode_escape') + private_key
+        pubkey_bin = '\x02\xca\x00\x20'.encode(
+        'raw_unicode_escape') + public_key[1:-32] + '\x00\x20'.encode() + public_key[-32:]
     cryptor = pyelliptic.ECC(
         curve='secp256k1', privkey=privkey_bin, pubkey=pubkey_bin)
     return cryptor

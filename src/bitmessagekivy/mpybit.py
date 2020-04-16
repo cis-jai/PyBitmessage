@@ -419,7 +419,7 @@ class AddressBook(Screen):
     def init_ui(self, dt=0):
         """Clock Schdule for method AddressBook"""
         self.loadAddresslist(None, 'All', '')
-        print dt
+        print(dt)
 
     def loadAddresslist(self, account, where="", what=""):
         """Clock Schdule for method AddressBook"""
@@ -541,7 +541,7 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
         """Respond to the selection of items in the view"""
         self.selected = is_selected
         if is_selected:
-            print "selection changed to {0}".format(rv.data[index])
+            print("selection changed to {0}".format(rv.data[index]))
             rv.parent.txt_input.text = rv.parent.txt_input.text.replace(
                 rv.parent.txt_input.text, rv.data[index]['text'])
 
@@ -568,7 +568,7 @@ class DropDownWidget(BoxLayout):
         subject = self.ids.subject.text.encode('utf-8').strip()
         message = self.ids.body.text.encode('utf-8').strip()
         encoding = 3
-        print "message: ", self.ids.body.text
+        print("message: {}".format(self.ids.body.text))
         sendMessageToPeople = True
         if sendMessageToPeople:
             if toAddress != '' and subject and message:
@@ -590,12 +590,12 @@ class DropDownWidget(BoxLayout):
                         statusIconColor = 'red'
                         if (addressVersionNumber > 4) or (
                                 addressVersionNumber <= 1):
-                            print "addressVersionNumber > 4"\
-                                " or addressVersionNumber <= 1"
+                            print("addressVersionNumber > 4"\
+                                " or addressVersionNumber <= 1")
                         if streamNumber > 1 or streamNumber == 0:
-                            print "streamNumber > 1 or streamNumber == 0"
+                            print("streamNumber > 1 or streamNumber == 0")
                         if statusIconColor == 'red':
-                            print "shared.statusIconColor == 'red'"
+                            print("shared.statusIconColor == 'red'")
                         stealthLevel = BMConfigParser().safeGetInt(
                             'bitmessagesettings', 'ackstealthlevel')
                         from helper_ackPayload import genAckPayload
@@ -624,7 +624,7 @@ class DropDownWidget(BoxLayout):
                     # self.parent.parent.screens[16].add_widget(Allmails())
                     Clock.schedule_once(self.callback_for_msgsend, 3)
                     queues.workerQueue.put(('sendmessage', toAddress))
-                    print "sqlExecute successfully #######################"
+                    print("sqlExecute successfully #######################")
                     state.in_composer = True
                     return
                 else:
@@ -1339,7 +1339,7 @@ class NavigateApp(App):  # pylint: disable=too-many-public-methods
             if not os.path.exists(directory):
                 os.makedirs(directory)
         except OSError:
-            print 'Error: Creating directory. ' + directory
+            print('Error: Creating directory. {}'.format(directory))
 
     @staticmethod
     def get_default_image():
@@ -1538,7 +1538,7 @@ class NavigateApp(App):  # pylint: disable=too-many-public-methods
     @staticmethod
     def on_stop():
         """On stop methos is used for stoping the runing script"""
-        print "*******************EXITING FROM APPLICATION*******************"
+        print("*******************EXITING FROM APPLICATION*******************")
         import shutdown
         shutdown.doCleanShutdown()
 
@@ -2100,7 +2100,7 @@ class Draft(Screen):
     def init_ui(self, dt=0):
         """Clock Schdule for method draft accounts"""
         self.sentaccounts()
-        print dt
+        print(dt)
 
     def sentaccounts(self):
         """Load draft accounts."""
@@ -2278,7 +2278,7 @@ class Allmails(Screen):
     def init_ui(self, dt=0):
         """Clock Schdule for method all mails"""
         self.loadMessagelist()
-        print dt
+        print(dt)
 
     def loadMessagelist(self):
         """Load Inbox, Sent anf Draft list of messages."""

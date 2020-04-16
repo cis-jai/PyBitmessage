@@ -4,6 +4,7 @@ Localization
 import logging
 import os
 import time
+import sys
 
 from bmconfigparser import BMConfigParser
 
@@ -62,22 +63,48 @@ else:
 # It seems some systems lie about the encoding they use so we perform
 # comprehensive decoding tests
 if time_format != DEFAULT_TIME_FORMAT:
-    try:
-        # Check day names
-        for i in xrange(7):
-            unicode(time.strftime(time_format, (0, 0, 0, 0, 0, 0, i, 0, 0)), encoding)
-        # Check month names
-        for i in xrange(1, 13):
-            unicode(time.strftime(time_format, (0, i, 0, 0, 0, 0, 0, 0, 0)), encoding)
-        # Check AM/PM
-        unicode(time.strftime(time_format, (0, 0, 0, 11, 0, 0, 0, 0, 0)), encoding)
-        unicode(time.strftime(time_format, (0, 0, 0, 13, 0, 0, 0, 0, 0)), encoding)
-        # Check DST
-        unicode(time.strftime(time_format, (0, 0, 0, 0, 0, 0, 0, 0, 1)), encoding)
-    except:
-        logger.exception('Could not decode locale formatted timestamp')
-        time_format = DEFAULT_TIME_FORMAT
-        encoding = DEFAULT_ENCODING
+    if sys.version_info[0] ==2:
+        try:
+            # Check day names
+            for i in xrange(7):
+                unicode(time.strftime(time_format, (0, 0, 0, 0, 0, 0, i, 0, 0)), encoding)
+            # Check month names
+            for i in xrange(1, 13):
+                unicode(time.strftime(time_format, (0, i, 0, 0, 0, 0, 0, 0, 0)), encoding)
+            # Check AM/PM
+            unicode(time.strftime(time_format, (0, 0, 0, 11, 0, 0, 0, 0, 0)), encoding)
+            unicode(time.strftime(time_format, (0, 0, 0, 13, 0, 0, 0, 0, 0)), encoding)
+            # Check DST
+            unicode(time.strftime(time_format, (0, 0, 0, 0, 0, 0, 0, 0, 1)), encoding)
+        except:
+            logger.exception('Could not decode locale formatted timestamp')
+            time_format = DEFAULT_TIME_FORMAT
+            encoding = DEFAULT_ENCODING
+    else:
+        try:
+            new_time_format = time_format
+            time_format = '%c'
+            for i in range(7):
+                # this work for python2.7
+                # unicode(time.strftime(time_format, (0, 0, 0, 0, 0, 0, i, 0, 0)), encoding)
+                # this code for the python3
+                (time.strftime(time_format, (0, 0, 0, 0, 0, 0, i, 0, 0))).encode()
+            # Check month names
+            for i in range(1, 13):
+                # unicode(time.strftime(time_format, (0, i, 0, 0, 0, 0, 0, 0, 0)), encoding)
+                (time.strftime(time_format, (0, i, 0, 0, 0, 0, 0, 0, 0))).encode()
+
+            # Check AM/PM
+            (time.strftime(time_format, (0, 0, 0, 11, 0, 0, 0, 0, 0))).encode()
+            (time.strftime(time_format, (0, 0, 0, 13, 0, 0, 0, 0, 0))).encode()
+            # Check DST
+            (time.strftime(time_format, (0, 0, 0, 0, 0, 0, 0, 0, 1))).encode()
+
+        except:
+            logger.exception('Could not decode locale formatted timestamp')
+            time_format = DEFAULT_TIME_FORMAT
+            encoding = DEFAULT_ENCODING
+        time_format = new_time_format
 
 
 def setlocale(category, newlocale):

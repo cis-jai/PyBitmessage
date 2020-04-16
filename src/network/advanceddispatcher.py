@@ -29,7 +29,7 @@ class AdvancedDispatcher(asyncore.dispatcher):
     _buf_len = 131072  # 128kB
 
     def __init__(self, sock=None):
-        if not hasattr(self, '_map'):
+        if not '_map' in dir(self):
             asyncore.dispatcher.__init__(self, sock)
         self.read_buf = bytearray()
         self.write_buf = bytearray()

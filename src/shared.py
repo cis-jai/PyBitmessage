@@ -190,6 +190,8 @@ def reloadBroadcastSendersForWhichImWatching():
         address, = row
         # status
         addressVersionNumber, streamNumber, hashobj = decodeAddress(address)[1:]
+        if not sys.version_info[0] ==2 and type(hashobj) == str:
+             hashobj = hashobj.encode()
         if addressVersionNumber == 2:
             broadcastSendersForWhichImWatching[hashobj] = 0
         # Now, for all addresses, even version 2 addresses,
