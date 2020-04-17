@@ -23,6 +23,8 @@ from debug import logger
 from fallback import RIPEMD160Hash
 from helper_sql import sqlExecute
 from version import softwareVersion
+from pycompatibility.utils import string_compatibility
+
 
 # Service flags
 #: This is a normal network node
@@ -96,13 +98,31 @@ def isBitSetWithinBitfield(fourByteString, n):
 
 def encodeHost(host):
     """Encode a given host to be used in low-level socket operations"""
-    if host.find('.onion') > -1:
-        return '\xfd\x87\xd8\x7e\xeb\x43' + base64.b32decode(
-            host.split(".")[0], True)
-    elif host.find(':') == -1:
-        return '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF' + \
-            socket.inet_aton(host)
-    return socket.inet_pton(socket.AF_INET6, host)
+    if sys.version_info[0] == 2:
+        if host.find('.onion') > -1:
+            return '\xfd\x87\xd8\x7e\xeb\x43' + base64.b32decode(
+                host.split(".")[0], True)
+        elif host.find(':') == -1:
+            return '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF' + \
+                socket.inet_aton(host)
+        return socket.inet_pton(socket.AF_INET6, host)
+    else:
+        if type(host) == bytes:
+            onion = 'onion'.encode()
+            colon = ':'.encode()
+            full_stop = '.'.encode()
+        else:
+            onion = 'onion'
+            colon = ':'
+            full_stop = '.'
+        if host.find(onion) > -1:
+            return '\xfd\x87\xd8\x7e\xeb\x43'.encode(
+                'raw_unicode_escape') + base64.b32decode(
+                    host.split(full_stop)[0], True)
+        elif host.find(colon) == -1:
+            return '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF'.encode('raw_unicode_escape') + \
+                socket.inet_aton(host)
+        return socket.inet_pton(socket.AF_INET6, host)
 
 
 def networkType(host):
@@ -173,28 +193,53 @@ def checkIPv4Address(host, hostStandardFormat, private=False):
     Returns hostStandardFormat if it is an IPv4 address,
     otherwise returns False
     """
-    if host[0] == '\x7F':  # 127/8
-        if not private:
-            logger.debug(
-                'Ignoring IP address in loopback range: %s',
-                hostStandardFormat)
-        return hostStandardFormat if private else False
-    if host[0] == '\x0A':  # 10/8
-        if not private:
-            logger.debug(
-                'Ignoring IP address in private range: %s', hostStandardFormat)
-        return hostStandardFormat if private else False
-    if host[0:2] == '\xC0\xA8':  # 192.168/16
-        if not private:
-            logger.debug(
-                'Ignoring IP address in private range: %s', hostStandardFormat)
-        return hostStandardFormat if private else False
-    if host[0:2] >= '\xAC\x10' and host[0:2] < '\xAC\x20':  # 172.16/12
-        if not private:
-            logger.debug(
-                'Ignoring IP address in private range: %s', hostStandardFormat)
-        return hostStandardFormat if private else False
-    return False if private else hostStandardFormat
+    if sys.version_info[0] ==2:
+        if host[0] == '\x7F':  # 127/8
+            if not private:
+                logger.debug(
+                    'Ignoring IP address in loopback range: %s',
+                    hostStandardFormat)
+            return hostStandardFormat if private else False
+        if host[0] == '\x0A':  # 10/8
+            if not private:
+                logger.debug(
+                    'Ignoring IP address in private range: %s', hostStandardFormat)
+            return hostStandardFormat if private else False
+        if host[0:2] == '\xC0\xA8':  # 192.168/16
+            if not private:
+                logger.debug(
+                    'Ignoring IP address in private range: %s', hostStandardFormat)
+            return hostStandardFormat if private else False
+        if host[0:2] >= '\xAC\x10' and host[0:2] < '\xAC\x20':  # 172.16/12
+            if not private:
+                logger.debug(
+                    'Ignoring IP address in private range: %s', hostStandardFormat)
+            return hostStandardFormat if private else False
+        return False if private else hostStandardFormat
+    else:
+        if host[0] == '\x7F'.encode('raw_unicode_escape'):  # 127/8
+            if not private:
+                logger.debug(
+                    'Ignoring IP address in loopback range: %s',
+                    hostStandardFormat)
+            return hostStandardFormat if private else False
+        if host[0] == '\x0A'.encode('raw_unicode_escape'):  # 10/8
+            if not private:
+                logger.debug(
+                    'Ignoring IP address in private range: %s', hostStandardFormat)
+            return hostStandardFormat if private else False
+        if host[0:2] == '\xC0\xA8'.encode('raw_unicode_escape'):  # 192.168/16
+            if not private:
+                logger.debug(
+                    'Ignoring IP address in private range: %s', hostStandardFormat)
+            return hostStandardFormat if private else False
+    # 172.16/12
+        if host[0:2] >= '\xAC\x10'.encode('raw_unicode_escape') and host[0:2] < '\xAC\x20'.encode('raw_unicode_escape'):
+            if not private:
+                logger.debug(
+                    'Ignoring IP address in private range: %s', hostStandardFormat)
+            return hostStandardFormat if private else False
+        return False if private else hostStandardFormat
 
 
 def checkIPv6Address(host, hostStandardFormat, private=False):
@@ -202,20 +247,37 @@ def checkIPv6Address(host, hostStandardFormat, private=False):
     Returns hostStandardFormat if it is an IPv6 address,
     otherwise returns False
     """
-    if host == ('\x00' * 15) + '\x01':
-        if not private:
-            logger.debug('Ignoring loopback address: %s', hostStandardFormat)
-        return False
-    if host[0] == '\xFE' and (ord(host[1]) & 0xc0) == 0x80:
-        if not private:
-            logger.debug('Ignoring local address: %s', hostStandardFormat)
+    if sys.version_info[0] == 0:
+        if host == ('\x00' * 15) + '\x01':
+            if not private:
+                logger.debug('Ignoring loopback address: %s', hostStandardFormat)
+            return False
+        if host[0] == '\xFE' and (ord(host[1]) & 0xc0) == 0x80:
+            if not private:
+                logger.debug('Ignoring local address: %s', hostStandardFormat)
+            return hostStandardFormat if private else False
+        if (ord(host[0]) & 0xfe) == 0xfc:
+            if not private:
+                logger.debug(
+                    'Ignoring unique local address: %s', hostStandardFormat)
+            return hostStandardFormat if private else False
+        return False if private else hostStandardFormat
+    else:
+        if host == ('\x00'.encode() * 15) + '\x01'.encode():
+            if not private:
+                logger.debug('Ignoring loopback address: {}'.format(hostStandardFormat))
+            return False
+        if host[0] == '\xFE' and (ord(host[1]) & 0xc0) == 0x80:
+            if not private:
+                logger.debug('Ignoring local address: {}'.format(hostStandardFormat))
         return hostStandardFormat if private else False
-    if (ord(host[0]) & 0xfe) == 0xfc:
-        if not private:
-            logger.debug(
-                'Ignoring unique local address: %s', hostStandardFormat)
-        return hostStandardFormat if private else False
-    return False if private else hostStandardFormat
+        if (ord(host[0:1]) & 0xfe) == 0xfc:
+            if not private:
+                logger.debug('Ignoring unique local address: {}'.format(hostStandardFormat))
+
+            return hostStandardFormat if private else False
+        return False if private else hostStandardFormat
+
 
 
 def haveSSL(server=False):
@@ -282,11 +344,13 @@ def isProofOfWorkSufficient(
 
 def CreatePacket(command, payload=''):
     """Construct and return a packet"""
+    if payload and sys.version_info[0] == 2:
+        payload = payload if type(payload) in [bytes, bytearray, memoryview] else payload.encode()
     payload_length = len(payload)
     checksum = hashlib.sha512(payload).digest()[0:4]
 
     b = bytearray(Header.size + payload_length)
-    Header.pack_into(b, 0, 0xE9BEB4D9, command, payload_length, checksum)
+    Header.pack_into(b, 0, 0xE9BEB4D9, string_compatibility(command), payload_length, checksum)
     b[Header.size:] = payload
     return bytes(b)
 
@@ -297,8 +361,8 @@ def assembleVersionMessage(
     """
     Construct the payload of a version message,
     return the resulting bytes of running `CreatePacket` on it
-    """
-    payload = ''
+-    """
+    payload = '' if sys.version_info[0] ==2 else bytes()
     payload += pack('>L', 3)  # protocol version.
     # bitflags of the services I offer.
     payload += pack(
@@ -334,7 +398,9 @@ def assembleVersionMessage(
     # = 127.0.0.1. This will be ignored by the remote host.
     # The actual remote connected IP will be used.
     payload += '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF' + pack(
-        '>L', 2130706433)
+        '>L', 2130706433) if sys.version_info [0] ==2 else \
+            '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF'.encode('raw_unicode_escape') \
+                + pack('>L', 2130706433)
     # we have a separate extPort and incoming over clearnet
     # or outgoing through clearnet
     extport = BMConfigParser().safeGetInt('bitmessagesettings', 'extport')
@@ -357,7 +423,7 @@ def assembleVersionMessage(
         payload += eightBytesOfRandomDataUsedToDetectConnectionsToSelf
     userAgent = '/PyBitmessage:' + softwareVersion + '/'
     payload += encodeVarint(len(userAgent))
-    payload += userAgent
+    payload += string_compatibility(userAgent)
 
     # Streams
     payload += encodeVarint(len(participatingStreams))

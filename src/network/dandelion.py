@@ -170,7 +170,7 @@ class Dandelion:  # pylint: disable=old-style-class
         with self.lock:
             deadline = time()
             toDelete = [
-                [v.stream, k, v.child] for k, v in self.hashMap.iteritems()
+                [v.stream, k, v.child] for k, v in iter(self.hashMap.items())
                 if v.timeout < deadline
             ]
 

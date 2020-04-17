@@ -33,7 +33,7 @@ from network.node import Node, Peer
 from network.objectracker import ObjectTracker, missingObjects
 from queues import invQueue, objectProcessorQueue, portCheckerQueue
 from network.randomtrackingdict import RandomTrackingDict
-
+from pycompatibility.utils import string_compatibility
 logger = logging.getLogger('default')
 
 
@@ -83,7 +83,7 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         """Process incoming header"""
         self.magic, self.command, self.payloadLength, self.checksum = \
             protocol.Header.unpack(self.read_buf[:protocol.Header.size])
-        self.command = self.command.rstrip('\x00')
+        self.command = self.command.rstrip(string_compatibility('\x00'))
         if self.magic != 0xE9BEB4D9:
             # skip 1 byte in order to sync
             self.set_state("bm_header", length=1)
@@ -108,7 +108,7 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
             self.invalid = True
         retval = True
         if not self.fullyEstablished and self.command not in (
-                "error", "version", "verack"):
+                string_compatibility("error"), string_compatibility("version"), string_compatibility("verack")):
             logger.error(
                 'Received command %s before connection was fully'
                 ' established, ignoring', self.command)
@@ -534,7 +534,7 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         if not self.isOutbound:
             self.append_write_buf(protocol.assembleVersionMessage(
                 self.destination.host, self.destination.port,
-                connectionpool.BMConnectionPool().streams, True,
+                network.connectionpool.BMConnectionPool().streams, True,
                 nodeid=self.nodeid))
             logger.debug(
                 '%(host)s:%(port)i sending version',
@@ -588,7 +588,7 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
                 'Closed connection to %s because there is no overlapping'
                 ' interest in streams.', self.destination)
             return False
-        if self.destination in connectionpool.BMConnectionPool().inboundConnections:
+        if self.destination in network.connectionpool.BMConnectionPool().inboundConnections:
             try:
                 if not protocol.checkSocksIP(self.destination.host):
                     self.append_write_buf(protocol.assembleErrorMessage(
@@ -605,9 +605,9 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
             # or server full report the same error to counter deanonymisation
             if (
                 Peer(self.destination.host, self.peerNode.port)
-                in connectionpool.BMConnectionPool().inboundConnections
-                or len(connectionpool.BMConnectionPool().inboundConnections)
-                + len(connectionpool.BMConnectionPool().outboundConnections)
+                in network.connectionpool.BMConnectionPool().inboundConnections
+                or len(network.connectionpool.BMConnectionPool().inboundConnections)
+                + len(network.connectionpool.BMConnectionPool().outboundConnections)
                 > BMConfigParser().safeGetInt(
                     'bitmessagesettings', 'maxtotalconnections')
                 + BMConfigParser().safeGetInt(
@@ -619,7 +619,7 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
                     'Closed connection to %s due to server full'
                     ' or duplicate inbound/outbound.', self.destination)
                 return False
-        if connectionpool.BMConnectionPool().isAlreadyConnected(
+        if network.connectionpool.BMConnectionPool().isAlreadyConnected(
                 self.nonce):
             self.append_write_buf(protocol.assembleErrorMessage(
                 errorText="I'm connected to myself. Closing connection.",
@@ -634,7 +634,7 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
     @staticmethod
     def stopDownloadingObject(hashId, forwardAnyway=False):
         """Stop downloading an object"""
-        for connection in connectionpool.BMConnectionPool().connections():
+        for connection in network.connectionpool.BMConnectionPool().connections():
             try:
                 del connection.objectsNewToMe[hashId]
             except KeyError:

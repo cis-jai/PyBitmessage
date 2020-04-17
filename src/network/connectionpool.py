@@ -83,7 +83,7 @@ class BMConnectionPool(object):
         Shortcut for combined list of connections from
         `inboundConnections` and `outboundConnections` dicts
         """
-        return self.inboundConnections.values() + self.outboundConnections.values()
+        return [x for x in self.inboundConnections.values()] + [x for x in self.outboundConnections.values()]
 
     def establishedConnections(self):
         """Shortcut for list of connections having fullyEstablished == True"""
@@ -393,7 +393,7 @@ class BMConnectionPool(object):
                     i.set_state("close")
         for i in (
             self.connections()
-            + self.listeningSockets.values() + self.udpSockets.values()
+            + [x for x in self.listeningSockets.values()] + [x for x in self.udpSockets.values()]
         ):
             if not (i.accepting or i.connecting or i.connected):
                 reaper.append(i)

@@ -36,7 +36,7 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.textinput import TextInput
 from kivy.utils import platform
 
-import kivy_helper_search
+from bitmessagekivy import kivy_helper_search
 from kivymd.button import MDIconButton
 from kivymd.dialog import MDDialog
 from kivymd.label import MDLabel
@@ -854,7 +854,7 @@ class Sent(Screen):
     def init_ui(self, dt=0):
         """Clock Schdule for method sent accounts"""
         self.loadSent()
-        print dt
+        print(dt)
 
     def loadSent(self, where="", what=""):
         """Load Sent list for Sent messages."""
