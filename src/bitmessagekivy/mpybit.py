@@ -58,9 +58,9 @@ import queues
 from semaphores import kivyuisignaler
 
 import state
-from uikivysignaler import UIkivySignaler
+from bitmessagekivy.uikivysignaler import UIkivySignaler
 
-import identiconGeneration
+from  bitmessagekivy import identiconGeneration
 from addresses import addBMIfNotPresent, decodeAddress
 
 

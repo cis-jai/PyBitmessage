@@ -247,7 +247,7 @@ def checkIPv6Address(host, hostStandardFormat, private=False):
     Returns hostStandardFormat if it is an IPv6 address,
     otherwise returns False
     """
-    if sys.version_info[0] == 0:
+    if sys.version_info[0] == 2:
         if host == ('\x00' * 15) + '\x01':
             if not private:
                 logger.debug('Ignoring loopback address: %s', hostStandardFormat)

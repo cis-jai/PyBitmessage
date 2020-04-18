@@ -16,6 +16,7 @@ import sys
 # else:
 from network import asyncore_pollchoose as asyncore
 from network.connectionchooser import chooseConnection
+from network.node import Peer
 
 import helper_random
 import knownnodes
