@@ -27,7 +27,7 @@ from debug import logger
 from helper_sql import sqlQuery
 
 from pyelliptic import arithmetic
-
+from pycompatibility.utils import string_compatibility
 
 verbose = 1
 # This is obsolete with the change to protocol v3
@@ -248,7 +248,7 @@ def checkSensitiveFilePermissions(filename):
             shell=True,
             stderr=subprocess.STDOUT
         )
-        if 'fuseblk' in fstype:
+        if string_compatibility('fuseblk') in fstype:
             logger.info(
                 'Skipping file permissions check for %s.'
                 ' Filesystem fuseblk detected.', filename)

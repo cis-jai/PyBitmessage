@@ -17,7 +17,7 @@ from fallback import RIPEMD160Hash
 from network.threads import StoppableThread
 from pyelliptic import arithmetic
 from pyelliptic.openssl import OpenSSL
-
+from pycompatibility.utils import string_compatibility
 
 class addressGenerator(StoppableThread):
     """A thread for creating addresses"""
@@ -142,7 +142,7 @@ class addressGenerator(StoppableThread):
                     ripe = RIPEMD160Hash(sha.digest()).digest()
                     if (
                         ripe[:numberOfNullBytesDemandedOnFrontOfRipeHash] ==
-                        '\x00' * numberOfNullBytesDemandedOnFrontOfRipeHash
+                        string_compatibility('\x00') * numberOfNullBytesDemandedOnFrontOfRipeHash
                     ):
                         break
                 self.logger.info(

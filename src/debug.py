@@ -71,13 +71,30 @@ def configureLogging():
     fail_msg = ''
 
     try:
-        logging_config = os.path.join('logging.dat')
-        logging.config.fileConfig(
-            logging_config,defaults=None, disable_existing_loggers=True)
-        return (
-            False,
-            'Loaded logger configuration from %s' % logging_config
-        )
+        if sys.version_info[0] ==2:
+            logging_config = os.path.join(state.appdata, 'logging.dat')
+            logging.config.fileConfig(
+                logging_config,defaults=None, disable_existing_loggers=True)
+            return (
+                False,
+                'Loaded logger configuration from %s' % logging_config
+            )
+        else:
+            logger = logging.getLogger(state.appdata+'/logging.dat')
+            logger.setLevel(logging.DEBUG)
+
+            # create console handler and set level to debug
+            logging_streamHandler = logging.StreamHandler()
+            logging_streamHandler.setLevel(logging.DEBUG)
+
+            # create formatter
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+            # add formatter to ch
+            logging_streamHandler.setFormatter(formatter)
+
+            # add ch to logger
+            logger.addHandler(logging_streamHandler)
     except (OSError, ConfigParser.NoSectionError) as e:
         if os.path.isfile(logging_config):
             fail_msg = \
@@ -93,7 +110,7 @@ def configureLogging():
         'version': 1,
         'formatters': {
             'default': {
-                'format': '{}(asctime)s - {}(levelname)s -{}(message)s',
+                'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
             },
         },
         'handlers': {
@@ -150,22 +167,7 @@ def resetLogging():
     configureLogging()
     logger = logging.getLogger('default')
 
-
-# !
-if sys.version_info[0] ==2:
-    preconfigured, msg = configureLogging()
-    logger = logging.getLogger('default')
-    if msg:
-        logger.log(logging.WARNING if preconfigured else logging.INFO, msg)
-
-else:
-    try:
-        preconfigured, msg = configureLogging()
-        if msg:
-            logger.log(logging.WARNING if preconfigured else logging.INFO, msg)
-
-    except:
-        pass
-    logger = logging.getLogger('default')
-
-
+preconfigured, msg = configureLogging()
+logger = logging.getLogger('default')
+if msg:
+    logger.log(logging.WARNING if preconfigured else logging.INFO, msg)
