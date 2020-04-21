@@ -165,13 +165,12 @@ class addressGenerator(StoppableThread):
                 # An excellent way for us to store our keys
                 # is in Wallet Import Format. Let us convert now.
                 # https://en.bitcoin.it/wiki/Wallet_import_format
-                privSigningKey = '\x80' + potentialPrivSigningKey
+                privSigningKey =string_compatibility ('\x80') + potentialPrivSigningKey
                 checksum = hashlib.sha256(hashlib.sha256(
                     privSigningKey).digest()).digest()[0:4]
                 privSigningKeyWIF = arithmetic.changebase(
                     privSigningKey + checksum, 256, 58)
-
-                privEncryptionKey = '\x80' + potentialPrivEncryptionKey
+                privEncryptionKey = string_compatibility ('\x80') + potentialPrivEncryptionKey
                 checksum = hashlib.sha256(hashlib.sha256(
                     privEncryptionKey).digest()).digest()[0:4]
                 privEncryptionKeyWIF = arithmetic.changebase(
@@ -184,7 +183,7 @@ class addressGenerator(StoppableThread):
                     nonceTrialsPerByte))
                 BMConfigParser().set(address, 'payloadlengthextrabytes', str(
                     payloadLengthExtraBytes))
-                BMConfigParser().set(
+                BMConfigParser  ().set(
                     address, 'privsigningkey', privSigningKeyWIF)
                 BMConfigParser().set(
                     address, 'privencryptionkey', privEncryptionKeyWIF)
@@ -260,7 +259,7 @@ class addressGenerator(StoppableThread):
                         ripe = RIPEMD160Hash(sha.digest()).digest()
                         if (
                             ripe[:numberOfNullBytesDemandedOnFrontOfRipeHash] ==
-                            '\x00' * numberOfNullBytesDemandedOnFrontOfRipeHash
+                            string_compatibility('\x00') * numberOfNullBytesDemandedOnFrontOfRipeHash
                         ):
                             break
 
@@ -297,13 +296,13 @@ class addressGenerator(StoppableThread):
                         # An excellent way for us to store our keys is
                         # in Wallet Import Format. Let us convert now.
                         # https://en.bitcoin.it/wiki/Wallet_import_format
-                        privSigningKey = '\x80' + potentialPrivSigningKey
+                        privSigningKey = string_compatibility('\x80') + potentialPrivSigningKey
                         checksum = hashlib.sha256(hashlib.sha256(
                             privSigningKey).digest()).digest()[0:4]
                         privSigningKeyWIF = arithmetic.changebase(
                             privSigningKey + checksum, 256, 58)
 
-                        privEncryptionKey = '\x80' + \
+                        privEncryptionKey = string_compatibility('\x80') + \
                             potentialPrivEncryptionKey
                         checksum = hashlib.sha256(hashlib.sha256(
                             privEncryptionKey).digest()).digest()[0:4]

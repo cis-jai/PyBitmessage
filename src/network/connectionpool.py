@@ -286,7 +286,7 @@ class BMConnectionPool(object):
                 except ValueError:
                     Proxy.onion_proxy = None
             established = sum(
-                1 for c in self.outboundConnections.values()
+                1 for c in [outboundConnections for outboundConnections in self.outboundConnections.values()]
                 if (c.connected and c.fullyEstablished))
             pending = len(self.outboundConnections) - established
             if established < BMConfigParser().safeGetInt(
@@ -310,7 +310,7 @@ class BMConnectionPool(object):
                     host_network_group = protocol.network_group(
                         chosen.host)
                     same_group = False
-                    for j in self.outboundConnections.values():
+                    for j in [outboundConnections for outboundConnections in self.outboundConnections.values()]:
                         if host_network_group == j.network_group:
                             same_group = True
                             if chosen.host == j.destination.host:
@@ -365,12 +365,12 @@ class BMConnectionPool(object):
                 logger.info('Starting UDP socket(s).')
         else:
             if self.listeningSockets:
-                for i in self.listeningSockets.values():
+                for i in [listeningSockets for listeningSockets in  self.listeningSockets.values()]:
                     i.close_reason = "Stopping listening"
                     i.accepting = i.connecting = i.connected = False
                 logger.info('Stopped listening for incoming connections.')
             if self.udpSockets:
-                for i in self.udpSockets.values():
+                for i in [udpSockets for udpSockets in self.udpSockets.values()]:
                     i.close_reason = "Stopping UDP socket"
                     i.accepting = i.connecting = i.connected = False
                 logger.info('Stopped udp sockets.')

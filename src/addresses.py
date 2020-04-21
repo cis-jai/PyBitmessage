@@ -7,6 +7,7 @@ from binascii import hexlify, unhexlify
 from struct import pack, unpack
 
 from debug import logger
+from pycompatibility.utils import  string_compatibility
 
 ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
@@ -148,16 +149,16 @@ def encodeAddress(version, stream, ripe):
                 'Programming error in encodeAddress: The length of'
                 ' a given ripe hash was not 20.'
             )
-        if ripe[:2] == '\x00\x00':
+        if ripe[:2] == string_compatibility('\x00\x00'):
             ripe = ripe[2:]
-        elif ripe[:1] == '\x00':
+        elif ripe[:1] == string_compatibility('\x00'):
             ripe = ripe[1:]
     elif version == 4:
         if len(ripe) != 20:
             raise Exception(
                 'Programming error in encodeAddress: The length of'
                 ' a given ripe hash was not 20.')
-        ripe = ripe.lstrip('\x00')
+        ripe = ripe.lstrip(string_compatibility('\x00'))
 
     storedBinaryData = encodeVarint(version) + encodeVarint(stream) + ripe
 
