@@ -33,7 +33,8 @@ from network.node import Node, Peer
 from network.objectracker import ObjectTracker, missingObjects
 from queues import invQueue, objectProcessorQueue, portCheckerQueue
 from network.randomtrackingdict import RandomTrackingDict
-from pycompatibility.utils import string_compatibility
+from pycompatibility.utils import string_compatibility, string_decode, \
+    string_required
 logger = logging.getLogger('default')
 
 
@@ -115,8 +116,9 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
             self.invalid = True
         if not self.invalid:
             try:
+                command = string_decode(self.command)
                 retval = getattr(
-                    self, "bm_command_" + str(self.command).lower())()
+                    self, "bm_command_" + command.lower())()
             except AttributeError:
                 # unimplemented command
                 logger.debug('unimplemented command %s', self.command)
@@ -171,18 +173,17 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         """Decode node details from the payload"""
         # protocol.checkIPAddress()
         services, host, port = self.decode_payload_content("Q16sH")
-        if host[0:12] == '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF':
-            host = socket.inet_ntop(socket.AF_INET, str(host[12:16]))
-        elif host[0:6] == '\xfd\x87\xd8\x7e\xeb\x43':
+        if host[0:12] == string_compatibility('\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF'):
+            host = socket.inet_ntop(socket.AF_INET, string_required(host[12:16]))
+        elif host[0:6] == string_compatibility('\xfd\x87\xd8\x7e\xeb\x43'):
             # Onion, based on BMD/bitcoind
-            host = base64.b32encode(host[6:]).lower() + ".onion"
+            host = base64.b32encode(host[6:]) + ".onion"
         else:
-            host = socket.inet_ntop(socket.AF_INET6, str(host))
+            host = socket.inet_ntop(socket.AF_INET6, string_required(host))
         if host == "":
             # This can happen on Windows systems which are not 64-bit
             # compatible so let us drop the IPv6 address.
-            host = socket.inet_ntop(socket.AF_INET, str(host[12:16]))
-
+            host = socket.inet_ntop(socket.AF_INET, string_required(host[12:16]))
         return Node(services, host, port)
 
     # pylint: disable=too-many-branches, too-many-statements
@@ -232,7 +233,6 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         # position of parser in subpattern
         # retval (array)
         parserStack = [[1, 1, False, pattern, 0, []]]
-
         while True:
             i = parserStack[-1][3][parserStack[-1][4]]
             if i in "0123456789" and (

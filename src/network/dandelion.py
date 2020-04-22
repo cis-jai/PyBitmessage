@@ -101,10 +101,10 @@ class Dandelion:  # pylint: disable=old-style-class
         with self.lock:
             if len(self.stem) < MAX_STEMS:
                 self.stem.append(connection)
-                for k in (k for k, v in self.nodeMap.iteritems() if v is None):
+                for k in (k for k, v in iter(self.nodeMap.items()) if v is None):
                     self.nodeMap[k] = connection
                 for k, v in {
-                        k: v for k, v in self.hashMap.iteritems()
+                        k: v for k, v in iter(self.hashMap.items())
                         if v.child is None
                 }.iteritems():
                     self.hashMap[k] = Stem(

@@ -287,6 +287,7 @@ def haveSSL(server=False):
     python < 2.7.9's ssl library does not support ECDSA server due to
     missing initialisation of available curves, but client works ok
     """
+    return False
     if not server:
         return True
     elif sys.version_info >= (2, 7, 9):
@@ -344,7 +345,7 @@ def isProofOfWorkSufficient(
 
 def CreatePacket(command, payload=''):
     """Construct and return a packet"""
-    if payload and sys.version_info[0] == 2:
+    if sys.version_info[0] != 2:
         payload = payload if type(payload) in [bytes, bytearray, memoryview] else payload.encode()
     payload_length = len(payload)
     checksum = hashlib.sha512(payload).digest()[0:4]

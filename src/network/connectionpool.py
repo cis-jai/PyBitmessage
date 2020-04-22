@@ -229,7 +229,7 @@ class BMConnectionPool(object):
         bootstrapper = bootstrap(connection_base)
         if not hostname:
             port = helper_random.randomchoice([8080, 8444])
-            hostname = 'bootstrap%s.bitmessage.org' % port
+            hostname = ('bootstrap{}.bitmessage.org'.format(port))
         else:
             port = 8444
         self.addConnection(bootstrapper(hostname, port))

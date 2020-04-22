@@ -9,3 +9,15 @@ def string_compatibility(instance):
         return instance
     else:
         return instance.encode('raw_unicode_escape')
+
+def string_decode(instance):
+    if sys.version_info[0]==2:
+        return instance
+    else:
+        return instance.decode()
+
+def string_required(instance):
+    if sys.version_info[0] == 2:
+        return str(instance)
+    else:
+        return instance
