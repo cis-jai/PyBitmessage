@@ -352,7 +352,7 @@ class BMConnectionPool(object):
                     ).split():
                         self.startListening(bind)
                 logger.info('Listening for incoming connections.')
-            if not self.udpSockets:
+            if False:
                 if BMConfigParser().safeGet('network', 'bind') == '':
                     self.startUDPSocket()
                 else:

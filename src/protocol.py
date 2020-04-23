@@ -167,12 +167,12 @@ def checkIPAddress(host, private=False):
     Returns hostStandardFormat if it is a valid IP address,
     otherwise returns False
     """
-    if host[0:12] == '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF':
+    if host[0:12] == string_compatibility('\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF'):
         hostStandardFormat = socket.inet_ntop(socket.AF_INET, host[12:])
         return checkIPv4Address(host[12:], hostStandardFormat, private)
-    elif host[0:6] == '\xfd\x87\xd8\x7e\xeb\x43':
+    elif host[0:6] == string_compatibility('\xfd\x87\xd8\x7e\xeb\x43'):
         # Onion, based on BMD/bitcoind
-        hostStandardFormat = base64.b32encode(host[6:]).lower() + ".onion"
+        hostStandardFormat = base64.b32encode(host[6:]).lower() + string_compatibility(".onion")
         if private:
             return False
         return hostStandardFormat

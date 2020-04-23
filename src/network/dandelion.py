@@ -106,7 +106,7 @@ class Dandelion:  # pylint: disable=old-style-class
                 for k, v in {
                         k: v for k, v in iter(self.hashMap.items())
                         if v.child is None
-                }.iteritems():
+                }.items():
                     self.hashMap[k] = Stem(
                         connection, v.stream, self.poissonTimeout())
                     invQueue.put((v.stream, k, v.child))

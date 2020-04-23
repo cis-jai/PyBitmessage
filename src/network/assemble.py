@@ -20,7 +20,7 @@ def assemble_addr(peerList):
         payload = addresses.encodeVarint(len(peerList[i:i + MAX_ADDR_COUNT]))
         for stream, peer, timestamp in peerList[i:i + MAX_ADDR_COUNT]:
             # 64-bit time
-            payload += struct.pack('>Q', timestamp)
+            payload += struct.pack('>Q', int(timestamp))
             payload += struct.pack('>I', stream)
             # service bit flags offered by this node
             payload += struct.pack('>q', 1)

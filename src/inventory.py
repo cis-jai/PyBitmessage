@@ -36,6 +36,16 @@ class Inventory():
         else:
             return realRet
 
+    # on python3 we have separately added __contains__ method
+    def __contains__(self, attr):
+        self.numberOfInventoryLookupsPerformed += 1
+        return getattr(self._realInventory, '__contains__')(attr)
+
+    # on python3 we have separately added __setitem__ method
+    def __setitem__(self, hash_, value):
+        return getattr(self._realInventory, '__setitem__')(hash_, value)
+
+
     # hint for pylint: this is dictionary like object
     def __getitem__(self, key):
         return self._realInventory[key]

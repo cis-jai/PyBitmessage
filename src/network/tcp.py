@@ -168,7 +168,7 @@ class TCPConnection(BMProto, TLSDispatcher):
                     # only if more recent than 3 hours
                     # and having positive or neutral rating
                     filtered = [
-                        (k, v) for k, v in nodes.iteritems()
+                        (k, v) for k, v in iter(nodes.items())
                         if v["lastseen"] > int(time.time()) -
                         shared.maximumAgeOfNodesThatIAdvertiseToOthers and
                         v["rating"] >= 0 and len(k.host) <= 22

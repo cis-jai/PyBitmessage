@@ -21,3 +21,15 @@ def string_required(instance):
         return str(instance)
     else:
         return instance
+
+def string_or_bytes(instance):
+    if sys.version_info[0] == 2:
+        return str(instance)
+    else:
+        return bytes(instance)
+
+def string_or_bytes_instance():
+    if sys.version_info[0] == 2:
+        return str
+    else:
+        return bytes

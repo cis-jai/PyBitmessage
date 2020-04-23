@@ -34,7 +34,7 @@ from network.objectracker import ObjectTracker, missingObjects
 from queues import invQueue, objectProcessorQueue, portCheckerQueue
 from network.randomtrackingdict import RandomTrackingDict
 from pycompatibility.utils import string_compatibility, string_decode, \
-    string_required
+    string_required, string_or_bytes,string_or_bytes_instance
 logger = logging.getLogger('default')
 
 
@@ -350,7 +350,7 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         if dandelion and not state.dandelion:
             return True
 
-        for i in map(str, items):
+        for i in map(string_or_bytes_instance(), items):
             if i in Inventory() and not Dandelion().hasHash(i):
                 continue
             if dandelion and not Dandelion().hasHash(i):
@@ -437,7 +437,7 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         # pylint: disable=redefined-outer-name
         addresses = self._decode_addr()
         for seenTime, stream, _, ip, port in addresses:
-            decodedIP = protocol.checkIPAddress(str(ip))
+            decodedIP = protocol.checkIPAddress(string_or_bytes(ip))
             if stream not in state.streamsInWhichIAmParticipating:
                 continue
             if (
