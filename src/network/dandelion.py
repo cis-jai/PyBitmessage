@@ -122,14 +122,14 @@ class Dandelion:  # pylint: disable=old-style-class
                 self.stem.remove(connection)
                 # active mappings to pointing to the removed node
                 for k in (
-                        k for k, v in self.nodeMap.iteritems()
+                        k for k, v in iter(self.nodeMap.items())
                         if v == connection
                 ):
                     self.nodeMap[k] = None
                 for k, v in {
-                        k: v for k, v in self.hashMap.iteritems()
+                        k: v for k, v in iter(self.hashMap.items())
                         if v.child == connection
-                }.iteritems():
+                }.items():
                     self.hashMap[k] = Stem(
                         None, v.stream, self.poissonTimeout())
 

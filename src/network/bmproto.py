@@ -34,7 +34,8 @@ from network.objectracker import ObjectTracker, missingObjects
 from queues import invQueue, objectProcessorQueue, portCheckerQueue
 from network.randomtrackingdict import RandomTrackingDict
 from pycompatibility.utils import string_compatibility, string_decode, \
-    string_required, string_or_bytes,string_or_bytes_instance
+    string_required, string_or_bytes,string_or_bytes_instance, \
+    buffer_or_memoryview
 logger = logging.getLogger('default')
 
 
@@ -349,9 +350,9 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         # ignore dinv if dandelion turned off
         if dandelion and not state.dandelion:
             return True
-
-        for i in map(string_or_bytes_instance(), items):
-            if i in Inventory() and not Dandelion().hasHash(i):
+        instance = string_or_bytes_instance()
+        for i in map(instance, items):
+            if i in Inventory   () and not Dandelion().hasHash(i):
                 continue
             if dandelion and not Dandelion().hasHash(i):
                 Dandelion().addHash(i, self)
@@ -375,7 +376,6 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         self.object = BMObject(
             nonce, expiresTime, objectType, version, streamNumber,
             self.payload, self.payloadOffset)
-
         if len(self.payload) - self.payloadOffset > MAX_OBJECT_PAYLOAD_SIZE:
             logger.info(
                 'The payload length of this object is too large (%d bytes).'
@@ -399,11 +399,11 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
                 self.object.inventoryHash, acceptmismatch)
             if not acceptmismatch:
                 raise
-
+        readable = buffer_or_memoryview()
         try:
             self.object.checkObjectByType()
             objectProcessorQueue.put((
-                self.object.objectType, buffer(self.object.data)))
+                self.object.objectType, readable(self.object.data)))
         except BMObjectInvalidError:
             BMProto.stopDownloadingObject(self.object.inventoryHash, True)
         else:
@@ -416,11 +416,10 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
                 self.object.inventoryHash):
             Dandelion().removeHash(
                 self.object.inventoryHash, "cycle detection")
-
         Inventory()[self.object.inventoryHash] = (
             self.object.objectType, self.object.streamNumber,
-            buffer(self.payload[objectOffset:]), self.object.expiresTime,
-            buffer(self.object.tag)
+            readable(self.payload[objectOffset:]), self.object.expiresTime,
+            readable(self.object.tag)
         )
         self.handleReceivedObject(
             self.object.streamNumber, self.object.inventoryHash)

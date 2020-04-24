@@ -80,7 +80,7 @@ def pickle_deserialize_old_knownnodes(source):
     global knownNodes  # pylint: disable=global-statement
     knownNodes = pickle.load(source)
     for stream in knownNodes.keys():
-        for node, params in knownNodes[stream].iteritems():
+        for node, params in iter(knownNodes[stream].items()):
             if isinstance(params, (float, int)):
                 addKnownNode(stream, node, params)
 

@@ -33,3 +33,9 @@ def string_or_bytes_instance():
         return str
     else:
         return bytes
+
+def buffer_or_memoryview():
+    if sys.version_info[0] == 2:
+        return buffer
+    else:
+        return memoryview
