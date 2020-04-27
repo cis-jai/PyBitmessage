@@ -346,18 +346,24 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
             logger.error(
                 'Too many items in %sinv message!', 'd' if dandelion else '')
             raise BMProtoExcessiveDataError()
-
+        import traceback
+        traceback.print_exc()
         # ignore dinv if dandelion turned off
         if dandelion and not state.dandelion:
             return True
+        import traceback
+        traceback.print_exc()
         instance = string_or_bytes_instance()
+        import traceback
+        traceback.print_exc()
         for i in map(instance, items):
-            if i in Inventory   () and not Dandelion().hasHash(i):
+            if i in Inventory() and not Dandelion().hasHash(i):
                 continue
             if dandelion and not Dandelion().hasHash(i):
                 Dandelion().addHash(i, self)
             self.handleReceivedInventory(i)
-
+        import traceback
+        traceback.print_exc()
         return True
 
     def bm_command_inv(self):

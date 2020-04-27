@@ -5,6 +5,8 @@ import hashlib
 import re
 import sys
 
+from pycompatibility.utils import string_compatibility
+
 P = 2**256 - 2**32 - 2**9 - 2**8 - 2**7 - 2**6 - 2**4 - 1
 A = 0
 Gx = 55066263022277343669578718895168534326250603453777594175500187360389116729240
@@ -26,14 +28,11 @@ def inv(a, n):
 def get_code_string(base):
     """Returns string according to base value"""
     if base == 2:
-        return '01'
+        return string_compatibility('01')
     elif base == 10:
-        return '0123456789'
+        return string_compatibility('0123456789')
     elif base == 16:
-        if sys.version_info[0]==2:
-            return "0123456789abcdef"
-        else:
-            return ("0123456789abcdef").encode()
+            return string_compatibility("0123456789abcdef")
     elif base == 58:
         return "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
     elif base == 256:
