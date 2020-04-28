@@ -23,17 +23,17 @@ class BMNetworkThread(StoppableThread):
 
     def stopThread(self):
         super(BMNetworkThread, self).stopThread()
-        for i in [x for x in BMConnectionPool().listeningSockets.values()]:
+        for i in BMConnectionPool().listeningSockets.values():
             try:
                 i.close()
             except:
                 pass
-        for i in [x for x in BMConnectionPool().outboundConnections.values()]:
+        for i in BMConnectionPool().outboundConnections.values():
             try:
                 i.close()
             except:
                 pass
-        for i in [x for x in BMConnectionPool().inboundConnections.values()]:
+        for i in BMConnectionPool().inboundConnections.values():
             try:
                 i.close()
             except:
