@@ -34,6 +34,8 @@ from helper_ackPayload import genAckPayload
 from helper_sql import SqlBulkExecute, sqlExecute, sqlQuery
 from network import bmproto
 from network.node import Peer
+from pycompatibility.utils import string_compatibility
+
 # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
 
 logger = logging.getLogger('default')
@@ -330,7 +332,7 @@ class objectProcessor(threading.Thread):
             dataToStore = data[20:readPosition]
             sha = hashlib.new('sha512')
             sha.update(
-                '\x04' + publicSigningKey + '\x04' + publicEncryptionKey)
+                string_compatibility('\x04') + publicSigningKey + string_compatibility('\x04') + publicEncryptionKey)
             ripe = RIPEMD160Hash(sha.digest()).digest()
 
             if logger.isEnabledFor(logging.DEBUG):
@@ -369,9 +371,9 @@ class objectProcessor(threading.Thread):
                     ' Sanity check failed.')
                 return
             readPosition += 4
-            publicSigningKey = '\x04' + data[readPosition:readPosition + 64]
+            publicSigningKey = string_compatibility('\x04') + data[readPosition:readPosition + 64]
             readPosition += 64
-            publicEncryptionKey = '\x04' + data[readPosition:readPosition + 64]
+            publicEncryptionKey = string_compatibility('\x04') + data[readPosition:readPosition + 64]
             readPosition += 64
             _, specifiedNonceTrialsPerByteLength = decodeVarint(
                 data[readPosition:readPosition + 10])
@@ -537,9 +539,9 @@ class objectProcessor(threading.Thread):
             return
         readPosition += sendersStreamNumberLength
         readPosition += 4
-        pubSigningKey = '\x04' + decryptedData[readPosition:readPosition + 64]
+        pubSigningKey = string_compatibility('\x04') + decryptedData[readPosition:readPosition + 64]
         readPosition += 64
-        pubEncryptionKey = '\x04' + decryptedData[readPosition:readPosition + 64]
+        pubEncryptionKey = string_compatibility('\x04') + decryptedData[readPosition:readPosition + 64]
         readPosition += 64
         if sendersAddressVersionNumber >= 3:
             requiredAverageProofOfWorkNonceTrialsPerByte, varintLength = \
@@ -1122,7 +1124,7 @@ class objectProcessor(threading.Thread):
         if checksum != hashlib.sha512(payload).digest()[0:4]:
             logger.info('ackdata checksum wrong. Not sending ackdata.')
             return False
-        command = command.rstrip('\x00')
+        command = command.rstrip(string_compatibility('\x00'))
         if command != 'object':
             return False
         return True

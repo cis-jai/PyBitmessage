@@ -118,6 +118,9 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         if not self.invalid:
             try:
                 command = string_decode(self.command)
+                # print('----------------------------')
+                # print(command)
+                # print('----------------------------')
                 retval = getattr(
                     self, "bm_command_" + command.lower())()
             except AttributeError:

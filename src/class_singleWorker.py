@@ -32,6 +32,7 @@ from bmconfigparser import BMConfigParser
 from helper_sql import sqlExecute, sqlQuery
 from inventory import Inventory
 from network import StoppableThread
+from pycompatibility.utils import string_compatibility
 
 # This thread, of which there is only one, does the heavy lifting:
 # calculating POWs.
@@ -110,7 +111,7 @@ class singleWorker(StoppableThread):
         for oldack in shared.ackdataForWhichImWatching:
             if len(oldack) == 32:
                 # attach legacy header, always constant (msg/1/1)
-                newack = '\x00\x00\x00\x02\x01\x01' + oldack
+                newack = string_compatibility('\x00\x00\x00\x02\x01\x01') + oldack
                 shared.ackdataForWhichImWatching[newack] = 0
                 sqlExecute(
                     'UPDATE sent SET ackdata=? WHERE ackdata=?',
@@ -255,7 +256,7 @@ class singleWorker(StoppableThread):
         TTL = int(28 * 24 * 60 * 60 + helper_random.randomrandrange(-300, 300))
         embeddedTime = int(time.time() + TTL)
         payload = pack('>Q', (embeddedTime))
-        payload += '\x00\x00\x00\x01'  # object type: pubkey
+        payload += string_compatibility('\x00\x00\x00\x01')  # object type: pubkey
         payload += encodeVarint(addressVersionNumber)  # Address version number
         payload += encodeVarint(streamNumber)
         # bitfield of features supported by me (see the wiki).
@@ -329,7 +330,7 @@ class singleWorker(StoppableThread):
         # expiresTime time.
 
         payload = pack('>Q', (embeddedTime))
-        payload += '\x00\x00\x00\x01'  # object type: pubkey
+        payload += string_compatibility('\x00\x00\x00\x01')  # object type: pubkey
         payload += encodeVarint(addressVersionNumber)  # Address version number
         payload += encodeVarint(streamNumber)
         # bitfield of features supported by me (see the wiki).
@@ -400,7 +401,7 @@ class singleWorker(StoppableThread):
         TTL = int(28 * 24 * 60 * 60 + helper_random.randomrandrange(-300, 300))
         embeddedTime = int(time.time() + TTL)
         payload = pack('>Q', (embeddedTime))
-        payload += '\x00\x00\x00\x01'  # object type: pubkey
+        payload += string_compatibility('\x00\x00\x00\x01')  # object type: pubkey
         payload += encodeVarint(addressVersionNumber)  # Address version number
         payload += encodeVarint(streamNumber)
         dataToEncrypt = protocol.getBitfield(myAddress)
@@ -570,7 +571,7 @@ class singleWorker(StoppableThread):
             TTL = int(TTL + helper_random.randomrandrange(-300, 300))
             embeddedTime = int(time.time() + TTL)
             payload = pack('>Q', embeddedTime)
-            payload += '\x00\x00\x00\x03'  # object type: broadcast
+            payload += string_compatibility('\x00\x00\x00\x03')  # object type: broadcast
 
             if addressVersionNumber <= 3:
                 payload += encodeVarint(4)  # broadcast version
@@ -1169,7 +1170,7 @@ class singleWorker(StoppableThread):
                     ackdata, toStreamNumber, TTL)
             payload += encodeVarint(len(fullAckPayload))
             payload += fullAckPayload
-            dataToSign = pack('>Q', embeddedTime) + '\x00\x00\x00\x02' + \
+            dataToSign = pack('>Q', embeddedTime) + string_compatibility('\x00\x00\x00\x02') + \
                 encodeVarint(1) + encodeVarint(toStreamNumber) + payload
             signature = highlevelcrypto.sign(dataToSign, privSigningKeyHex)
             payload += encodeVarint(len(signature))
@@ -1197,7 +1198,7 @@ class singleWorker(StoppableThread):
                 continue
 
             encryptedPayload = pack('>Q', embeddedTime)
-            encryptedPayload += '\x00\x00\x00\x02'  # object type: msg
+            encryptedPayload += string_compatibility('\x00\x00\x00\x02')  # object type: msg
             encryptedPayload += encodeVarint(1)  # msg version
             encryptedPayload += encodeVarint(toStreamNumber) + encrypted
             target = 2 ** 64 / (
@@ -1383,7 +1384,7 @@ class singleWorker(StoppableThread):
         TTL = TTL + helper_random.randomrandrange(-300, 300)
         embeddedTime = int(time.time() + TTL)
         payload = pack('>Q', embeddedTime)
-        payload += '\x00\x00\x00\x00'  # object type: getpubkey
+        payload += string_compatibility('\x00\x00\x00\x00')  # object type: getpubkey
         payload += encodeVarint(addressVersionNumber)
         payload += encodeVarint(streamNumber)
         if addressVersionNumber <= 3:
@@ -1465,5 +1466,4 @@ class singleWorker(StoppableThread):
 
         payload = self._doPOWDefaults(
             payload, TTL, log_prefix='(For ack message)', log_time=True)
-
         return protocol.CreatePacket('object', payload)
