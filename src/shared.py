@@ -123,7 +123,7 @@ def decodeWalletImportFormat(WIFstring):
         )
         os._exit(0)  # pylint: disable=protected-access
         # return ""
-    elif privkey[0] == string_compatibility('\x80'):  # checksum passed
+    elif privkey[0:1] == string_compatibility('\x80'):  # checksum passed
         return privkey[1:]
 
     logger.critical(

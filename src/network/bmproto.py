@@ -118,9 +118,9 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
         if not self.invalid:
             try:
                 command = string_decode(self.command)
-                # print('----------------------------')
-                # print(command)
-                # print('----------------------------')
+                print('----------------------------')
+                print(command)
+                print('----------------------------')
                 retval = getattr(
                     self, "bm_command_" + command.lower())()
             except AttributeError:
@@ -349,24 +349,18 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
             logger.error(
                 'Too many items in %sinv message!', 'd' if dandelion else '')
             raise BMProtoExcessiveDataError()
-        import traceback
-        traceback.print_exc()
         # ignore dinv if dandelion turned off
         if dandelion and not state.dandelion:
             return True
-        import traceback
-        traceback.print_exc()
         instance = string_or_bytes_instance()
-        import traceback
-        traceback.print_exc()
         for i in map(instance, items):
             if i in Inventory() and not Dandelion().hasHash(i):
                 continue
+            
             if dandelion and not Dandelion().hasHash(i):
+                print('-------------------')
                 Dandelion().addHash(i, self)
             self.handleReceivedInventory(i)
-        import traceback
-        traceback.print_exc()
         return True
 
     def bm_command_inv(self):
@@ -379,40 +373,63 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
 
     def bm_command_object(self):
         """Incoming object, process it"""
+        print('++++++++++++++++376+++++++++++++++++++++++++++')
         objectOffset = self.payloadOffset
         nonce, expiresTime, objectType, version, streamNumber = \
             self.decode_payload_content("QQIvv")
+        print('++++++++++++++++380+++++++++++++++++++++++++++')
+        
         self.object = BMObject(
             nonce, expiresTime, objectType, version, streamNumber,
             self.payload, self.payloadOffset)
+        print('++++++++++++++++385+++++++++++++++++++++++++++')
+        
         if len(self.payload) - self.payloadOffset > MAX_OBJECT_PAYLOAD_SIZE:
+            print('++++++++++++++++388+++++++++++++++++++++++++++')
             logger.info(
                 'The payload length of this object is too large (%d bytes).'
                 ' Ignoring it.', len(self.payload) - self.payloadOffset)
+            print('++++++++++++++++392+++++++++++++++++++++++++++')
             raise BMProtoExcessiveDataError()
-
+            print('++++++++++++++++394+++++++++++++++++++++++++++')
         try:
+            print('++++++++++++++++396+++++++++++++++++++++++++++')
             self.object.checkProofOfWorkSufficient()
+            print('++++++++++++++++398+++++++++++++++++++++++++++')
             self.object.checkEOLSanity()
+            print('++++++++++++++++400+++++++++++++++++++++++++++')
             self.object.checkAlreadyHave()
+            print('++++++++++++++++402+++++++++++++++++++++++++++') 
         except (BMObjectExpiredError, BMObjectAlreadyHaveError,
                 BMObjectInsufficientPOWError):
+            print('++++++++++++++++405+++++++++++++++++++++++++++')
             BMProto.stopDownloadingObject(self.object.inventoryHash)
+            print('++++++++++++++++407+++++++++++++++++++++++++++')
             raise
         try:
+            print('++++++++++++++++410+++++++++++++++++++++++++++')
             self.object.checkStream()
+            print('++++++++++++++++412+++++++++++++++++++++++++++')
         except BMObjectUnwantedStreamError:
+            print('++++++++++++++++414+++++++++++++++++++++++++++')
             acceptmismatch = BMConfigParser().get(
                 "inventory", "acceptmismatch")
+            print('++++++++++++++++417+++++++++++++++++++++++++++')
             BMProto.stopDownloadingObject(
                 self.object.inventoryHash, acceptmismatch)
+            print('++++++++++++++++420+++++++++++++++++++++++++++')
             if not acceptmismatch:
+                print('++++++++++++++++422+++++++++++++++++++++++++++')
                 raise
         readable = buffer_or_memoryview()
+        print('++++++++++++++++425+++++++++++++++++++++++++++')
         try:
             self.object.checkObjectByType()
+            print('++++++++++++++++428+++++++++++++++++++++++++++')
             objectProcessorQueue.put((
                 self.object.objectType, readable(self.object.data)))
+            print('++++++++++++++++++++432+++++++++++++++++++++++')
+            
         except BMObjectInvalidError:
             BMProto.stopDownloadingObject(self.object.inventoryHash, True)
         else:

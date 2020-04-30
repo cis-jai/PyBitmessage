@@ -206,7 +206,6 @@ def decodeAddress(address):
     currentHash = sha.digest()
     sha = hashlib.new('sha512')
     sha.update(currentHash)
-
     if checksum != sha.digest()[0:4]:
         status = 'checksumfailed'
         return status, 0, 0, ''
