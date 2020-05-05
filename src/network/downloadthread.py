@@ -74,7 +74,10 @@ class DownloadThread(StoppableThread):
                 if not chunkCount:
                     continue
                 payload[0:0] = addresses.encodeVarint(chunkCount)
-                i.append_write_buf(protocol.CreatePacket('getdata', payload))
+                # print('Ping Ping Ping Ping Ping Ping Ping Ping Ping ')
+                # print('i.write_buf - {}'.format(i.write_buf))
+                i.append_write_buf(protocol.CreatePacket('ping'))
+                # print('i.write_buf - {}'.format(i.write_buf))
                 self.logger.debug(
                     '%s:%i Requesting %i objects',
                     i.destination.host, i.destination.port, chunkCount)

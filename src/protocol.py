@@ -158,7 +158,7 @@ def network_group(host):
     else:
         # just host, e.g. for tor
         return host
-    # global network type group for local, private, unroutable
+    # global network type group for local, vate, unroutable
     return network_type
 
 
@@ -350,10 +350,10 @@ def CreatePacket(command, payload=''):
     payload_length = len(payload)
     checksum = hashlib.sha512(payload).digest()[0:4]
 
-    b = bytearray(Header.size + payload_length)
-    Header.pack_into(b, 0, 0xE9BEB4D9, string_compatibility(command), payload_length, checksum)
-    b[Header.size:] = payload
-    return bytes(b)
+    byte = bytearray(Header.size + payload_length)
+    Header.pack_into(byte, 0, 0xE9BEB4D9, string_compatibility(command), payload_length, checksum)
+    byte[Header.size:] = payload
+    return bytes(byte)
 
 
 def assembleVersionMessage(

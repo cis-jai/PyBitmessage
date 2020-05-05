@@ -452,18 +452,19 @@ def loop(timeout=30.0, use_poll=False, map=None, count=None, poller=None):
     # argument which should no longer be used in favor of
     # "poller"
 
-    if poller is None:
-        if use_poll:
-            poller = poll_poller
-        elif hasattr(select, 'epoll'):
-            poller = epoll_poller
-        elif hasattr(select, 'kqueue'):
-            poller = kqueue_poller
-        elif hasattr(select, 'poll'):
-            poller = poll_poller
-        elif hasattr(select, 'select'):
-            poller = select_poller
+    # if poller is None:
+    #     if use_poll:
+    #         poller = poll_poller
+    #     elif hasattr(select, 'epoll'):
+    #         poller = epoll_poller
+    #     elif hasattr(select, 'kqueue'):
+    #         poller = kqueue_poller
+    #     elif hasattr(select, 'poll'):
+    #         poller = poll_poller
+    #     elif hasattr(select, 'select'):
+    #         poller = select_poller
 
+    poller = select_poller
     if timeout == 0:
         deadline = 0
     else:
