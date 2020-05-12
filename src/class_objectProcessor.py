@@ -34,7 +34,7 @@ from helper_ackPayload import genAckPayload
 from helper_sql import SqlBulkExecute, sqlExecute, sqlQuery
 from network import bmproto
 from network.node import Peer
-from pycompatibility.utils import string_compatibility
+from pycompatibility.utils import string_compatibility, memoryview_bytes_intances
 
 # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
 
@@ -70,8 +70,8 @@ class objectProcessor(threading.Thread):
         """Process the objects from `.queues.objectProcessorQueue`"""
         while True:
             objectType, data = queues.objectProcessorQueue.get()
-
-            self.checkackdata(data)
+            # import pdb; pdb.set_trace()
+            self.checkackdata(memoryview_bytes_intances(data))
 
             try:
                 if objectType == protocol.OBJECT_GETPUBKEY:
@@ -225,7 +225,7 @@ class objectProcessor(threading.Thread):
                 'the hash requested in this getpubkey request is: %s',
                 hexlify(requestedHash))
             # if this address hash is one of mine
-            if requestedHash in shared.myAddressesByHash:
+            if memoryview_bytes_intances(requestedHash) in shared.myAddressesByHash:
                 myAddress = shared.myAddressesByHash[requestedHash]
         elif requestedAddressVersionNumber >= 4:
             requestedTag = data[readPosition:readPosition + 32]
@@ -237,7 +237,7 @@ class objectProcessor(threading.Thread):
             logger.debug(
                 'the tag requested in this getpubkey request is: %s',
                 hexlify(requestedTag))
-            if requestedTag in shared.myAddressesByTag:
+            if memoryview_bytes_intances(requestedTag) in shared.myAddressesByTag:
                 myAddress = shared.myAddressesByTag[requestedTag]
 
         if myAddress == '':
@@ -387,9 +387,9 @@ class objectProcessor(threading.Thread):
             signatureLength, signatureLengthLength = decodeVarint(
                 data[readPosition:readPosition + 10])
             readPosition += signatureLengthLength
-            signature = data[readPosition:readPosition + signatureLength]
+            signature = memoryview_bytes_intances(data[readPosition:readPosition + signatureLength])
             if highlevelcrypto.verify(
-                    data[8:endOfSignedDataPosition],
+                   memoryview_bytes_intances(data[8:endOfSignedDataPosition]),
                     signature, hexlify(publicSigningKey)):
                 logger.debug('ECDSA verify passed (within processpubkey)')
             else:
@@ -436,7 +436,7 @@ class objectProcessor(threading.Thread):
                     ' Sanity check failed.')
                 return
 
-            tag = data[readPosition:readPosition + 32]
+            tag = memoryview_bytes_intances(data[readPosition:readPosition + 32])
             if tag not in state.neededPubkeys:
                 logger.info(
                     'We don\'t need this v4 pubkey. We didn\'t ask for it.')
@@ -444,7 +444,7 @@ class objectProcessor(threading.Thread):
 
             # Let us try to decrypt the pubkey
             toAddress, _ = state.neededPubkeys[tag]
-            if protocol.decryptAndCheckPubkeyPayload(data, toAddress) == \
+            if protocol.decryptAndCheckPubkeyPayload(memoryview_bytes_intances(data), toAddress) == \
                     'successful':
                 # At this point we know that we have been waiting on this
                 # pubkey. This function will command the workerThread
@@ -460,6 +460,7 @@ class objectProcessor(threading.Thread):
 
     def processmsg(self, data):
         """Process a message object"""
+        # import pdb; pdb.set_trace()
         messageProcessingStartTime = time.time()
         shared.numberOfMessagesProcessed += 1
         queues.UISignalQueue.put((
@@ -489,9 +490,9 @@ class objectProcessor(threading.Thread):
             try:
                 # continue decryption attempts to avoid timing attacks
                 if initialDecryptionSuccessful:
-                    cryptorObject.decrypt(data[readPosition:])
+                    cryptorObject.decrypt(memoryview_bytes_intances(data[readPosition:]))
                 else:
-                    decryptedData = cryptorObject.decrypt(data[readPosition:])
+                    decryptedData = cryptorObject.decrypt(memoryview_bytes_intances(data[readPosition:]))
                     # This is the RIPE hash of my pubkeys. We need this
                     # below to compare to the destination_ripe included
                     # in the encrypted data.
@@ -592,7 +593,7 @@ class objectProcessor(threading.Thread):
         readPosition += signatureLengthLength
         signature = decryptedData[
             readPosition:readPosition + signatureLength]
-        signedData = data[8:20] + encodeVarint(1) + encodeVarint(
+        signedData = memoryview_bytes_intances(data[8:20]) + encodeVarint(1) + encodeVarint(
             streamNumberAsClaimedByMsg
         ) + decryptedData[:positionOfBottomOfAckData]
 
@@ -870,7 +871,7 @@ class objectProcessor(threading.Thread):
         elif broadcastVersion == 5:
             embeddedTag = data[readPosition:readPosition + 32]
             readPosition += 32
-            if embeddedTag not in shared.MyECSubscriptionCryptorObjects:
+            if memoryview_bytes_intances(embeddedTag) not in shared.MyECSubscriptionCryptorObjects:
                 logger.debug('We\'re not interested in this broadcast.')
                 return
             # We are interested in this broadcast because of its tag.

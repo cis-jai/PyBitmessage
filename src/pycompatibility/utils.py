@@ -39,3 +39,9 @@ def buffer_or_memoryview():
         return buffer
     else:
         return memoryview
+
+def memoryview_bytes_intances(instance):
+    if sys.version_info[0] ==2:
+        return instance
+    else:
+        return bytes(instance)

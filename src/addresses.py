@@ -2,6 +2,7 @@
 Operations with addresses
 """
 # pylint: disable=redefined-outer-name,inconsistent-return-statements
+import sys
 import hashlib
 from binascii import hexlify, unhexlify
 from struct import pack, unpack
@@ -183,7 +184,6 @@ def decodeAddress(address):
     # pylint: disable=too-many-branches
 
     address = str(address).strip()
-
     if address[:3] == 'BM-':
         integer = decodeBase58(address[3:])
     else:
@@ -193,8 +193,11 @@ def decodeAddress(address):
         return status, 0, 0, ''
     # after converting to hex, the string will be prepended
     # with a 0x and appended with a L
-    hexdata = hex(integer)[2:-1]
-
+    if sys.version_info[0] == 2:
+        hexdata = hex(integer)[2:-1]
+    else:
+        hexdata = hex(integer)[2:]
+    
     if len(hexdata) % 2 != 0:
         hexdata = '0' + hexdata
 
@@ -242,13 +245,13 @@ def decodeAddress(address):
             data[bytesUsedByVersionNumber + bytesUsedByStreamNumber:-4]
         if len(embeddedRipeData) == 19:
             return status, addressVersionNumber, streamNumber, \
-                '\x00' + embeddedRipeData
+                string_compatibility('\x00') + embeddedRipeData
         elif len(embeddedRipeData) == 20:
             return status, addressVersionNumber, streamNumber, \
                 embeddedRipeData
         elif len(embeddedRipeData) == 18:
             return status, addressVersionNumber, streamNumber, \
-                '\x00\x00' + embeddedRipeData
+                string_compatibility('\x00\x00') + embeddedRipeData
         elif len(embeddedRipeData) < 18:
             return 'ripetooshort', 0, 0, ''
         elif len(embeddedRipeData) > 20:
@@ -265,7 +268,7 @@ def decodeAddress(address):
             return 'ripetoolong', 0, 0, ''
         elif len(embeddedRipeData) < 4:
             return 'ripetooshort', 0, 0, ''
-        x00string = '\x00' * (20 - len(embeddedRipeData))
+        x00string = string_compatibility('\x00') * (20 - len(embeddedRipeData))
         return status, addressVersionNumber, streamNumber, \
             x00string + embeddedRipeData
 

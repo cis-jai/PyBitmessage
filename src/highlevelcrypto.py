@@ -13,7 +13,7 @@ import pyelliptic
 from bmconfigparser import BMConfigParser
 from pyelliptic import OpenSSL
 from pyelliptic import arithmetic as a
-
+from pycompatibility.utils import string_compatibility
 
 def makeCryptor(privkey):
     """Return a private `.pyelliptic.ECC` instance"""
@@ -34,7 +34,7 @@ def makeCryptor(privkey):
 def hexToPubkey(pubkey):
     """Convert a pubkey from hex to binary"""
     pubkey_raw = a.changebase(pubkey[2:], 16, 256, minlen=64)
-    pubkey_bin = '\x02\xca\x00 ' + pubkey_raw[:32] + '\x00 ' + pubkey_raw[32:]
+    pubkey_bin = string_compatibility('\x02\xca\x00 ') + pubkey_raw[:32] + string_compatibility('\x00 ') + pubkey_raw[32:]
     return pubkey_bin
 
 
