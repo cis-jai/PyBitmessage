@@ -17,6 +17,7 @@ from network.connectionpool import BMConnectionPool
 from network.dandelion import Dandelion
 from queues import invQueue
 from network.threads import StoppableThread
+from pycompatibility.utils import string_compatibility
 
 
 def handleExpiredDandelion(expired):
@@ -98,13 +99,13 @@ class InvThread(StoppableThread):
                         connection.append_write_buf(protocol.CreatePacket(
                             'inv',
                             addresses.encodeVarint(
-                                len(fluffs)) + ''.join(fluffs)))
+                                len(fluffs)) + string_compatibility('').join([x for x in fluffs])))
                     if stems:
                         random.shuffle(stems)
                         connection.append_write_buf(protocol.CreatePacket(
                             'dinv',
                             addresses.encodeVarint(
-                                len(stems)) + ''.join(stems)))
+                                len(stems)) + string_compatibility('').join([x for x in stems])))
 
             invQueue.iterate()
             for _ in range(len(chunk)):
