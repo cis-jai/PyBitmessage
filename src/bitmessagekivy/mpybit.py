@@ -1534,7 +1534,15 @@ class NavigateApp(MDApp):
         for nav_obj in self.root.ids.content_drawer.children[
                 0].children[0].children[0].children:
             nav_obj.active = True if nav_obj.text == 'Inbox' else False
+        self.fileManagerSetting()
         Clock.schedule_once(self.setCurrentAccountData, 0.5)
+
+    def fileManagerSetting(self):
+        """This method is for file manager setting"""
+        if not self.root.ids.content_drawer.ids.file_manager.opacity and \
+            self.root.ids.content_drawer.ids.file_manager.disabled:
+            self.root.ids.content_drawer.ids.file_manager.opacity = 1
+            self.root.ids.content_drawer.ids.file_manager.disabled = False
 
     def setCurrentAccountData(self, dt=0):
         """This method set the current accout data on all the screens"""
@@ -2018,48 +2026,38 @@ class NavigateApp(MDApp):
             ext=['.png', '.jpg']
         )
         self.manager.add_widget(self.file_manager)
-        # self.file_manager.show(os.environ["HOME"])
         if platform == 'android':
-            from android.permissions import request_permissions, Permission
-            request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE])
-
-            # from android.storage import app_storage_path
-            # settings_path = app_storage_path()
-            # print('path1................................', settings_path)
-
-            # from android.storage import primary_external_storage_path
-            # primary_ext_storage = primary_external_storage_path()
-            # print('path1................................', primary_ext_storage)
-
-            # from android.storage import secondary_external_storage_path
-            # secondary_ext_storage = secondary_external_storage_path()
-            # print('path1................................', secondary_ext_storage)
-
-        # from kivy.app import user_data_dir
-        # from os.path import dirname, join
-        # out = join(dirname(user_data_dir), 'DCIM')
-        # DCIM = join('/sdcard', 'DCIM')
-        self.file_manager.show(os.getenv('EXTERNAL_STORAGE') if platform == 'android' else os.environ["HOME"])
-        # self.file_manager.show(os.getenv('EXTERNAL_STORAGE'))
-        self.manager_open = True
-        self.manager.open()
+            from android.permissions import request_permissions, Permission, check_permission
+            if check_permission(Permission.WRITE_EXTERNAL_STORAGE) and check_permission(Permission.READ_EXTERNAL_STORAGE):
+                self.file_manager.show(os.getenv('EXTERNAL_STORAGE'))
+                self.manager_open = True
+                self.manager.open()
+            else:
+                request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE])
+        else:
+            self.file_manager.show('/sdcard')
+            self.manager_open = True
+            self.manager.open()
 
     def select_path(self, path):
         """This method is used to save the select image"""
-        from PIL import Image as PilImage
-        newImg = PilImage.open(path).resize((300, 300))
-        if platform == 'android':
-            android_path = os.path.join(
-                os.environ['ANDROID_PRIVATE'] + '/app/')
-            newImg.save('{1}/images/default_identicon/{0}.png'.format(
-                state.association, android_path))
-        else:
-            if not os.path.exists('./images/default_identicon/'):
-                os.makedirs('./images/default_identicon/')
-            newImg.save('./images/default_identicon/{0}.png'.format(state.association))
-        self.load_selected_Image(state.association)
+        try:
+            from PIL import Image as PilImage
+            newImg = PilImage.open(path).resize((300, 300))
+            if platform == 'android':
+                android_path = os.path.join(
+                    os.environ['ANDROID_PRIVATE'] + '/app/')
+                newImg.save('{1}/images/default_identicon/{0}.png'.format(
+                    state.association, android_path))
+            else:
+                if not os.path.exists('./images/default_identicon/'):
+                    os.makedirs('./images/default_identicon/')
+                newImg.save('./images/default_identicon/{0}.png'.format(state.association))
+            self.load_selected_Image(state.association)
+            toast('Image changed')
+        except Exception:
+            toast('Exit')
         self.exit_manager()
-        toast('Image changed')
 
     def exit_manager(self, *args):
         """Called when the user reaches the root of the directory tree."""

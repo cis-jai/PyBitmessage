@@ -108,7 +108,7 @@ android.minapi = 21
 android.sdk = 20
 
 # (str) Android NDK version to use
-android.ndk = 17c
+# android.ndk = 17c
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 # android.private_storage = True
@@ -161,7 +161,7 @@ android.ndk = 17c
 #android.add_activites = com.example.ExampleActivity
 
 # (str) python-for-android branch to use, defaults to stable
-p4a.branch = master
+# p4a.branch = master
 
 # (str) OUYA Console category. Should be one of GAME or APP
 # If you leave this blank, OUYA support will not be enabled
@@ -207,10 +207,10 @@ android.arch = armeabi-v7a
 #
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
-p4a.source_dir = /home/cis/Music/androidp4a/python-for-android
+# p4a.source_dir = /home/cis/Music/androidp4a/python-for-android
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
-p4a.local_recipes = /home/cis/navjotrepo/PyBitmessage/src/bitmessagekivy/android/python-for-android/recipes/
+p4a.local_recipes = %(source.dir)s/bitmessagekivy/android/python-for-android/recipes/
 
 # (str) Filename to the hook for p4a
 #p4a.hook =
