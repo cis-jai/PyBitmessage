@@ -134,7 +134,6 @@ from semaphores import kivyuisignaler
 
 import state
 from addresses import decodeAddress
-from kivy.uix.modalview import ModalView
 from datetime import datetime
 from kivymd.uix.behaviors.elevation import RectangularElevationBehavior
 from kivymd.uix.bottomsheet import MDCustomBottomSheet
