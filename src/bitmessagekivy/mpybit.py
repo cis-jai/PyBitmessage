@@ -69,7 +69,6 @@ from semaphores import kivyuisignaler
 
 import state
 from addresses import decodeAddress
-from kivy.uix.modalview import ModalView
 from datetime import datetime
 
 if platform != 'android':
