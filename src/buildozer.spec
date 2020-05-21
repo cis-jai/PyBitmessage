@@ -48,7 +48,8 @@ requirements =
 	pillow,
 	bitmsghash,
 	#git+https://github.com/surbhicis/KivyMD-1.git,
-	git+https://github.com/surbhicis/KivyMD-1#egg=kivymd,
+	#git+https://github.com/surbhicis/KivyMD-1#egg=kivymd,
+	git+https://github.com/navjotcis/KivyMD#egg=kivymd,
 	kivy-garden, 
 	qrcode,
 	msgpack

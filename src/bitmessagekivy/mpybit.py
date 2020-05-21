@@ -1625,6 +1625,7 @@ class NavigateApp(MDApp):
     imgstatus = False
     count = 0
     manager_open = False
+    file_manager = None
 
     def build(self):
         """Method builds the widget"""
@@ -1678,7 +1679,7 @@ class NavigateApp(MDApp):
     def fileManagerSetting(self):
         """This method is for file manager setting"""
         if not self.root.ids.content_drawer.ids.file_manager.opacity and \
-            self.root.ids.content_drawer.ids.file_manager.disabled:
+                self.root.ids.content_drawer.ids.file_manager.disabled:
             self.root.ids.content_drawer.ids.file_manager.opacity = 1
             self.root.ids.content_drawer.ids.file_manager.disabled = False
 
@@ -2156,26 +2157,25 @@ class NavigateApp(MDApp):
         """This method open the file manager of local system"""
         from kivymd.uix.filemanager import MDFileManager
 
-        self.manager = ModalView(size_hint=(1, 1), auto_dismiss=False)
-        self.file_manager = MDFileManager(
-            exit_manager=self.exit_manager,
-            select_path=self.select_path,
-            previous=False,
-            ext=['.png', '.jpg']
-        )
-        self.manager.add_widget(self.file_manager)
+        if not self.file_manager:
+            self.file_manager = MDFileManager(
+                exit_manager=self.exit_manager,
+                select_path=self.select_path,
+                ext=['.png', '.jpg']
+            )
+        self.file_manager.previous = False
+        self.file_manager.current_path = '/'
         if platform == 'android':
             from android.permissions import request_permissions, Permission, check_permission
-            if check_permission(Permission.WRITE_EXTERNAL_STORAGE) and check_permission(Permission.READ_EXTERNAL_STORAGE):
+            if check_permission(Permission.WRITE_EXTERNAL_STORAGE) and \
+                    check_permission(Permission.READ_EXTERNAL_STORAGE):
                 self.file_manager.show(os.getenv('EXTERNAL_STORAGE'))
                 self.manager_open = True
-                self.manager.open()
             else:
                 request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE])
         else:
-            self.file_manager.show('/sdcard')
+            self.file_manager.show(os.environ["HOME"])
             self.manager_open = True
-            self.manager.open()
 
     def select_path(self, path):
         """This method is used to save the select image"""
@@ -2199,8 +2199,8 @@ class NavigateApp(MDApp):
 
     def exit_manager(self, *args):
         """Called when the user reaches the root of the directory tree."""
-        self.manager.dismiss()
         self.manager_open = False
+        self.file_manager.close()
 
     def load_selected_Image(self, curerentAddr):
         """This method load the selected image on screen"""
