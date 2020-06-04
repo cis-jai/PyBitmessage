@@ -223,7 +223,7 @@ class Inbox(Screen):
                 text_color=NavigateApp().theme_cls.primary_color)
             meny._txt_right_pad = dp(70)
             meny.add_widget(AvatarSampleWidget(
-                source='./images/text_images/{}.png'.format(
+                source= state.imageDir +'/text_images/{}.png'.format(
                     avatarImageFirstLetter(item['secondary_text'].strip()))))
             meny.bind(on_press=partial(self.inbox_detail, item['msgid']))
             meny.add_widget(AddTimeWidget(item['received']))
@@ -413,7 +413,7 @@ class MyAddress(Screen):
             except Exception:
                 meny.canvas.children[9].rgba = [0, 0, 0, 0] if is_enable == 'true' else [0.5, 0.5, 0.5, 0.5]
             meny.add_widget(AvatarSampleWidget(
-                source='./images/text_images/{}.png'.format(
+                source= state.imageDir + '/text_images/{}.png'.format(
                     avatarImageFirstLetter(item['text'].strip()))))
             meny.bind(on_press=partial(
                 self.myadd_detail, item['secondary_text'], item['text']))
@@ -585,7 +585,7 @@ class AddressBook(Screen):
                 text=item[0], secondary_text=item[1], theme_text_color='Custom',
                 text_color=NavigateApp().theme_cls.primary_color)
             meny.add_widget(AvatarSampleWidget(
-                source='./images/text_images/{}.png'.format(
+                source=state.imageDir + '/text_images/{}.png'.format(
                     avatarImageFirstLetter(item[0].strip()))))
             meny.bind(on_press=partial(
                 self.addBook_detail, item[1], item[0]))
@@ -1129,7 +1129,7 @@ class Sent(Screen):
                 text_color=NavigateApp().theme_cls.primary_color)
             meny._txt_right_pad = dp(70)
             meny.add_widget(AvatarSampleWidget(
-                source='./images/text_images/{}.png'.format(
+                source=state.imageDir + '/text_images/{}.png'.format(
                     avatarImageFirstLetter(item['secondary_text'].strip()))))
             meny.bind(on_press=partial(self.sent_detail, item['ackdata']))
             meny.add_widget(AddTimeWidget(item['senttime']))
@@ -1347,7 +1347,7 @@ class Trash(Screen):
                 theme_text_color='Custom',
                 text_color=NavigateApp().theme_cls.primary_color)
             meny._txt_right_pad = dp(70)
-            img_latter = './images/text_images/{}.png'.format(
+            img_latter =state.imageDir + '/text_images/{}.png'.format(
                 subject[0].upper() if (subject[0].upper() >= 'A' and subject[0].upper() <= 'Z') else '!')
             meny.add_widget(AvatarSampleWidget(source=img_latter))
             meny.add_widget(AddTimeWidget(item[7]))
@@ -1487,6 +1487,8 @@ class NavigateApp(MDApp):
     count = 0
     manager_open = False
     file_manager = None
+    state.imageDir = os.path.join(os.path.abspath(os.path.join(__file__ ,"../../..")),'images', 'kivy')
+    image_path = state.imageDir
 
     def build(self):
         """Method builds the widget"""
@@ -1520,7 +1522,7 @@ class NavigateApp(MDApp):
 
     def getCurrentAccountData(self, text):
         """Get Current Address Account Data"""
-        if os.path.exists('./images/default_identicon/{}.png'.format(text)):
+        if os.path.exists(state.imageDir + '/default_identicon/{}.png'.format(text)):
             self.load_selected_Image(text)
         else:
             self.set_identicon(text)
@@ -1584,20 +1586,20 @@ class NavigateApp(MDApp):
         """Getting Default Account Data"""
         if BMConfigParser().addresses():
             img = identiconGeneration.generate(BMConfigParser().addresses()[0])
-            self.createFolder('./images/default_identicon/')
+            self.createFolder(state.imageDir + '/default_identicon/')
             if platform == 'android':
                 # android_path = os.path.expanduser
                 # ("~/user/0/org.test.bitapp/files/app/")
-                if not os.path.exists('./images/default_identicon/{}.png'.format(
+                if not os.path.exists(state.imageDir + '/default_identicon/{}.png'.format(
                         BMConfigParser().addresses()[0])):
                     android_path = os.path.join(
                         os.environ['ANDROID_PRIVATE'] + '/app/')
-                    img.texture.save('{1}/images/default_identicon/{0}.png'.format(
+                    img.texture.save('{1}/kivy/default_identicon/{0}.png'.format(
                         BMConfigParser().addresses()[0], android_path))
             else:
-                if not os.path.exists('./images/default_identicon/{}.png'.format(
+                if not os.path.exists(state.imageDir + '/default_identicon/{}.png'.format(
                         BMConfigParser().addresses()[0])):
-                    img.texture.save('./images/default_identicon/{}.png'.format(
+                    img.texture.save(state.imageDir + '/default_identicon/{}.png'.format(
                         BMConfigParser().addresses()[0]))
             return BMConfigParser().addresses()[0]
         return 'Select Address'
@@ -1615,17 +1617,17 @@ class NavigateApp(MDApp):
     def get_default_image():
         """Getting default image on address"""
         if BMConfigParser().addresses():
-            return './images/default_identicon/{}.png'.format(
+            return state.imageDir + '/default_identicon/{}.png'.format(
                 BMConfigParser().addresses()[0])
-        return './images/no_identicons.png'
+        return state.imageDir + '/no_identicons.png'
 
     @staticmethod
     def get_default_logo():
         """Getting default logo image"""
         if BMConfigParser().addresses():
-            return './images/default_identicon/{}.png'.format(
+            return state.imageDir + '/default_identicon/{}.png'.format(
                 BMConfigParser().addresses()[0])
-        return './images/drawer_logo1.png'
+        return state.imageDir + '/drawer_logo1.png'
 
     @staticmethod
     def addressexist():
@@ -2046,12 +2048,12 @@ class NavigateApp(MDApp):
             if platform == 'android':
                 android_path = os.path.join(
                     os.environ['ANDROID_PRIVATE'] + '/app/')
-                newImg.save('{1}/images/default_identicon/{0}.png'.format(
+                newImg.save('{1}/kivy/default_identicon/{0}.png'.format(
                     state.association, android_path))
             else:
-                if not os.path.exists('./images/default_identicon/'):
-                    os.makedirs('./images/default_identicon/')
-                newImg.save('./images/default_identicon/{0}.png'.format(state.association))
+                if not os.path.exists(state.imageDir + '/default_identicon/'):
+                    os.makedirs(state.imageDir + '/default_identicon/')
+                newImg.save(state.imageDir + '/default_identicon/{0}.png'.format(state.association))
             self.load_selected_Image(state.association)
             toast('Image changed')
         except Exception:
@@ -2068,7 +2070,7 @@ class NavigateApp(MDApp):
         top_box_obj = self.root.ids.content_drawer.ids.top_box.children[0]
         # spinner_img_obj = self.root.ids.content_drawer.ids.btn.children[1]
         # spinner_img_obj.source = top_box_obj.source ='./images/default_identicon/{0}.png'.format(curerentAddr)
-        top_box_obj.source = './images/default_identicon/{0}.png'.format(curerentAddr)
+        top_box_obj.source = state.imageDir + '/default_identicon/{0}.png'.format(curerentAddr)
         top_box_obj.reload()
         # spinner_img_obj.reload()
 
@@ -2281,8 +2283,8 @@ class MailDetail(Screen):  # pylint: disable=too-many-instance-attributes
         if len(data[0]) == 7:
             self.status = data[0][4]
         self.time_tag = ShowTimeHistoy(data[0][4]) if state.detailPageType == 'inbox' else ShowTimeHistoy(data[0][6])
-        self.avatarImg = './images/avatar.png' if state.detailPageType == 'draft' else (
-            './images/text_images/{0}.png'.format(avatarImageFirstLetter(self.subject.strip())))
+        self.avatarImg = state.imageDir + '/avatar.png' if state.detailPageType == 'draft' else (
+            state.imageDir + '/text_images/{0}.png'.format(avatarImageFirstLetter(self.subject.strip())))
         self.timeinseconds = data[0][4] if state.detailPageType == 'inbox' else data[0][6]
 
     def delete_mail(self):
@@ -2604,7 +2606,7 @@ class Draft(Screen):
                 text_color=NavigateApp().theme_cls.primary_color)
             meny._txt_right_pad = dp(70)
             meny.add_widget(AvatarSampleWidget(
-                source='./images/avatar.png'))
+                source=state.imageDir + '/avatar.png'))
             meny.bind(on_press=partial(
                 self.draft_detail, item['ackdata']))
             meny.add_widget(AddTimeWidget(item['senttime']))
@@ -2807,7 +2809,7 @@ class Allmails(Screen):
                 text_color=NavigateApp().theme_cls.primary_color)
             meny._txt_right_pad = dp(70)
             meny.add_widget(AvatarSampleWidget(
-                source='./images/text_images/{}.png'.format(
+                source= state.imageDir +'/text_images/{}.png'.format(
                     avatarImageFirstLetter(body.strip()))))
             meny.bind(on_press=partial(
                 self.mail_detail, item[5], item[4]))
@@ -3182,7 +3184,7 @@ class ChatList(Screen):
                 text=item[0], secondary_text=item[1], theme_text_color='Custom',
                 text_color=NavigateApp().theme_cls.primary_color)
             meny.add_widget(AvatarSampleWidget(
-                source='./images/text_images/{}.png'.format(
+                source= state.imageDir + '/text_images/{}.png'.format(
                     avatarImageFirstLetter(item[0].strip()))))
             meny.bind(on_release=partial(
                 self.redirect_to_chat, item[0], item[1]))
