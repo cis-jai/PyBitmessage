@@ -43,6 +43,7 @@ from kivy.utils import platform
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.label import MDLabel
+from kivymd.uix.button import MDFlatButton
 from kivymd.uix.list import (
     ILeftBody,
     ILeftBodyTouch,
@@ -456,16 +457,25 @@ class MyAddress(Screen):
             p.set_address(fromaddress, label)
         else:
             width = .8 if platform == 'android' else .55
-            msg_dialog = MDDialog(
-                text='Address is not currently active. Please click on Toggle button to active it.',
-                title='', size_hint=(width, .25), text_button_ok='Ok',
-                events_callback=self.callback_for_menu_items)
-            msg_dialog.open()
+            dialog_box=MDDialog(
+            text='Address is not currently active. Please click on Toggle button to active it.',
+            size_hint=(width, .25),
+            buttons=[
+                MDFlatButton(
+                    text="Ok", on_release=lambda x: callback_for_menu_items("Ok")
+                ),
+            ],)
+            dialog_box.open()
 
-    @staticmethod
-    def callback_for_menu_items(text_item, *arg):
-        """Callback of alert box"""
-        toast(text_item)
+        def callback_for_menu_items(text_item, *arg):
+            """Callback of alert box"""
+            dialog_box.dismiss()
+            toast(text_item)
+
+    # @staticmethod
+    # def callback_for_menu_items(text_item, *arg):
+    #     """Callback of alert box"""
+    #     toast(text_item)
 
     def refresh_callback(self, *args):
         """Method updates the state of application,
@@ -802,16 +812,25 @@ class DropDownWidget(BoxLayout):
     def address_error_message(self, msg):
         """Generates error message"""
         width = .8 if platform == 'android' else .55
-        msg_dialog = MDDialog(
+        dialog_box=MDDialog(
             text=msg,
-            title='', size_hint=(width, .25), text_button_ok='Ok',
-            events_callback=self.callback_for_menu_items)
-        msg_dialog.open()
+            size_hint=(width, .25),
+            buttons=[
+                MDFlatButton(
+                    text="Ok", on_release=lambda x: callback_for_menu_items("Ok")
+                ),
+            ],)
+        dialog_box.open()
 
-    @staticmethod
-    def callback_for_menu_items(text_item, *arg):
-        """Callback of alert box"""
-        toast(text_item)
+        def callback_for_menu_items(text_item, *arg):
+            """Callback of alert box"""
+            dialog_box.dismiss()
+            toast(text_item)
+
+    # @staticmethod
+    # def callback_for_menu_items(text_item, *arg):
+    #     """Callback of alert box"""
+    #     toast(text_item)
 
     def reset_composer(self):
         """Method will reset composer"""
@@ -1400,22 +1419,34 @@ class Trash(Screen):
     def delete_confirmation(self):
         """Show confirmation delete popup"""
         width = .8 if platform == 'android' else .55
-        delete_msg_dialog = MDDialog(
+        dialog_box=MDDialog(
             text='Are you sure you want to delete this'
             ' message permanently from trash?',
-            title='',
             size_hint=(width, .25),
-            text_button_ok='Yes',
-            text_button_cancel='No',
-            events_callback=self.callback_for_delete_msg)
-        delete_msg_dialog.open()
+            buttons=[
+                MDFlatButton(
+                    text="Yes", on_release=lambda x: callback_for_delete_msg("Yes")
+                ),
+                MDFlatButton(
+                    text="No",on_release=lambda x: callback_for_delete_msg("No"),
+                ),
+            ],)
+        dialog_box.open()
 
-    def callback_for_delete_msg(self, text_item, *arg):
-        """Getting the callback of alert box"""
-        if text_item == 'Yes':
-            self.delete_message_from_trash()
-        else:
-            toast(text_item)
+        def callback_for_delete_msg(text_item, *arg):
+            """Getting the callback of alert box"""
+            if text_item == 'Yes':
+                self.delete_message_from_trash()
+            else:
+                toast(text_item)
+            dialog_box.dismiss()
+
+    # def callback_for_delete_msg(self, text_item, *arg):
+    #     """Getting the callback of alert box"""
+    #     if text_item == 'Yes':
+    #         self.delete_message_from_trash()
+    #     else:
+    #         toast(text_item)
 
     def delete_message_from_trash(self):
         """Deleting message from trash"""
@@ -3088,20 +3119,32 @@ class OneLineListTitle(OneLineListItem):
     def copymessageTitle(self, text):
         """this method is for displaying dialog box"""
         width = .8 if platform == 'android' else .55
-        msg_dialog = MDDialog(
+        dialog_box=MDDialog(
             text=text,
-            title='', size_hint=(width, .25),
-            text_button_cancel='Cancel',
-            text_button_ok='Copy',
-            events_callback=self.callback_for_copy_title)
-        msg_dialog.open()
+            size_hint=(width, .25),
+            buttons=[
+                MDFlatButton(
+                    text="Copy", on_release=lambda x: callback_for_copy_title(text)
+                ),
+                MDFlatButton(
+                    text="Cancel",on_release=lambda x: callback_for_copy_title(text),
+                ),
+            ],)
+        dialog_box.open()
 
-    @staticmethod
-    def callback_for_copy_title(text_item, *arg):
-        """Callback of alert box"""
-        if text_item == 'Copy':
-            Clipboard.copy(str(arg[0].text))
-        toast(text_item)
+        def callback_for_copy_title(text_item, *arg):
+            """Callback of alert box"""
+            if text_item == 'Copy':
+                Clipboard.copy()
+            dialog_box.dismiss()
+            toast(text_item)
+
+    # @staticmethod
+    # def callback_for_copy_title(text_item, *arg):
+    #     """Callback of alert box"""
+    #     if text_item == 'Copy':
+    #         Clipboard.copy(str(arg[0].text))
+    #     toast(text_item)
 
 
 class ToAddrBoxlayout(BoxLayout):
