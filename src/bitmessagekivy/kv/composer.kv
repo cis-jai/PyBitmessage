@@ -18,6 +18,9 @@
                     multiline: False
                     required: True
                     helper_text_mode: "on_error"
+                    canvas.before:
+                        Color:
+                            rgba: (0,0,0,1)
 
                 BoxLayout:
                     size_hint_y: None
@@ -65,6 +68,9 @@
                 size_hint_y: None
                 multiline: False
                 helper_text_mode: "on_error"
+                canvas.before:
+                    Color:
+                        rgba: (0,0,0,1)
 
             MyMDTextField:
                 id: body
@@ -74,6 +80,9 @@
                 font_size: '15sp'
                 required: True
                 helper_text_mode: "on_error"
+                canvas.before:
+                    Color:
+                        rgba: (0,0,0,1)
             BoxLayout:
                 spacing:50
 
