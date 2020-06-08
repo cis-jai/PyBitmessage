@@ -85,6 +85,8 @@ KVFILES = [
     'chat_room', 'chat_list'
 ]
 
+ThemeClsColor = [0.12, 0.58, 0.95, 1]
+
 
 def toast(text):
     """Method will display the toast message"""
@@ -221,7 +223,7 @@ class Inbox(Screen):
             meny = TwoLineAvatarIconListItem(
                 text=item['text'], secondary_text=item['secondary_text'],
                 theme_text_color='Custom',
-                text_color=NavigateApp().theme_cls.primary_color)
+                text_color=ThemeClsColor)
             meny._txt_right_pad = dp(70)
             meny.add_widget(AvatarSampleWidget(
                 source= state.imageDir +'/text_images/{}.png'.format(
@@ -407,7 +409,7 @@ class MyAddress(Screen):
             meny = CustomTwoLineAvatarIconListItem(
                 text=item['text'], secondary_text=item['secondary_text'],
                 theme_text_color='Custom' if is_enable == 'true' else 'Primary',
-                text_color=NavigateApp().theme_cls.primary_color,)
+                text_color=ThemeClsColor,)
             meny._txt_right_pad = dp(70)
             try:
                 meny.canvas.children[6].rgba = [0, 0, 0, 0] if is_enable == 'true' else [0.5, 0.5, 0.5, 0.5]
@@ -424,7 +426,7 @@ class MyAddress(Screen):
                     size=[85 if platform == 'android' else 50, 60],
                     text='Active', halign='center',
                     font_style='Body1', theme_text_color='Custom',
-                    text_color=NavigateApp().theme_cls.primary_color
+                    text_color=ThemeClsColor
                 )
                 badge_obj.font_size = '13sp'
                 meny.add_widget(badge_obj)
@@ -593,7 +595,7 @@ class AddressBook(Screen):
         for item in self.queryreturn[start_index:end_index]:
             meny = TwoLineAvatarIconListItem(
                 text=item[0], secondary_text=item[1], theme_text_color='Custom',
-                text_color=NavigateApp().theme_cls.primary_color)
+                text_color=ThemeClsColor)
             meny.add_widget(AvatarSampleWidget(
                 source=state.imageDir + '/text_images/{}.png'.format(
                     avatarImageFirstLetter(item[0].strip()))))
@@ -1145,7 +1147,7 @@ class Sent(Screen):
             meny = TwoLineAvatarIconListItem(
                 text=item['text'], secondary_text=item['secondary_text'],
                 theme_text_color='Custom',
-                text_color=NavigateApp().theme_cls.primary_color)
+                text_color=ThemeClsColor)
             meny._txt_right_pad = dp(70)
             meny.add_widget(AvatarSampleWidget(
                 source=state.imageDir + '/text_images/{}.png'.format(
@@ -1364,7 +1366,7 @@ class Trash(Screen):
                 secondary_text=(item[2][:50] + '........' if len(
                     subject) >= 50 else (subject + ',' + body)[0:50] + '........').replace('\t', '').replace('  ', ''),
                 theme_text_color='Custom',
-                text_color=NavigateApp().theme_cls.primary_color)
+                text_color=ThemeClsColor)
             meny._txt_right_pad = dp(70)
             img_latter =state.imageDir + '/text_images/{}.png'.format(
                 subject[0].upper() if (subject[0].upper() >= 'A' and subject[0].upper() <= 'Z') else '!')
@@ -2634,7 +2636,7 @@ class Draft(Screen):
             meny = TwoLineAvatarIconListItem(
                 text='Draft', secondary_text=item['text'],
                 theme_text_color='Custom',
-                text_color=NavigateApp().theme_cls.primary_color)
+                text_color=ThemeClsColor)
             meny._txt_right_pad = dp(70)
             meny.add_widget(AvatarSampleWidget(
                 source=state.imageDir + '/avatar.png'))
@@ -2837,7 +2839,7 @@ class Allmails(Screen):
                     subject) >= 50 else (
                         subject + ',' + body)[0:50] + '........').replace('\t', '').replace('  ', ''),
                 theme_text_color='Custom',
-                text_color=NavigateApp().theme_cls.primary_color)
+                text_color=ThemeClsColor)
             meny._txt_right_pad = dp(70)
             meny.add_widget(AvatarSampleWidget(
                 source= state.imageDir +'/text_images/{}.png'.format(
@@ -3225,7 +3227,7 @@ class ChatList(Screen):
         for item in self.queryreturn:
             meny = TwoLineAvatarIconListItem(
                 text=item[0], secondary_text=item[1], theme_text_color='Custom',
-                text_color=NavigateApp().theme_cls.primary_color)
+                text_color=ThemeClsColor)
             meny.add_widget(AvatarSampleWidget(
                 source= state.imageDir + '/text_images/{}.png'.format(
                     avatarImageFirstLetter(item[0].strip()))))
