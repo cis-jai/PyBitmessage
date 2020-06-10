@@ -114,7 +114,11 @@ android.minapi = 21
 android.sdk = 20
 
 # (str) Android NDK version to use
-# android.ndk = 17c
+
+#android.ndk = 17c
+
+# (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
+#android.ndk_api = 21
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
@@ -192,12 +196,15 @@ android.sdk = 20
 # (list) Java classes to add as activities to the manifest.
 #android.add_activites = com.example.ExampleActivity
 
+<<<<<<< HEAD
 <<<<<<< 667e2db38c7c29784a0a753d1ca3c14968759eb0
 =======
 # (str) python-for-android branch to use, defaults to stable
 # p4a.branch = master
 
 >>>>>>> Worked on filemanager allow permisino and making spec file dynamic
+=======
+>>>>>>> 14c5984a1ba5312d741cc9cf10265d98a1a11365
 # (str) OUYA Console category. Should be one of GAME or APP
 # If you leave this blank, OUYA support will not be enabled
 #android.ouya.category = GAME
@@ -252,17 +259,23 @@ android.arch = arm64-v8a
 p4a.branch = develop
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
+<<<<<<< HEAD
 <<<<<<< 667e2db38c7c29784a0a753d1ca3c14968759eb0
+=======
+>>>>>>> 14c5984a1ba5312d741cc9cf10265d98a1a11365
 #p4a.source_dir =
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
 p4a.local_recipes = /home/surbhi/Downloads/peter3/PyBitmessage/src/bitmessagekivy/android/python-for-android/recipes/
+<<<<<<< HEAD
 =======
 # p4a.source_dir = /home/cis/Music/androidp4a/python-for-android
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
 p4a.local_recipes = %(source.dir)s/bitmessagekivy/android/python-for-android/recipes/
 >>>>>>> Worked on filemanager allow permisino and making spec file dynamic
+=======
+>>>>>>> 14c5984a1ba5312d741cc9cf10265d98a1a11365
 
 # (str) Filename to the hook for p4a
 #p4a.hook =
