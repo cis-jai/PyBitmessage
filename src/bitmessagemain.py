@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/local/bin/python3.7
 """
 The PyBitmessage startup script
 """
@@ -22,29 +22,57 @@ import time
 import traceback
 from struct import pack
 
-import defaults
-import depends
-import shared
-import shutdown
-import state
+try:
+    import defaults
+    import depends
+    import shared
+    import shutdown
+    import state
+    from bmconfigparser import BMConfigParser
+    # this should go before any threads
+    from debug import logger
+    from helper_startup import (
+        adjustHalfOpenConnectionsLimit,
+        start_proxyconfig
+    )
+    from inventory import Inventory
+    from knownnodes import readKnownNodes
+    # Network objects and threads
+    from network import (
+        BMConnectionPool, Dandelion, AddrThread, AnnounceThread, BMNetworkThread,
+        InvThread, ReceiveQueueThread, DownloadThread, UploadThread
+    )
+    from singleinstance import singleinstance
+    # Synchronous threads
+    from threads import (set_thread_name, printLock,
+        addressGenerator, objectProcessor, singleCleaner, singleWorker, sqlThread)
+    
+except ModuleNotFoundError:
+    from pybitmessage import defaults
+    from pybitmessage import depends
+    from pybitmessage import shared
+    from pybitmessage import shutdown
+    from pybitmessage import state
 
-from bmconfigparser import BMConfigParser
-# this should go before any threads
-from debug import logger
-from helper_startup import (
-    adjustHalfOpenConnectionsLimit, start_proxyconfig)
-from inventory import Inventory
-from knownnodes import readKnownNodes
-# Network objects and threads
-from network import (
-    BMConnectionPool, Dandelion, AddrThread, AnnounceThread, BMNetworkThread,
-    InvThread, ReceiveQueueThread, DownloadThread, UploadThread
-)
-from singleinstance import singleinstance
-# Synchronous threads
-from threads import (
-    set_thread_name, printLock,
-    addressGenerator, objectProcessor, singleCleaner, singleWorker, sqlThread)
+    from pybitmessage.bmconfigparser import BMConfigParser
+    # this should go before any threads
+    from pybitmessage.debug import logger
+    from pybitmessage.helper_startup import (
+        adjustHalfOpenConnectionsLimit,
+        start_proxyconfig
+    )   
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.knownnodes import readKnownNodes
+    # Network objects and threads
+    from pybitmessage.network import (
+        BMConnectionPool, Dandelion, AddrThread, AnnounceThread, BMNetworkThread,
+        InvThread, ReceiveQueueThread, DownloadThread, UploadThread
+    )
+    from pybitmessage.singleinstance import singleinstance
+    # Synchronous threads
+    from pybitmessage.threads import (set_thread_name, printLock,
+        addressGenerator, objectProcessor, singleCleaner, 
+        singleWorker, sqlThread)
 
 app_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(app_dir)
@@ -353,8 +381,9 @@ class Main(object):
                 state.kivyapp = NavigateApp()
                 state.kivyapp.run()
             else:
-                import bitmessageqt
-                bitmessageqt.run()
+                pass
+                # import bitmessageqt
+                # bitmessageqt.run()
         else:
             config.remove_option('bitmessagesettings', 'dontconnect')
 

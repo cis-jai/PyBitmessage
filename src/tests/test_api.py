@@ -5,9 +5,9 @@ Tests using API.
 import base64
 import json
 import time
-import xmlrpclib  # nosec
+import xmlrpc.client as xmlrpclib  # nosec
 
-from test_process import TestProcessProto, TestProcessShutdown
+from .test_process import TestProcessProto, TestProcessShutdown
 
 
 class TestAPIProto(TestProcessProto):
@@ -44,7 +44,7 @@ class TestAPIShutdown(TestAPIProto, TestProcessShutdown):
 class TestAPI(TestAPIProto):
     """Main API test case"""
     _seed = base64.encodestring(
-        'TIGER, tiger, burning bright. In the forests of the night'
+        'TIGER, tiger, burning bright. In the forests of the night'.encode()
     )
 
     def _add_random_address(self, label):

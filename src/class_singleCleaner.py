@@ -23,18 +23,30 @@ import gc
 import os
 from datetime import datetime, timedelta
 import time
-import shared
 
-import knownnodes
-import queues
-import state
-import tr
-from bmconfigparser import BMConfigParser
-from helper_sql import sqlExecute, sqlQuery
-from inventory import Inventory
-from network.connectionpool import BMConnectionPool
-from network.threads import StoppableThread
+try:
+    import shared
+    import knownnodes
+    import queues
+    import state
+    import tr
+    from bmconfigparser import BMConfigParser
+    from helper_sql import sqlExecute, sqlQuery
+    from inventory import Inventory
+    from network.connectionpool import BMConnectionPool
+    from network.threads import StoppableThread
 
+except ModuleNotFoundError:
+    from . import shared
+    from . import knownnodes
+    from . import queues
+    from . import state
+    from . import tr
+    from .bmconfigparser import BMConfigParser
+    from .helper_sql import sqlExecute, sqlQuery
+    from .inventory import Inventory
+    from .network.connectionpool import BMConnectionPool
+    from .network.threads import StoppableThread
 
 #: Equals 4 weeks. You could make this longer if you want
 #: but making it shorter would not be advisable because
@@ -82,9 +94,12 @@ class singleCleaner(StoppableThread):
             # If we are running as a daemon then we are going to fill up the UI
             # queue which will never be handled by a UI. We should clear it to
             # save memory.
-            # FIXME redundant?
-            if state.thisapp.daemon or not state.enableGUI:
-                queues.UISignalQueue.queue.clear()
+            # ..FIXME redundant?
+            try:
+                if shared.thisapp.daemon or not state.enableGUI:
+                    queues.UISignalQueue.queue.clear()
+            except:
+                pass
             if timeWeLastClearedInventoryAndPubkeysTables < \
                     int(time.time()) - 7380:
                 timeWeLastClearedInventoryAndPubkeysTables = int(time.time())

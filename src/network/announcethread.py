@@ -3,13 +3,23 @@ Announce myself (node address)
 """
 import time
 
-import state
-from bmconfigparser import BMConfigParser
-from network.assemble import assemble_addr
-from network.connectionpool import BMConnectionPool
-from network.udp import UDPSocket
-from network.node import Peer
-from network.threads import StoppableThread
+try:
+    import state
+    from bmconfigparser import BMConfigParser
+    from network.assemble import assemble_addr
+    from network.connectionpool import BMConnectionPool
+    from network.udp import UDPSocket
+    from network.node import Peer
+    from network.threads import StoppableThread
+
+except ModuleNotFoundError:
+    from .. import state
+    from ..bmconfigparser import BMConfigParser
+    from .assemble import assemble_addr
+    from .connectionpool import BMConnectionPool
+    from .udp import UDPSocket
+    from .node import Peer
+    from .threads import StoppableThread
 
 
 class AnnounceThread(StoppableThread):

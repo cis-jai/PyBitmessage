@@ -1,12 +1,18 @@
 """
 A thread to handle network concerns
 """
-import network.asyncore_pollchoose as asyncore
-import state
-from network.connectionpool import BMConnectionPool
-from queues import excQueue
-from network.threads import StoppableThread
-
+try:
+    import network.asyncore_pollchoose as asyncore
+    import state
+    from network.connectionpool import BMConnectionPool
+    from queues import excQueue
+    from network.threads import StoppableThread
+except ModuleNotFoundError:
+    from . import asyncore_pollchoose as asyncore
+    from .. import state
+    from .connectionpool import BMConnectionPool
+    from ..queues import excQueue
+    from .threads import StoppableThread
 
 class BMNetworkThread(StoppableThread):
     """Main network thread"""

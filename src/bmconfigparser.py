@@ -7,8 +7,13 @@ import os
 import shutil
 from datetime import datetime
 
-import state
-from singleton import Singleton
+try:    
+    import state
+    from singleton import Singleton  
+except ModuleNotFoundError:
+    from . import  state
+    from .singleton import Singleton
+  
 
 BMConfigDefaults = {
     "bitmessagesettings": {

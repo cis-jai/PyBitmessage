@@ -1,3 +1,11 @@
 python_prctl
 psutil
 pycrypto
+qrcode
+Fabric3
+fabric-virtualenv
+httplib2
+urllib3
+pythondialog
+stem
+Pillow

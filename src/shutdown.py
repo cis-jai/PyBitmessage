@@ -4,15 +4,27 @@ import queue as Queue
 import threading
 import time
 
-import state
-from debug import logger
-from helper_sql import sqlQuery, sqlStoredProcedure
-from inventory import Inventory
-from knownnodes import saveKnownNodes
-from network import StoppableThread
-from queues import (
-    addressGeneratorQueue, objectProcessorQueue, UISignalQueue, workerQueue)
 
+try:
+    import shared
+    import state
+    from debug import logger
+    from helper_sql import sqlQuery, sqlStoredProcedure
+    from inventory import Inventory
+    from knownnodes import saveKnownNodes
+    from network import StoppableThread
+    from queues import (
+        addressGeneratorQueue, objectProcessorQueue, UISignalQueue, workerQueue)
+except ModuleNotFoundError:
+    from . import shared
+    from . import state
+    from .debug import logger
+    from .helper_sql import sqlQuery, sqlStoredProcedure
+    from .inventory import Inventory
+    from .knownnodes import saveKnownNodes
+    from .network import StoppableThread
+    from .queues import (
+        addressGeneratorQueue, objectProcessorQueue, UISignalQueue, workerQueue)
 
 def doCleanShutdown():
     """
@@ -78,12 +90,13 @@ def doCleanShutdown():
                 queue.task_done()
             except Queue.Empty:
                 break
-
-    if state.thisapp.daemon or not state.enableGUI:
-        logger.info('Clean shutdown complete.')
-        state.thisapp.cleanup()
-        os._exit(0)  # pylint: disable=protected-access
-    else:
+    
+    try:
+        if shared.thisapp.daemon or not state.enableGUI:  # ..fixme:: redundant?
+            logger.info('Clean shutdown complete.')
+            shared.thisapp.cleanup()
+            os._exit(0)  # pylint: disable=protected-access
+    except AttributeError:
         logger.info('Core shutdown complete.')
     for thread in threading.enumerate():
         logger.debug('Thread %s still running', thread.name)

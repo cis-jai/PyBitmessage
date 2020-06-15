@@ -7,9 +7,10 @@ which is under the Python Software Foundation License version 2
 import atexit
 import os
 import sys
-
-import state
-
+try:
+    import state
+except ModuleNotFoundError:
+    from . import state
 try:
     import fcntl  # @UnresolvedImport
 except ImportError:

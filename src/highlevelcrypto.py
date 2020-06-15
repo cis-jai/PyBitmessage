@@ -8,12 +8,17 @@ High level cryptographic functions based on `.pyelliptic` OpenSSL bindings.
 """
 
 from binascii import hexlify
-
-import pyelliptic
-from bmconfigparser import BMConfigParser
-from pyelliptic import OpenSSL
-from pyelliptic import arithmetic as a
-
+try:
+    import pyelliptic
+    from bmconfigparser import BMConfigParser
+    from pyelliptic import OpenSSL
+    from pyelliptic import arithmetic as a
+except ModuleNotFoundError:
+    from . import pyelliptic
+    from .bmconfigparser import BMConfigParser
+    from .pyelliptic import OpenSSL
+    from .pyelliptic import arithmetic as a
+    
 
 def makeCryptor(privkey):
     """Return a private `.pyelliptic.ECC` instance"""

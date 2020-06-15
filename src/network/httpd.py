@@ -4,9 +4,10 @@ src/network/httpd.py
 """
 import asyncore
 import socket
-
-from .tls import TLSHandshake
-
+try:
+    from .tls import TLSDispatcher
+except ModuleNotFoundError:
+    from ..network.tls import TLSDispatcher
 
 class HTTPRequestHandler(asyncore.dispatcher):
     """Handling HTTP request"""
@@ -67,13 +68,13 @@ class HTTPRequestHandler(asyncore.dispatcher):
             self.close()
 
 
-class HTTPSRequestHandler(HTTPRequestHandler, TLSHandshake):
+class HTTPSRequestHandler(HTTPRequestHandler, TLSDispatcher):
     """Handling HTTPS request"""
     def __init__(self, sock):
         if not hasattr(self, '_map'):
             asyncore.dispatcher.__init__(self, sock)        # pylint: disable=non-parent-init-called
         # self.tlsDone = False
-        TLSHandshake.__init__(
+        TLSDispatcher.__init__(
             self,
             sock=sock,
             certfile='/home/shurdeek/src/PyBitmessage/src/sslkeys/cert.pem',
@@ -82,35 +83,35 @@ class HTTPSRequestHandler(HTTPRequestHandler, TLSHandshake):
         HTTPRequestHandler.__init__(self, sock)
 
     def handle_connect(self):
-        TLSHandshake.handle_connect(self)
+        TLSDispatcher.handle_connect(self)
 
     def handle_close(self):
         if self.tlsDone:
             HTTPRequestHandler.close(self)
         else:
-            TLSHandshake.close(self)
+            TLSDispatcher.close(self)
 
     def readable(self):
         if self.tlsDone:
             return HTTPRequestHandler.readable(self)
-        return TLSHandshake.readable(self)
+        return TLSDispatcher.readable(self)
 
     def handle_read(self):
         if self.tlsDone:
             HTTPRequestHandler.handle_read(self)
         else:
-            TLSHandshake.handle_read(self)
+            TLSDispatcher.handle_read(self)
 
     def writable(self):
         if self.tlsDone:
             return HTTPRequestHandler.writable(self)
-        return TLSHandshake.writable(self)
+        return TLSDispatcher.writable(self)
 
     def handle_write(self):
         if self.tlsDone:
             HTTPRequestHandler.handle_write(self)
         else:
-            TLSHandshake.handle_write(self)
+            TLSDispatcher.handle_write(self)
 
 
 class HTTPServer(asyncore.dispatcher):

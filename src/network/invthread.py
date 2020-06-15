@@ -4,15 +4,22 @@ Thread to send inv annoucements
 import queue as Queue
 import random
 from time import time
-
-import addresses
-import protocol
-import state
-from network.connectionpool import BMConnectionPool
-from network.dandelion import Dandelion
-from queues import invQueue
-from network.threads import StoppableThread
-
+try:
+    import addresses
+    import protocol
+    import state
+    from network.connectionpool import BMConnectionPool
+    from network.dandelion import Dandelion
+    from queues import invQueue
+    from network.threads import StoppableThread
+except ModuleNotFoundError:
+    from .. import addresses
+    from .. import protocol
+    from .. import state
+    from .connectionpool import BMConnectionPool
+    from .dandelion import Dandelion
+    from ..queues import invQueue
+    from .threads import StoppableThread
 
 def handleExpiredDandelion(expired):
     """For expired dandelion objects, mark all remotes as not having

@@ -7,10 +7,16 @@ from random import choice, expovariate, sample
 from threading import RLock
 from time import time
 
-from network import connectionpool
-import state
-from queues import invQueue
-from singleton import Singleton
+try:
+    from network import connectionpool
+    import state
+    from queues import invQueue
+    from singleton import Singleton
+except ModuleNotFoundError:
+    from . import connectionpool
+    from .. import state
+    from ..queues import invQueue
+    from ..singleton import Singleton
 
 # randomise routes after 600 seconds
 REASSIGN_INTERVAL = 600

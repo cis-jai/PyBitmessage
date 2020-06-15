@@ -8,28 +8,53 @@ import random
 import socket
 import time
 
-import addresses
-import network.asyncore_pollchoose as asyncore
-from network import connectionpool
-import helper_random
-import knownnodes
-import protocol
-import state
-from bmconfigparser import BMConfigParser
-from helper_random import randomBytes
-from inventory import Inventory
-from network.advanceddispatcher import AdvancedDispatcher
-from network.assemble import assemble_addr
-from network.bmproto import BMProto
-from network.constants import MAX_OBJECT_COUNT
-from network.dandelion import Dandelion
-from network.objectracker import ObjectTracker
-from network.socks4a import Socks4aConnection
-from network.socks5 import Socks5Connection
-from network.tls import TLSDispatcher
-from .node import Peer
-from queues import UISignalQueue, invQueue, receiveDataQueue
-# pylint: disable=logging-format-interpolation
+try:
+    import addresses
+    import network.asyncore_pollchoose as asyncore
+    from network import connectionpool
+    import helper_random
+    import knownnodes
+    import protocol
+    import shared
+    import state
+    from bmconfigparser import BMConfigParser
+    from helper_random import randomBytes
+    from inventory import Inventory
+    from network.advanceddispatcher import AdvancedDispatcher
+    from network.assemble import assemble_addr
+    from network.bmproto import BMProto
+    from network.constants import MAX_OBJECT_COUNT
+    from network.dandelion import Dandelion
+    from network.objectracker import ObjectTracker
+    from network.socks4a import Socks4aConnection
+    from network.socks5 import Socks5Connection
+    from network.tls import TLSDispatcher
+    from .node import Peer
+    from queues import UISignalQueue, invQueue, receiveDataQueue
+except ModuleNotFoundError:
+    from .. import addresses
+    from . import asyncore_pollchoose as asyncore
+    from . import connectionpool
+    from .. import helper_random
+    from .. import knownnodes
+    from .. import protocol
+    from .. import shared
+    from .. import state
+    from ..bmconfigparser import BMConfigParser
+    from ..helper_random import randomBytes
+    from ..inventory import Inventory
+    from .advanceddispatcher import AdvancedDispatcher
+    from .assemble import assemble_addr
+    from .bmproto import BMProto
+    from .constants import MAX_OBJECT_COUNT
+    from .dandelion import Dandelion
+    from .objectracker import ObjectTracker
+    from .socks4a import Socks4aConnection
+    from .socks5 import Socks5Connection
+    from .tls import TLSDispatcher
+    from .node import Peer
+    from ..queues import UISignalQueue, invQueue, receiveDataQueue
+    # pylint: disable=logging-format-interpolation
 
 logger = logging.getLogger('default')
 

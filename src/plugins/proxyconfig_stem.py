@@ -15,7 +15,6 @@ import logging
 import os
 import random  # noseq
 import tempfile
-
 import stem
 import stem.control
 import stem.process

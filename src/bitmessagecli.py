@@ -21,10 +21,12 @@ import os
 import socket
 import sys
 import time
-import xmlrpclib
+import xmlrpc.client as xmlrpclib
 
-from bmconfigparser import BMConfigParser
-
+try:
+    from bmconfigparser import BMConfigParser
+except:
+    from .bmconfigparser import BMConfigParser
 
 api = ''
 keysName = 'keys.dat'

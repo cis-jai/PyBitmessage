@@ -5,12 +5,18 @@ import errno
 import queue as Queue
 import socket
 
-import state
-from network.advanceddispatcher import UnknownStateError
-from network.connectionpool import BMConnectionPool
-from queues import receiveDataQueue
-from network.threads import StoppableThread
-
+try:
+    import state
+    from network.advanceddispatcher import UnknownStateError
+    from network.connectionpool import BMConnectionPool
+    from queues import receiveDataQueue
+    from network.threads import StoppableThread
+except ModuleNotFoundError:
+    from .. import state
+    from .advanceddispatcher import UnknownStateError
+    from .connectionpool import BMConnectionPool
+    from ..queues import receiveDataQueue
+    from .threads import StoppableThread
 
 class ReceiveQueueThread(StoppableThread):
     """This thread processes data received from the network

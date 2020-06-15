@@ -5,9 +5,12 @@ import sqlite3
 import time
 from threading import RLock
 
-
-from helper_sql import sqlQuery, SqlBulkExecute, sqlExecute
-from storage.storage import InventoryStorage, InventoryItem
+try:
+    from helper_sql import sqlQuery, SqlBulkExecute, sqlExecute
+    from storage.storage import InventoryStorage, InventoryItem
+except ModuleNotFoundError:
+    from ..helper_sql import sqlQuery, SqlBulkExecute, sqlExecute
+    from ..storage.storage import InventoryStorage, InventoryItem
 
 
 class SqliteInventory(InventoryStorage):  # pylint: disable=too-many-ancestors

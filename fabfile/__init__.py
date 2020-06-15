@@ -14,7 +14,6 @@ For help on fabric itself:
 
 For more help on a particular command
 """
-
 from fabric.api import env
 
 from fabfile.tasks import code_quality, build_docs, push_docs, clean, test

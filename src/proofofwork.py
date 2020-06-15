@@ -11,16 +11,31 @@ import time
 from struct import pack, unpack
 from subprocess import call
 
-import openclpow
-import paths
-import queues
-import state
-import tr
-from bmconfigparser import BMConfigParser
-from debug import logger
-from kivy.utils import platform
+try:
+    import openclpow
+    import paths
+    import queues
+    import state
+    import tr
+    from bmconfigparser import BMConfigParser
+    from debug import logger
 
-
+except ModuleNotFoundError:
+    try:
+        from . import openclpow
+        from . import paths
+        from . import queues
+        from . import state
+        from . import tr
+        from .bmconfigparser import BMConfigParser
+        from .debug import logger
+    except ImportError:
+        import openclpow
+try:        
+    from kivy.utils import platform
+except:
+    platform = ''
+        
 bitmsglib = 'bitmsghash.so'
 bmpow = None
 

@@ -3,10 +3,14 @@ Network statistics
 """
 import time
 
-from network import asyncore_pollchoose as asyncore
-from network.connectionpool import BMConnectionPool
-from network.objectracker import missingObjects
-
+try:
+    from network import asyncore_pollchoose as asyncore
+    from network.connectionpool import BMConnectionPool
+    from network.objectracker import missingObjects
+except ModuleNotFoundError:
+    from . import asyncore_pollchoose as asyncore
+    from .connectionpool import BMConnectionPool
+    from .objectracker import missingObjects
 
 lastReceivedTimestamp = time.time()
 lastReceivedBytes = 0

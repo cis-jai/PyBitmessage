@@ -14,17 +14,41 @@ import stat
 import subprocess
 import sys
 from binascii import hexlify
-from pyelliptic import arithmetic
-from kivy.utils import platform
 
 # Project imports.
-import highlevelcrypto
-import state
-from addresses import decodeAddress, encodeVarint
-from bmconfigparser import BMConfigParser
-from debug import logger
-from helper_sql import sqlQuery
 # pylint: disable=logging-format-interpolation
+try:
+    from kivy.utils import platform
+except:
+    platform = ''
+try:
+    import state
+    from pyelliptic import arithmetic
+    from bmconfigparser import BMConfigParser
+    from addresses import decodeAddress, encodeVarint
+    from debug import logger
+    import highlevelcrypto
+    from helper_sql import sqlQuery
+except ModuleNotFoundError:
+    try:
+        from . import state
+        from .bmconfigparser import BMConfigParser
+        from .addresses import decodeAddress, encodeVarint
+        from .debug import logger
+        from . import highlevelcrypto
+        from .helper_sql import sqlQuery
+        platform = ''
+        from .pyelliptic import arithmetic
+    except ImportError:
+        import state
+        from bmconfigparser import BMConfigParser
+        from pyelliptic import arithmetic
+        from bmconfigparser import BMConfigParser
+        from addresses import decodeAddress, encodeVarint
+        from debug import logger
+        import highlevelcrypto
+        from helper_sql import sqlQuery
+       
 
 myECCryptorObjects = {}
 MyECSubscriptionCryptorObjects = {}
@@ -105,7 +129,7 @@ def decodeWalletImportFormat(WIFstring):
 
 def reloadMyAddressHashes():
     """Reload keys for user's addresses from the config file"""
-    logger.debug('reloading keys from keys.dat file')
+    # logger.debug('reloading keys from keys.dat file')
 
     myECCryptorObjects.clear()
     myAddressesByHash.clear()

@@ -5,8 +5,11 @@ SOCKS4a proxy module
 import socket
 import struct
 
-from network.proxy import Proxy, ProxyError, GeneralProxyError
-
+try:
+    from network.proxy import Proxy, ProxyError, GeneralProxyError
+except ModuleNotFoundError:
+    from .proxy import Proxy, ProxyError, GeneralProxyError
+    
 
 class Socks4aError(ProxyError):
     """SOCKS4a error base class"""

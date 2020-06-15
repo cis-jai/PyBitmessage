@@ -1,12 +1,18 @@
 # pylint: disable=redefined-outer-name, too-many-ancestors, missing-docstring
 import socket
 
-from advanceddispatcher import AdvancedDispatcher
-import asyncore_pollchoose as asyncore
-from network.proxy import ProxyError
-from socks5 import Socks5Connection, Socks5Resolver
-from socks4a import Socks4aConnection, Socks4aResolver
-
+try:
+    from advanceddispatcher import AdvancedDispatcher
+    import asyncore_pollchoose as asyncore
+    from network.proxy import ProxyError
+    from socks5 import Socks5Connection, Socks5Resolver
+    from socks4a import Socks4aConnection, Socks4aResolver
+except ModuleNotFoundError:
+    from .advanceddispatcher import AdvancedDispatcher
+    from . import asyncore_pollchoose as asyncore
+    from .proxy import ProxyError
+    from .socks5 import Socks5Connection, Socks5Resolver
+    from .socks4a import Socks4aConnection, Socks4aResolver
 
 class HttpError(ProxyError):
     pass

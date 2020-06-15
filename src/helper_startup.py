@@ -9,15 +9,18 @@ import platform
 import sys
 import time
 from distutils.version import StrictVersion
-
-import defaults
-import helper_random
-import paths
-import state
-from bmconfigparser import BMConfigParser
-
 try:
-    from plugins.plugin import get_plugin
+    import defaults
+    import helper_random
+    import paths
+    import state
+    from bmconfigparser import BMConfigParser
+except ModuleNotFoundError:
+    from . import defaults
+    from . import helper_random ,paths, state
+    from .bmconfigparser import BMConfigParser
+try:
+    from .plugins.plugin import get_plugin
 except ImportError:
     get_plugin = None
 

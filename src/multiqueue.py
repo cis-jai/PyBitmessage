@@ -6,8 +6,10 @@ Elements are added into a random subqueue, and retrieval rotates
 import queue as Queue
 from collections import deque
 
-import helper_random
-
+try:
+    import helper_random
+except ModuleNotFoundError:
+    from . import helper_random
 
 class MultiQueue(Queue.Queue):
     """A base queue class"""

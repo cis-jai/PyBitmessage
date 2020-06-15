@@ -3,10 +3,13 @@ Calculates bitcoin and testnet address from pubkey
 """
 
 import hashlib
-
-from debug import logger
-from pyelliptic import arithmetic
-
+try:
+    from debug import logger
+    from pyelliptic import arithmetic
+except ModuleNotFoundError:
+    from .debug import logger
+    from .pyelliptic import arithmetic
+    
 
 def calculateBitcoinAddressFromPubkey(pubkey):
     """Calculate bitcoin address from given pubkey (65 bytes long hex string)"""

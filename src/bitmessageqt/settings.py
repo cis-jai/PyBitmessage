@@ -23,7 +23,41 @@ from helper_startup import start_proxyconfig
 from network.asyncore_pollchoose import set_rates
 from tr import _translate
 
-
+try:
+    import debug
+    import defaults
+    import knownnodes
+    import namecoin
+    import openclpow
+    import paths
+    import queues
+    import shared
+    import state
+    import tempfile
+    import widgets
+    from bmconfigparser import BMConfigParser
+    from helper_sql import sqlExecute, sqlStoredProcedure
+    from helper_startup import start_proxyconfig
+    from network.asyncore_pollchoose import set_rates
+    from tr import _translate
+except:
+    from .. import debug
+    from .. import defaults
+    from .. import knownnodes
+    from .. import namecoin
+    from .. import openclpow
+    from .. import paths
+    from .. import queues
+    from .. import shared
+    from .. import state
+    # from .. import tempfile
+    # import widgets
+    from ..bmconfigparser import BMConfigParser
+    from ..helper_sql import sqlExecute, sqlStoredProcedure
+    from ..helper_startup import start_proxyconfig
+    from ..network.asyncore_pollchoose import set_rates
+    from ..tr import _translate
+    
 def getSOCKSProxyType(config):
     """Get user socksproxytype setting from *config*"""
     try:

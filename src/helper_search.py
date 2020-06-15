@@ -3,6 +3,16 @@ Additional SQL helper for searching messages.
 Used by :mod:`.bitmessageqt`.
 """
 
+
+try:
+    from helper_sql import sqlQuery
+except ModuleNotFoundError:
+    from .helper_sql import sqlQuery
+try:
+    from PyQt4 import QtGui
+    haveQt = True
+except ImportError:
+    haveQt = False
 # pylint: disable=too-many-arguments
 from helper_sql import sqlQuery
 from tr import _translate

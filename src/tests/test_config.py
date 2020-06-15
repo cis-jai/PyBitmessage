@@ -5,13 +5,12 @@ Various tests for config
 import os
 import unittest
 
-from pybitmessage.bmconfigparser import BMConfigParser
-from test_process import TestProcessProto
+from ..bmconfigparser import BMConfigParser
+from .test_process import TestProcessProto
 
 
 class TestConfig(unittest.TestCase):
     """A test case for bmconfigparser"""
-
     def test_safeGet(self):
         """safeGet retuns provided default for nonexistent option or None"""
         self.assertIs(

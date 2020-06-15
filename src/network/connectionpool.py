@@ -7,20 +7,35 @@ import re
 import socket
 import sys
 import time
+try:
+    import network.asyncore_pollchoose as asyncore
+    import helper_random
+    import knownnodes
+    import protocol
+    import state
+    from bmconfigparser import BMConfigParser
+    from network.connectionchooser import chooseConnection
+    from network.proxy import Proxy
 
-import network.asyncore_pollchoose as asyncore
-import helper_random
-import knownnodes
-import protocol
-import state
-from bmconfigparser import BMConfigParser
-from network.connectionchooser import chooseConnection
-from network.proxy import Proxy
+    from network.tcp import (
+        TCPServer, Socks5BMConnection, Socks4aBMConnection, TCPConnection, bootstrap)
+    from network.udp import UDPSocket
+    from singleton import Singleton
+except ModuleNotFoundError:
+    from . import asyncore_pollchoose as asyncore
+    from .. import helper_random
+    from .. import knownnodes
+    from .. import protocol
+    from .. import state
+    from ..bmconfigparser import BMConfigParser
+    from .connectionchooser import chooseConnection
+    from .proxy import Proxy
 
-from network.tcp import (
-    TCPServer, Socks5BMConnection, Socks4aBMConnection, TCPConnection, bootstrap)
-from network.udp import UDPSocket
-from singleton import Singleton
+    from .tcp import (
+        TCPServer, Socks5BMConnection, Socks4aBMConnection, TCPConnection, bootstrap)
+    from .udp import UDPSocket
+    from ..singleton import Singleton
+    
 from .node import Peer
 
 logger = logging.getLogger('default')

@@ -1,8 +1,8 @@
 # pylint: disable=missing-docstring
 import asyncore
 
-from .http import HTTPClient
-from .tls import TLSHandshake
+from .http import HttpConnection
+from .tls import TLSDispatcher
 """
 self.sslSock = ssl.wrap_socket(
     self.sock,
@@ -15,14 +15,14 @@ self.sslSock = ssl.wrap_socket(
 """
 
 
-class HTTPSClient(HTTPClient, TLSHandshake):
+class HTTPSClient(HttpConnection, TLSDispatcher):
     def __init__(self, host, path):
         # pylint: disable=non-parent-init-called
         if not hasattr(self, '_map'):
             asyncore.dispatcher.__init__(self)
         self.tlsDone = False
         """
-        TLSHandshake.__init__(
+        TLSDispatcher.__init__(
             self,
             address=(host, 443),
             certfile='/home/shurdeek/src/PyBitmessage/sslsrc/keys/cert.pem',
@@ -30,41 +30,41 @@ class HTTPSClient(HTTPClient, TLSHandshake):
             server_side=False,
             ciphers='AECDH-AES256-SHA')
         """
-        HTTPClient.__init__(self, host, path, connect=False)
-        TLSHandshake.__init__(self, address=(host, 443), server_side=False)
+        HttpConnection.__init__(self, host, path, connect=False)
+        TLSDispatcher.__init__(self, address=(host, 443), server_side=False)
 
     def handle_connect(self):
-        TLSHandshake.handle_connect(self)
+        TLSDispatcher.handle_connect(self)
 
     def handle_close(self):
         if self.tlsDone:
-            HTTPClient.close(self)
+            HttpConnection.close(self)
         else:
-            TLSHandshake.close(self)
+            TLSDispatcher.close(self)
 
     def readable(self):
         if self.tlsDone:
-            return HTTPClient.readable(self)
+            return HttpConnection.readable(self)
         else:
-            return TLSHandshake.readable(self)
+            return TLSDispatcher.readable(self)
 
     def handle_read(self):
         if self.tlsDone:
-            HTTPClient.handle_read(self)
+            HttpConnection.handle_read(self)
         else:
-            TLSHandshake.handle_read(self)
+            TLSDispatcher.handle_read(self)
 
     def writable(self):
         if self.tlsDone:
-            return HTTPClient.writable(self)
+            return HttpConnection.writable(self)
         else:
-            return TLSHandshake.writable(self)
+            return TLSDispatcher.writable(self)
 
     def handle_write(self):
         if self.tlsDone:
-            HTTPClient.handle_write(self)
+            HttpConnection.handle_write(self)
         else:
-            TLSHandshake.handle_write(self)
+            TLSDispatcher.handle_write(self)
 
 
 if __name__ == "__main__":

@@ -3,10 +3,14 @@ Module for tracking objects
 """
 import time
 from threading import RLock
-
-import network.connectionpool
-from network.dandelion import Dandelion
-from network.randomtrackingdict import RandomTrackingDict
+try:
+    import network.connectionpool
+    from network.dandelion import Dandelion
+    from network.randomtrackingdict import RandomTrackingDict
+except:
+    from . import connectionpool
+    from .dandelion import Dandelion
+    from .randomtrackingdict import RandomTrackingDict
 
 haveBloom = False
 

@@ -12,14 +12,22 @@ import threading
 import time
 from email.header import decode_header
 from email.parser import Parser
-
-import queues
-from addresses import decodeAddress
-from bmconfigparser import BMConfigParser
-from helper_ackPayload import genAckPayload
-from helper_sql import sqlExecute
-from network.threads import StoppableThread
-from version import softwareVersion
+try:
+    import queues
+    from addresses import decodeAddress
+    from bmconfigparser import BMConfigParser
+    from helper_ackPayload import genAckPayload
+    from helper_sql import sqlExecute
+    from network.threads import StoppableThread
+    from version import softwareVersion
+except ModuleNotFoundError:
+    from . import queues
+    from .addresses import decodeAddress
+    from .bmconfigparser import BMConfigParser
+    from .helper_ackPayload import genAckPayload
+    from .helper_sql import sqlExecute
+    from .network.threads import StoppableThread
+    from .version import softwareVersion
 
 SMTPDOMAIN = "bmaddr.lan"
 LISTENPORT = 8425

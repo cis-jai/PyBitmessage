@@ -4,24 +4,35 @@ Reference: http://mattscodecave.com/posts/using-python-and-upnp-to-forward-a-por
 """
 # pylint: disable=too-many-statements,too-many-branches,protected-access,no-self-use
 
-import httplib
+import httplib2
 import socket
 import time
-import urllib2
+import urllib3
 from random import randint
-from urlparse import urlparse
+import urllib.parse as urlparse
 from xml.dom.minidom import Document, parseString
 
-import knownnodes
-import queues
-import state
-import tr
-from bmconfigparser import BMConfigParser
-from debug import logger
-from network.connectionpool import BMConnectionPool
-from network.node import Peer
-from network.threads import StoppableThread
-
+try:
+    import knownnodes
+    import queues
+    import state
+    import tr
+    from bmconfigparser import BMConfigParser
+    from debug import logger
+    from network.connectionpool import BMConnectionPool
+    from network.node import Peer
+    from network.threads import StoppableThread
+except ModuleNotFoundError:
+    from . import knownnodes
+    from . import queues
+    from . import state
+    from . import tr
+    from .bmconfigparser import BMConfigParser
+    from .debug import logger
+    from .network.connectionpool import BMConnectionPool
+    from .network.node import Peer
+    from .network.threads import StoppableThread
+    
 
 def createRequestXML(service, action, arguments=None):
     """Router UPnP requests are XML formatted"""
@@ -169,7 +180,7 @@ class Router:  # pylint: disable=old-style-class
 
     def soapRequest(self, service, action, arguments=None):
         """Make a request to a router"""
-        conn = httplib.HTTPConnection(self.routerPath.hostname, self.routerPath.port)
+        conn = httplib2.HTTPConnection(self.routerPath.hostname, self.routerPath.port)
         conn.request(
             'POST',
             self.path,

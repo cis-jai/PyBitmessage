@@ -4,18 +4,25 @@ Namecoin queries
 # pylint: disable=too-many-branches,protected-access
 
 import base64
-import httplib
+import httplib2
 import json
 import os
 import socket
 import sys
 
-import defaults
-import tr  # translate
-from addresses import decodeAddress
-from bmconfigparser import BMConfigParser
-from debug import logger
-
+try:
+    import defaults
+    import tr  # translate
+    from addresses import decodeAddress
+    from bmconfigparser import BMConfigParser
+    from debug import logger
+except ModuleNotFoundError:
+    from . import defaults
+    from . import tr  # translate
+    from .addresses import decodeAddress
+    from .bmconfigparser import BMConfigParser
+    from .debug import logger
+    
 
 configSection = "bitmessagesettings"
 

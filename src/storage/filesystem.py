@@ -7,9 +7,12 @@ from binascii import hexlify, unhexlify
 from os import listdir, makedirs, path, remove, rmdir
 from threading import RLock
 
-from paths import lookupAppdataFolder
-from storage.storage import InventoryStorage, InventoryItem
-
+try:
+    from paths import lookupAppdataFolder
+    from storage.storage import InventoryStorage, InventoryItem
+except ModuleNotFoundError:
+    from ..paths import lookupAppdataFolder
+    from ..storage.storage import InventoryStorage, InventoryItem
 
 class FilesystemInventory(InventoryStorage):
     """Filesystem for inventory storage"""

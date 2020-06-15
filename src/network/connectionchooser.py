@@ -4,12 +4,18 @@ Select which node to connect to
 # pylint: disable=too-many-branches, logging-format-interpolation, unidiomatic-typecheck
 import logging
 import random  # nosec
-
-import knownnodes
-import protocol
-import state
-from bmconfigparser import BMConfigParser
-from queues import Queue, portCheckerQueue
+try:
+    import knownnodes
+    import protocol
+    import state
+    from bmconfigparser import BMConfigParser
+    from queues import Queue, portCheckerQueue
+except ModuleNotFoundError:
+    from .. import knownnodes
+    from .. import protocol
+    from .. import state
+    from ..bmconfigparser import BMConfigParser
+    from ..queues import Queue, portCheckerQueue
 
 logger = logging.getLogger('default')
 

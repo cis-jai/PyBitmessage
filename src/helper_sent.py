@@ -1,8 +1,10 @@
 """
 Insert values into sent table
 """
-from helper_sql import sqlExecute
-
+try:
+    from helper_sql import sqlExecute
+except ModuleNotFoundError:
+    from .helper_sql import sqlExecute
 
 def insert(t):
     """Perform an insert into the `sent` table"""

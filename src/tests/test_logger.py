@@ -7,6 +7,7 @@ import os
 import tempfile
 import unittest
 
+from .tests_compatibility.utils import encoded_string
 
 class TestLogger(unittest.TestCase):
     """A test case for bmconfigparser"""
@@ -40,12 +41,11 @@ handlers=default
         tmp = os.environ['BITMESSAGE_HOME'] = tempfile.gettempdir()
         log_config = os.path.join(tmp, 'logging.dat')
         log_file = os.path.join(tmp, 'debug.log')
-
+        
         def gen_log_config(pattern):
             """A small closure to generate logging.dat with custom pattern"""
             with open(log_config, 'wb') as dst:
-                dst.write(self.conf_template.format(log_file, pattern))
-
+                dst.write(encoded_string(self.conf_template.format(log_file, pattern)))
         pattern = r' o_0 '
         gen_log_config(pattern)
 
@@ -59,11 +59,9 @@ handlers=default
             self.fail('There is no package pybitmessage. Things gone wrong.')
         finally:
             os.remove(log_config)
-
         logger_ = logging.getLogger('default')
 
         self.assertEqual(logger, logger_)
 
         logger_.info('Testing the logger...')
-
-        self.assertRegexpMatches(open(log_file).read(), pattern)
+        self.assertRegex(open(log_file).read(), pattern)

@@ -7,6 +7,7 @@ import unittest
 from abc import ABCMeta, abstractmethod
 from binascii import hexlify, unhexlify
 from pybitmessage.pyelliptic import arithmetic
+from .tests_compatibility.utils import encoded_string
 
 try:
     from Crypto.Hash import RIPEMD
@@ -28,6 +29,8 @@ sample_privateencryptionkey = \
 sample_ripe = '003cd097eb7f35c87b5dc8b4538c22cb55312a9f'
 # stream: 1, version: 2
 sample_address = 'BM-onkVu1KKL2UaUss5Upg9vXmqd3esTmV79'
+
+sample_ripe = encoded_string('003cd097eb7f35c87b5dc8b4538c22cb55312a9f')
 
 _sha = hashlib.new('sha512')
 _sha.update(sample_pubsigningkey + sample_pubencryptionkey)
@@ -71,6 +74,7 @@ class TestAddresses(unittest.TestCase):
     """Test addresses manipulations"""
     def test_privtopub(self):
         """Generate public keys and check the result"""
+        import pdb; pdb.set_trace()
         self.assertEqual(
             arithmetic.privtopub(sample_privatesigningkey),
             hexlify(sample_pubsigningkey)

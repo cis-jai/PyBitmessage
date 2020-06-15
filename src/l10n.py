@@ -5,7 +5,10 @@ import logging
 import os
 import time
 
-from bmconfigparser import BMConfigParser
+try:
+    from bmconfigparser import BMConfigParser
+except ModuleNotFoundError:
+    from .bmconfigparser import BMConfigParser
 
 logger = logging.getLogger('default')
 

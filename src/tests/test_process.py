@@ -9,13 +9,16 @@ import tempfile
 import time
 import unittest
 
-import psutil
+try:
+    import psutil
+except ModuleNotFoundError:
+    pass
 
 
 def put_signal_file(path, filename):
     """Creates file, presence of which is a signal about some event."""
-    with open(os.path.join(path, filename), 'wb') as outfile:
-        outfile.write(str(time.time()))
+    with open(os.path.join(path, filename), 'w') as outfile:
+        outfile.write( str(time.time()))
 
 
 class TestProcessProto(unittest.TestCase):
@@ -34,7 +37,10 @@ class TestProcessProto(unittest.TestCase):
         """Setup environment and start pybitmessage"""
         cls.home = os.environ['BITMESSAGE_HOME'] = tempfile.gettempdir()
         put_signal_file(cls.home, 'unittest.lock')
-        subprocess.call(cls._process_cmd)  # nosec
+        try:
+            subprocess.call(cls._process_cmd)  # nosec
+        except FileNotFoundError:   
+            subprocess.call([os.getcwd().rsplit('/',1)[0] + '/pybitmessage','-d'])
         time.sleep(5)
         cls.pid = int(cls._get_readline('singleton.lock'))
         cls.process = psutil.Process(cls.pid)

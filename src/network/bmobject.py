@@ -3,12 +3,18 @@ BMObject and it's exceptions.
 """
 import logging
 import time
-
-import protocol
-import state
-from addresses import calculateInventoryHash
-from inventory import Inventory
-from network.dandelion import Dandelion
+try:
+    import protocol
+    import state
+    from addresses import calculateInventoryHash
+    from inventory import Inventory
+    from network.dandelion import Dandelion
+except ModuleNotFoundError:
+    from .. import protocol
+    from .. import state
+    from ..addresses import calculateInventoryHash
+    from ..inventory import Inventory
+    from .dandelion import Dandelion
 
 logger = logging.getLogger('default')
 

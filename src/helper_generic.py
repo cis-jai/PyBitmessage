@@ -13,13 +13,18 @@ try:
 except Exception as e:
     pass
 from binascii import hexlify, unhexlify
-
-import shared
-import state
-import queues
-import shutdown
-from debug import logger
-
+try:
+    import shared
+    import state
+    import queues
+    import shutdown
+    from debug import logger
+except ModuleNotFoundError:
+    from . import shared
+    from . import state
+    from . import queues
+    from . import shutdown
+    from .debug import logger
 
 def powQueueSize():
     curWorkerQueue = queues.workerQueue.qsize()

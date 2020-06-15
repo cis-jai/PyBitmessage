@@ -17,41 +17,75 @@ from sqlite3 import register_adapter
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtNetwork import QLocalSocket, QLocalServer
-
-import shared
-import state
-from debug import logger
-from tr import _translate
-from addresses import decodeAddress, addBMIfNotPresent
-from bitmessageui import Ui_MainWindow
-from bmconfigparser import BMConfigParser
-import namecoin
-from messageview import MessageView
-from migrationwizard import Ui_MigrationWizard
-from foldertree import (
-    AccountMixin, Ui_FolderWidget, Ui_AddressWidget, Ui_SubscriptionWidget,
-    MessageList_AddressWidget, MessageList_SubjectWidget,
-    Ui_AddressBookWidgetItemLabel, Ui_AddressBookWidgetItemAddress,
-    MessageList_TimeWidget)
-import settingsmixin
-import support
-from helper_ackPayload import genAckPayload
-from helper_sql import sqlQuery, sqlExecute, sqlExecuteChunked, sqlStoredProcedure
-import helper_search
-import l10n
-from utils import str_broadcast_subscribers, avatarize
-from account import (
-    getSortedAccounts, getSortedSubscriptions, accountClass, BMAccount,
-    GatewayAccount, MailchuckAccount, AccountColor)
-import dialogs
-from network.stats import pendingDownload, pendingUpload
-from uisignaler import UISignaler
-import paths
-from proofofwork import getPowType
-import queues
-import shutdown
-from statusbar import BMStatusBar
-import sound
+try:
+    import shared
+    import state
+    from debug import logger
+    from tr import _translate
+    from addresses import decodeAddress, addBMIfNotPresent
+    from bitmessageui import Ui_MainWindow
+    from bmconfigparser import BMConfigParser
+    import namecoin
+    from messageview import MessageView
+    from migrationwizard import Ui_MigrationWizard
+    from foldertree import (
+        AccountMixin, Ui_FolderWidget, Ui_AddressWidget, Ui_SubscriptionWidget,
+        MessageList_AddressWidget, MessageList_SubjectWidget,
+        Ui_AddressBookWidgetItemLabel, Ui_AddressBookWidgetItemAddress,
+        MessageList_TimeWidget)
+    import settingsmixin
+    import support
+    from helper_ackPayload import genAckPayload
+    from helper_sql import sqlQuery, sqlExecute, sqlExecuteChunked, sqlStoredProcedure
+    import helper_search
+    import l10n
+    from utils import str_broadcast_subscribers, avatarize
+    from account import (
+        getSortedAccounts, getSortedSubscriptions, accountClass, BMAccount,
+        GatewayAccount, MailchuckAccount, AccountColor)
+    import dialogs
+    from network.stats import pendingDownload, pendingUpload
+    from uisignaler import UISignaler
+    import paths
+    from proofofwork import getPowType
+    import queues
+    import shutdown
+    from statusbar import BMStatusBar
+    import sound
+except Exception:  
+    from ..debug import logger
+    from ..tr import _translate
+    from ..addresses import decodeAddress, addBMIfNotPresent
+    from .. import shared
+    from .bitmessageui import Ui_MainWindow
+    from ..bmconfigparser import BMConfigParser
+    from .. import namecoin
+    from .messageview import MessageView
+    from .migrationwizard import Ui_MigrationWizard
+    from .foldertree import (
+        AccountMixin, Ui_FolderWidget, Ui_AddressWidget, Ui_SubscriptionWidget,
+        MessageList_AddressWidget, MessageList_SubjectWidget,
+        Ui_AddressBookWidgetItemLabel, Ui_AddressBookWidgetItemAddress)
+    from . import settingsmixin
+    from . import support
+    from ..helper_ackPayload import genAckPayload
+    from ..helper_sql import sqlQuery, sqlExecute, sqlExecuteChunked, sqlStoredProcedure
+    from .. import helper_search
+    from .. import l10n
+    from .utils import str_broadcast_subscribers, avatarize
+    from .account import (
+        getSortedAccounts, getSortedSubscriptions, accountClass, BMAccount,
+        GatewayAccount, MailchuckAccount, AccountColor)
+    from . import dialogs
+    from ..network.stats import pendingDownload, pendingUpload
+    from .uisignaler import UISignaler
+    from .. import paths
+    from ..proofofwork import getPowType
+    from .. import queues
+    from .. import shutdown
+    from .. import state
+    from .statusbar import BMStatusBar
+    from . import sound
 # This is needed for tray icon
 import bitmessage_icons_rc  # noqa:F401 pylint: disable=unused-import
 

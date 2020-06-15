@@ -4,10 +4,10 @@ Track randomize ordered dict
 import random
 from threading import RLock
 from time import time
-
-import helper_random
-
-
+try:
+    import helper_random
+except ModuleNotFoundError:
+    from .. import helper_random
 class RandomTrackingDict(object):
     """
     Dict with randomised order and tracking.

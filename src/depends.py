@@ -2,13 +2,15 @@
 Utility functions to check the availability of dependencies
 and suggest how it may be installed
 """
-
 import sys
 import logging
 import os
-import state
 from importlib import import_module
-
+try:
+    import state
+except ModuleNotFoundError:
+    from . import  state
+    
 # Only really old versions of Python don't have sys.hexversion. We don't
 # support them. The logging module was introduced in Python 2.3
 if not hasattr(sys, 'hexversion') or sys.hexversion < 0x20300F0:

@@ -15,12 +15,19 @@ There are also other threads in the `.network` package.
 
 import threading
 
-from class_addressGenerator import addressGenerator
-from class_objectProcessor import objectProcessor
-from class_singleCleaner import singleCleaner
-from class_singleWorker import singleWorker
-from class_sqlThread import sqlThread
 
+try:
+    from class_addressGenerator import addressGenerator
+    from class_objectProcessor import objectProcessor
+    from class_singleCleaner import singleCleaner
+    from class_singleWorker import singleWorker
+    from class_sqlThread import sqlThread
+except ModuleNotFoundError:
+    from .class_addressGenerator import addressGenerator
+    from .class_objectProcessor import objectProcessor
+    from .class_singleCleaner import singleCleaner
+    from .class_singleWorker import singleWorker
+    from .class_sqlThread import sqlThread
 try:
     import prctl
 except ImportError:
@@ -36,8 +43,8 @@ else:
         set_thread_name(self.name)
         threading.Thread.__bootstrap_original__(self)
     # pylint: disable=protected-access
-    threading.Thread.__bootstrap_original__ = threading.Thread._Thread__bootstrap
-    threading.Thread._Thread__bootstrap = _thread_name_hack
+    threading.Thread.__bootstrap_original__ = threading.Thread._bootstrap
+    threading.Thread._bootstrap = _thread_name_hack
 
 
 printLock = threading.Lock()

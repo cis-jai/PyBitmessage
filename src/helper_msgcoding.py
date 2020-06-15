@@ -4,18 +4,29 @@ Message encoding end decoding functions
 
 import zlib
 
-import messagetypes
-from bmconfigparser import BMConfigParser
-from debug import logger
-from tr import _translate
+try:
+    import messagetypes
+    from bmconfigparser import BMConfigParser
+    from debug import logger
+    from tr import _translate
+
+except ModuleNotFoundError:
+    from . import messagetypes
+    from .bmconfigparser import BMConfigParser
+    from .debug import logger
+    from .tr import _translate
 
 try:
     import msgpack
-except ImportError:
+
+except ModuleNotFoundError:
     try:
-        import umsgpack as msgpack
+        from .fallback.umsgpack import umsgpack as msgpack
     except ImportError:
-        import fallback.umsgpack.umsgpack as msgpack
+        try:
+            import umsgpack as msgpack
+        except ImportError:
+            import fallback.umsgpack.umsgpack as msgpack
 
 BITMESSAGE_ENCODING_IGNORE = 0
 BITMESSAGE_ENCODING_TRIVIAL = 1

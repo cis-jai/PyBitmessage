@@ -11,24 +11,56 @@ import string
 import time
 import unittest
 
-import knownnodes
-import protocol
-import state
-from bmconfigparser import BMConfigParser
-from helper_msgcoding import MsgEncode, MsgDecode
-from helper_startup import start_proxyconfig
-from network import asyncore_pollchoose as asyncore
-from network.bmproto import BMProto
-from network.connectionpool import BMConnectionPool
-from network.node import Node, Peer
-from network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
-from queues import excQueue
-from version import softwareVersion
 
+from pybitmessage import knownnodes
+from pybitmessage import protocol
+from pybitmessage import state
+from pybitmessage.bmconfigparser import BMConfigParser
+from pybitmessage.helper_msgcoding import MsgEncode, MsgDecode
+from pybitmessage.helper_startup import start_proxyconfig
+from pybitmessage.network import asyncore_pollchoose as asyncore
+from pybitmessage.network.bmproto import BMProto
+from pybitmessage.network.connectionpool import BMConnectionPool
+from pybitmessage.network.node import Node, Peer
+from pybitmessage.network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
+from pybitmessage.queues import excQueue
+from pybitmessage.version import softwareVersion
+
+# try:
+#     import knownnodes
+#     import protocol
+#     import state
+#     from bmconfigparser import BMConfigParser
+#     from helper_msgcoding import MsgEncode, MsgDecode
+#     from helper_startup import start_proxyconfig
+#     from network import asyncore_pollchoose as asyncore
+#     from network.bmproto import BMProto
+#     from network.connectionpool import BMConnectionPool
+#     from network.node import Node, Peer
+#     from network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
+#     from queues import excQueue
+#     from version import softwareVersion
+
+# except ModuleNotFoundError:
+#     import pdb; pdb.set_trace()
+#     from pybitmessage import knownnodes
+#     from pybitmessage import protocol
+#     from pybitmessage import state
+#     from pybitmessage.bmconfigparser import BMConfigParser
+#     from pybitmessage.helper_msgcoding import MsgEncode, MsgDecode
+#     from pybitmessage.helper_startup import start_proxyconfig
+#     from pybitmessage.network import asyncore_pollchoose as asyncore
+#     from pybitmessage.network.bmproto import BMProto
+#     from pybitmessage.network.connectionpool import BMConnectionPool
+#     from pybitmessage.network.node import Peer
+#     from pybitmessage.network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
+#     from pybitmessage.queues import excQueue
+#     from pybitmessage.version import softwareVersion
 try:
     import stem.version as stem_version
 except ImportError:
     stem_version = None
+from .tests_compatibility.utils import encoded_string
 
 knownnodes_file = os.path.join(state.appdata, 'knownnodes.dat')
 
@@ -38,14 +70,13 @@ def pickle_knownnodes():
     now = time.time()
     with open(knownnodes_file, 'wb') as dst:
         pickle.dump({
-            stream: {
-                Peer(
-                    '%i.%i.%i.%i' % tuple([
-                        random.randint(1, 255) for i in range(4)]),
-                    8444): {'lastseen': now, 'rating': 0.1}
+            stream: 
+                {Peer('{0[0]}.{0[1]}.{0[2]}.{0[3]}'.format(
+                    tuple([random.randint(1, 255) for i in range(4)]))
+                ,8444): {'lastseen': now, 'rating': 0.1}
                 for i in range(1, 4)  # 3 test nodes
             }
-            for stream in range(1, 4)  # 3 test streams
+            for stream in range(1, 4)  # 3 test streams 
         }, dst)
 
 
@@ -67,20 +98,19 @@ class TestCore(unittest.TestCase):
                 random.choice(string.ascii_lowercase + string.digits)  # nosec
                 for _ in range(10000))
         }
-
+    
         obj1 = MsgEncode(msg_data, 1)
         obj2 = MsgEncode(msg_data, 2)
         obj3 = MsgEncode(msg_data, 3)
         # print "1: %i 2: %i 3: %i" % (
         # len(obj1.data), len(obj2.data), len(obj3.data))
-
-        obj1e = MsgDecode(1, obj1.data)
+        obj1e = MsgDecode(1, encoded_string(obj1.data))
         # no subject in trivial encoding
-        self.assertEqual(msg_data['body'], obj1e.body)
+        self.assertEqual(encoded_string(msg_data['body']), obj1e.body)
 
-        obj2e = MsgDecode(2, obj2.data)
-        self.assertEqual(msg_data['subject'], obj2e.subject)
-        self.assertEqual(msg_data['body'], obj2e.body)
+        obj2e = MsgDecode(2, encoded_string(obj2.data))
+        self.assertEqual(encoded_string(msg_data['subject']),   obj2e.subject)
+        self.assertEqual(encoded_string(msg_data['body']), obj2e.body)
 
         obj3e = MsgDecode(3, obj3.data)
         self.assertEqual(msg_data['subject'], obj3e.subject)
@@ -102,7 +132,7 @@ class TestCore(unittest.TestCase):
             for peer in (Peer("127.0.0.1", 8448),):
                 direct = TCPConnection(peer)
                 while asyncore.socket_map:
-                    print("loop, state = %s" % direct.state)
+                    print("loop, state = {}".format(direct.state))
                     asyncore.loop(timeout=10, count=1)
         except:
             self.fail('Exception in test loop')
@@ -124,9 +154,9 @@ class TestCore(unittest.TestCase):
         pickle_knownnodes()
         self._wipe_knownnodes()
         knownnodes.readKnownNodes()
-        for nodes in knownnodes.knownNodes.itervalues():
+        for nodes in iter(knownnodes.knownNodes.values()):
             self_count = n = 0
-            for n, node in enumerate(nodes.itervalues()):
+            for n, node in enumerate(iter(nodes.values())):
                 if node.get('self'):
                     self_count += 1
             self.assertEqual(n - self_count, 2)
@@ -140,12 +170,16 @@ class TestCore(unittest.TestCase):
             len(knownnodes.knownNodes[1]), len(knownnodes.DEFAULT_NODES))
 
     def test_0_cleaner(self):
-        """test knownnodes starvation leading to IndexError in Asyncore"""
+        """test known   nodes starvation leading to IndexError in Asyncore"""
+        import sys
+        print('-----------------------------------------')
+        print(sys.version_info)
+        print('-----------------------------------------')
         self._outdate_knownnodes()
         # time.sleep(303)  # singleCleaner wakes up every 5 min
         knownnodes.cleanupKnownNodes()
         self.assertTrue(knownnodes.knownNodes[1])
-        while True:
+        while True: 
             try:
                 thread, exc = excQueue.get(block=False)
             except Queue.Empty:
@@ -171,9 +205,11 @@ class TestCore(unittest.TestCase):
             connection_base = Socks4aBMConnection
         else:
             connection_base = TCPConnection
+        outboundConnections = BMConnectionPool().outboundConnections.items()
         for _ in range(180):
             time.sleep(1)
-            for peer, con in BMConnectionPool().outboundConnections.iteritems():
+        
+            for peer, con in iter(outboundConnections):
                 if not peer.host.startswith('bootstrap'):
                     self.assertIsInstance(con, connection_base)
                     self.assertNotEqual(peer.host, '127.0.0.1')

@@ -8,7 +8,10 @@ This module loads openssl libs with ctypes and incapsulates
 needed openssl functionality in class _OpenSSL.
 """
 import ctypes
-from kivy.utils import platform
+try:
+    from kivy.utils import platform
+except:
+    platform = ''
 import sys
 
 # pylint: disable=protected-access

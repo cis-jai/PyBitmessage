@@ -40,9 +40,12 @@ import logging
 import logging.config
 import os
 import sys
-
-import helper_startup
-import state
+try:
+    import helper_startup
+    import state
+except ModuleNotFoundError:
+    from . import helper_startup, state
+    from . import state
 
 helper_startup.loadConfig()
 # Now can be overriden from a config file, which uses standard python
@@ -139,11 +142,14 @@ def resetLogging():
     """Reconfigure logging in runtime when state.appdata dir changed"""
     # pylint: disable=global-statement, used-before-assignment
     global logger
-    for i in logger.handlers:
-        logger.removeHandler(i)
-        i.flush()
-        i.close()
-    configureLogging()
+    try:
+        for i in logger.handlers:
+            logger.removeHandler(i)
+            iresetLogging.flush()
+            i.close()
+        configureLogging()
+    except:
+        pass
     logger = logging.getLogger('default')
 
 

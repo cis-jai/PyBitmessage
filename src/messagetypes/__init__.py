@@ -6,10 +6,15 @@ try:
 except:
     platform = ''
 
-import messagetypes
-import paths
+try:
+    import messagetypes
+    import paths
+    
+except ModuleNotFoundError:
+    from .. import messagetypes
+    from .. import paths
 
-logger = logging.getLogger('default')
+logger = logging.getLogger('default')   
 
 
 class MsgBase(object):  # pylint: disable=too-few-public-methods
@@ -53,7 +58,10 @@ else:
             continue
         try:
             import_module(".{}".format(splitted[0]), "messagetypes")
-        except ImportError:
-            logger.error("Error importing %s", mod, exc_info=True)
+        except ModuleNotFoundError:
+            try:
+                from . import chatmsg
+            except ImportError:
+                logger.error("Error importing %s", mod, exc_info=True)
         else:
             logger.debug("Imported message type module %s", mod)

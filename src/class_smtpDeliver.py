@@ -3,15 +3,23 @@ SMTP client thread for delivering emails
 """
 # pylint: disable=unused-variable
 import smtplib
-import urlparse
+import urllib.parse as urlparse
 from email.header import Header
 from email.mime.text import MIMEText
 
-import queues
-import state
-from bmconfigparser import BMConfigParser
-from network.threads import StoppableThread
+try:
+    import queues
+    import state
+    from bmconfigparser import BMConfigParser
+    from network.threads import StoppableThread
 
+except ModuleNotFoundError:
+    from . import queues
+    from . import state
+    from .bmconfigparser import BMConfigParser
+    from .network.threads import StoppableThread
+    
+    
 SMTPDOMAIN = "bmaddr.lan"
 
 

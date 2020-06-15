@@ -3,10 +3,14 @@ Ui Singnaler for kivy interface
 """
 from threading import Thread
 
-import queues
-import state
-from semaphores import kivyuisignaler
-
+try:
+    import queues
+    import state
+    from semaphores import kivyuisignaler
+except ModuleNotFoundError:
+    from .. import queues
+    from .. import state
+    from ..semaphores import kivyuisignaler
 
 class UIkivySignaler(Thread):
     """Kivy ui signaler"""

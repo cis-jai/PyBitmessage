@@ -19,8 +19,10 @@ from errno import (
 )
 from threading import current_thread
 
-import helper_random
-
+try:
+    import helper_random
+except ModuleNotFoundError:
+    from .. import helper_random
 try:
     from errno import WSAEWOULDBLOCK
 except (ImportError, AttributeError):

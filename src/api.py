@@ -15,35 +15,60 @@ import socket
 import subprocess
 import time
 from binascii import hexlify, unhexlify
-from xmlrpc.server import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler, \
-    SimpleXMLRPCServer
+
+from xmlrpc.server import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
 from struct import pack
 
-import defaults
-import helper_inbox
-import helper_sent
-import network.stats
-import proofofwork
-import queues
-import shared
-import shutdown
-import state
-import threads
-from addresses import (
-    addBMIfNotPresent,
-    calculateInventoryHash,
-    decodeAddress,
-    decodeVarint,
-    varintDecodeError
-)
-from bmconfigparser import BMConfigParser
-from debug import logger
-from helper_ackPayload import genAckPayload
-from helper_sql import SqlBulkExecute, sqlExecute, sqlQuery, sqlStoredProcedure
-from inventory import Inventory
-from network.threads import StoppableThread
-from version import softwareVersion
 
+try:
+    import defaults
+    import helper_inbox
+    import helper_sent
+    import network.stats
+    import proofofwork
+    import queues
+    import shared
+    import shutdown
+    import state
+    from addresses import (
+        addBMIfNotPresent,
+        calculateInventoryHash,
+        decodeAddress,
+        decodeVarint,
+        varintDecodeError
+    )
+    from bmconfigparser import BMConfigParser
+    from debug import logger
+    from helper_ackPayload import genAckPayload
+    from helper_sql import SqlBulkExecute, sqlExecute, sqlQuery, sqlStoredProcedure
+    from inventory import Inventory
+    from network.threads import StoppableThread
+    from version import softwareVersion
+except:
+    from . import defaults
+    from . import helper_inbox
+    from . import helper_sent
+    from .network  import stats
+    from . import proofofwork
+    from . import queues
+    from . import shared
+    from .import shutdown
+    from .import state
+    from .addresses import (
+        addBMIfNotPresent,
+        calculateInventoryHash,
+        decodeAddress,
+        decodeVarint,
+        varintDecodeError
+    )
+    from .bmconfigparser import BMConfigParser
+    from .debug import logger
+    from .helper_ackPayload import genAckPayload
+    from .helper_sql import SqlBulkExecute, sqlExecute, sqlQuery, sqlStoredProcedure
+    from .inventory import Inventory
+    from .network.threads import StoppableThread
+    from .version import softwareVersion
+    
 str_chan = '[chan]'
 
 
@@ -1227,7 +1252,8 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         initialHash = hashlib.sha512(encryptedPayload).digest()
         trialValue, nonce = proofofwork.run(target, initialHash)
         with threads.printLock:
-            print('(For msg message via API) Found proof of work', trialValue, 'Nonce:', nonce)
+            print('(For msg message via API) Found proof of work {}, Nonce: {})'.\
+                format(trialValue,nonce))
             try:
                 print(
                     'POW took', int(time.time() - powStartTime),
@@ -1246,7 +1272,8 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             int(time.time()) + TTL, ''
         )
         with threads.printLock:
-            print('Broadcasting inv for msg(API disseminatePreEncryptedMsg command):', hexlify(inventoryHash))
+            print('Broadcasting inv for msg(API disseminatePreEncryptedMsg command): {}'.\
+                format(hexlify(inventoryHash)))
         queues.invQueue.put((toStreamNumber, inventoryHash))
 
     def HandleTrashSentMessageByAckDAta(self, params):
@@ -1279,7 +1306,8 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         print('(For pubkey message via API) Doing proof of work...')
         initialHash = hashlib.sha512(payload).digest()
         trialValue, nonce = proofofwork.run(target, initialHash)
-        print('(For pubkey message via API) Found proof of work', trialValue, 'Nonce:', nonce)
+        print('(For pubkey message via API) Found proof of work {} ,Nonce: {}'.\
+            format(trialValue,nonce))
         payload = pack('>Q', nonce) + payload
 
         pubkeyReadPosition = 8  # bypass the nonce
@@ -1300,7 +1328,8 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             objectType, pubkeyStreamNumber, payload, int(time.time()) + TTL, ''
         )
         with threads.printLock:
-            print('broadcasting inv within API command disseminatePubkey with hash:', hexlify(inventoryHash))
+            print('broadcasting inv within API command disseminatePubkey with hash:{}'.\
+                format(hexlify(inventoryHash)))
         queues.invQueue.put((pubkeyStreamNumber, inventoryHash))
 
     def HandleGetMessageDataByDestinationHash(self, params):

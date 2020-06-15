@@ -4,20 +4,32 @@ A thread for creating addresses
 import hashlib
 import time
 from binascii import hexlify
-
-import defaults
-import highlevelcrypto
-import queues
-import shared
-import state
-import tr
-from addresses import decodeAddress, encodeAddress, encodeVarint
-from bmconfigparser import BMConfigParser
-from fallback import RIPEMD160Hash
-from pyelliptic import arithmetic
-from pyelliptic.openssl import OpenSSL
-from network.threads import StoppableThread
-
+try:
+    import defaults
+    import highlevelcrypto
+    import queues
+    import shared
+    import state
+    import tr
+    from addresses import decodeAddress, encodeAddress, encodeVarint
+    from bmconfigparser import BMConfigParser
+    from fallback import RIPEMD160Hash
+    from pyelliptic import arithmetic
+    from pyelliptic.openssl import OpenSSL
+    from network.threads import StoppableThread
+except ModuleNotFoundError:
+    from . import defaults
+    from .import highlevelcrypto
+    from . import queues
+    from . import shared
+    from . import state
+    from . import tr
+    from .addresses import decodeAddress, encodeAddress, encodeVarint
+    from .bmconfigparser import BMConfigParser
+    from .fallback import RIPEMD160Hash
+    from .pyelliptic import arithmetic
+    from .pyelliptic.openssl import OpenSSL
+    from .network.threads import StoppableThread
 
 class addressGenerator(StoppableThread):
     """A thread for creating addresses"""

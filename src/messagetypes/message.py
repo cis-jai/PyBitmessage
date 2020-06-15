@@ -1,6 +1,8 @@
 import logging
-
-from messagetypes import MsgBase
+try:
+    from messagetypes import MsgBase
+except ModuleNotFoundError:
+    from ..messagetypes import MsgBase
 # pylint: disable=attribute-defined-outside-init
 
 logger = logging.getLogger('default')

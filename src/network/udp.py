@@ -5,13 +5,20 @@ import logging
 import socket
 import time
 
-import protocol
-from network.bmproto import BMProto
-from network.objectracker import ObjectTracker
-from .node import Peer
-import state
+try:
+    import protocol
+    from network.bmproto import BMProto
+    from network.objectracker import ObjectTracker
+    from .node import Peer
+    import state
+    from queues import receiveDataQueue
 
-from queues import receiveDataQueue
+except ModuleNotFoundError:
+    from .. import protocol
+    from .. import state
+    from .bmproto import BMProto
+    from .objectracker import ObjectTracker
+    from .node import Peer
 
 logger = logging.getLogger('default')
 # pylint: disable=logging-format-interpolation

@@ -3,15 +3,24 @@
 """
 import time
 
-import helper_random
-import protocol
-from inventory import Inventory
-from network.connectionpool import BMConnectionPool
-from network.dandelion import Dandelion
-from network.randomtrackingdict import RandomTrackingDict
+try:
+    import helper_random
+    import protocol
+    from inventory import Inventory
+    from network.connectionpool import BMConnectionPool
+    from network.dandelion import Dandelion
+    from network.randomtrackingdict import RandomTrackingDict
 
-from network.threads import StoppableThread
+    from network.threads import StoppableThread
+except ModuleNotFoundError:
 
+    from .. import helper_random
+    from .. import protocol
+    from ..inventory import Inventory
+    from .connectionpool import BMConnectionPool
+    from .dandelion import Dandelion
+    from .randomtrackingdict import RandomTrackingDict
+    from .threads import StoppableThread
 
 class UploadThread(StoppableThread):
     """

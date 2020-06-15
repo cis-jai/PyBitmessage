@@ -3,14 +3,26 @@
 """
 import time
 
-import addresses
-import helper_random
-import protocol
-from network.dandelion import Dandelion
-from inventory import Inventory
-from network.connectionpool import BMConnectionPool
-from network.objectracker import missingObjects
-from network.threads import StoppableThread
+try:
+    import addresses
+    import helper_random
+    import protocol
+    from network.dandelion import Dandelion
+    from inventory import Inventory
+    from network.connectionpool import BMConnectionPool
+    from network.objectracker import missingObjects
+    from network.threads import StoppableThread
+
+except ModuleNotFoundError:
+    from .. import addresses
+    from .. import helper_random
+    from .. import protocol
+    from .dandelion import Dandelion
+    from ..inventory import Inventory
+    from .connectionpool import BMConnectionPool
+    from .objectracker import missingObjects
+    #checkded this condition
+    from .threads import StoppableThread
 
 
 class DownloadThread(StoppableThread):

@@ -4,8 +4,10 @@ import queue as Queue
 import threading
 import time
 
-from multiqueue import MultiQueue
-
+try:
+    from multiqueue import MultiQueue
+except ModuleNotFoundError:
+    from .multiqueue import MultiQueue
 
 class ObjectProcessorQueue(Queue.Queue):
     """Special queue class using lock for `.threads.objectProcessor`"""

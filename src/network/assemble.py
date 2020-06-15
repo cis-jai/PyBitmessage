@@ -2,11 +2,16 @@
 Create bitmessage protocol command packets
 """
 import struct
-
-import addresses
-from network.constants import MAX_ADDR_COUNT
-from network.node import Peer
-from protocol import CreatePacket, encodeHost
+try:
+    import addresses
+    from network.constants import MAX_ADDR_COUNT
+    from network.node import Peer
+    from protocol import CreatePacket, encodeHost
+except ModuleNotFoundError:
+    from .. import  addresses
+    from .constants import MAX_ADDR_COUNT
+    from .node import Peer
+    from ..protocol import CreatePacket, encodeHost
 
 
 def assemble_addr(peerList):

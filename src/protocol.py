@@ -13,16 +13,28 @@ import time
 from binascii import hexlify
 from struct import Struct, pack, unpack
 
-import defaults
-import highlevelcrypto
-import state
-from addresses import (
-    encodeVarint, decodeVarint, decodeAddress, varintDecodeError)
-from bmconfigparser import BMConfigParser
-from debug import logger
-from fallback import RIPEMD160Hash
-from helper_sql import sqlExecute
-from version import softwareVersion
+try:
+    import defaults
+    import highlevelcrypto
+    import state
+    from addresses import (
+        encodeVarint, decodeVarint, decodeAddress, varintDecodeError)
+    from bmconfigparser import BMConfigParser
+    from debug import logger
+    from fallback import RIPEMD160Hash
+    from helper_sql import sqlExecute
+    from version import softwareVersion
+except ModuleNotFoundError:
+    from . import defaults
+    from . import highlevelcrypto
+    from . import state
+    from .addresses import (
+        encodeVarint, decodeVarint, decodeAddress, varintDecodeError)
+    from .bmconfigparser import BMConfigParser
+    from .debug import logger
+    from .fallback import RIPEMD160Hash
+    from .helper_sql import sqlExecute
+    from .version import softwareVersion
 
 # Service flags
 #: This is a normal network node

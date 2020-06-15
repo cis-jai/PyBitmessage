@@ -8,10 +8,14 @@ import os
 import pickle
 import threading
 import time
-
-import state
-from bmconfigparser import BMConfigParser
-from network.node import Peer
+try:
+    import state
+    from bmconfigparser import BMConfigParser
+    from network.node import Peer
+except ModuleNotFoundError:
+    from . import state
+    from .bmconfigparser import BMConfigParser
+    from .network.node import Peer
 
 knownNodesLock = threading.Lock()
 """Thread lock for knownnodes modification"""
@@ -86,7 +90,7 @@ def pickle_deserialize_old_knownnodes(source):
     global knownNodes  # pylint: disable=global-statement
     knownNodes = pickle.load(source)
     for stream in knownNodes.keys():
-        for node, params in knownNodes[stream].iteritems():
+        for node, params in iter(knownNodes[stream].items()):
             if isinstance(params, (float, int)):
                 addKnownNode(stream, node, params)
 
@@ -206,7 +210,7 @@ def cleanupKnownNodes():
         for stream in knownNodes:
             if stream not in state.streamsInWhichIAmParticipating:
                 continue
-            keys = knownNodes[stream].keys()
+            keys = list(knownNodes[stream].keys())#its should list
             for node in keys:
                 if len(knownNodes[stream]) <= 1:  # leave at least one node
                     break

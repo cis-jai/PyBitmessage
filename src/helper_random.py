@@ -1,9 +1,14 @@
-"""Convenience functions for random operations. Not suitable for security / cryptography operations."""
+"""
+Convenience functions for random operations. Not suitable for security / cryptography operations.
+"""
 
 import os
 import random
 
-from pyelliptic.openssl import OpenSSL
+try:
+    from pyelliptic.openssl import OpenSSL
+except ModuleNotFoundError:
+    from .pyelliptic.openssl import OpenSSL
 
 NoneType = type(None)
 

@@ -5,11 +5,16 @@ Set proxy if avaiable otherwise exception
 import logging
 import socket
 import time
+try:
+    import network.asyncore_pollchoose as asyncore
+    from network.advanceddispatcher import AdvancedDispatcher
 
-import network.asyncore_pollchoose as asyncore
-from network.advanceddispatcher import AdvancedDispatcher
+    from bmconfigparser import BMConfigParser
+except ModuleNotFoundError:
+    from . import asyncore_pollchoose as asyncore
+    from .advanceddispatcher import AdvancedDispatcher
 
-from bmconfigparser import BMConfigParser
+    from ..bmconfigparser import BMConfigParser
 from .node import Peer
 
 logger = logging.getLogger('default')

@@ -13,12 +13,19 @@ Bitmessage android(mobile) interface
 from bitmessagekivy.get_platform import platform
 import os
 import time
-from bitmessagekivy import identiconGeneration
-from bitmessagekivy import kivy_helper_search
-from bitmessagekivy.uikivysignaler import UIkivySignaler
-from bmconfigparser import BMConfigParser
 from functools import partial
-from helper_sql import sqlExecute, sqlQuery
+try:
+    from bitmessagekivy import identiconGeneration
+    from bitmessagekivy import kivy_helper_search
+    from bitmessagekivy.uikivysignaler import UIkivySignaler
+    from bmconfigparser import BMConfigParser
+    from helper_sql import sqlExecute, sqlQuery
+except ModuleNotFoundError:
+    from ..bitmessagekivy import identiconGeneration
+    from ..bitmessagekivy import kivy_helper_search
+    from ..bitmessagekivy.uikivysignaler import UIkivySignaler
+    from ..bmconfigparser import BMConfigParser
+    from ..helper_sql import sqlExecute, sqlQuery
 from kivymd.app import MDApp
 from kivy.clock import Clock
 from kivy.core.clipboard import Clipboard
@@ -68,11 +75,18 @@ from kivymd.uix.selectioncontrol import MDCheckbox, MDSwitch
 from kivymd.uix.chip import MDChip
 from kivy.uix.screenmanager import RiseInTransition, SlideTransition, FallOutTransition
 
-import queues
-from semaphores import kivyuisignaler
+try:
+    import queues
+    from semaphores import kivyuisignaler
+    import state
+    from addresses import decodeAddress
+except ModuleNotFoundError:
+    from .. import queues
+    from ..semaphores import kivyuisignaler
+    from .. import state
+    from ..addresses import decodeAddress
 
-import state
-from addresses import decodeAddress
+
 from datetime import datetime
 from kivymd.uix.behaviors.elevation import RectangularElevationBehavior
 from kivymd.uix.bottomsheet import MDCustomBottomSheet

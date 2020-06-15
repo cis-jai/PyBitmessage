@@ -6,11 +6,17 @@ import os
 import socket
 import ssl
 import sys
+try:
+    import network.asyncore_pollchoose as asyncore
+    import paths
+    from network.advanceddispatcher import AdvancedDispatcher
+    from queues import receiveDataQueue
+except ModuleNotFoundError:
+    from . import asyncore_pollchoose as asyncore
+    from .. import paths
+    from .advanceddispatcher import AdvancedDispatcher
+    from ..queues import receiveDataQueue
 
-import network.asyncore_pollchoose as asyncore
-import paths
-from network.advanceddispatcher import AdvancedDispatcher
-from queues import receiveDataQueue
 
 logger = logging.getLogger('default')
 

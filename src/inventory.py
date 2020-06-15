@@ -1,11 +1,17 @@
 """The Inventory singleton"""
 
 # TODO make this dynamic, and watch out for frozen, like with messagetypes
-import storage.filesystem
-import storage.sqlite
-from bmconfigparser import BMConfigParser
-from singleton import Singleton
-
+try:
+    import storage.filesystem
+    import storage.sqlite
+    from bmconfigparser import BMConfigParser
+    from singleton import Singleton
+except ModuleNotFoundError:
+    from .storage import filesystem
+    from .storage import sqlite
+    from .bmconfigparser import BMConfigParser
+    from .singleton import Singleton
+    
 
 @Singleton
 class Inventory(object):

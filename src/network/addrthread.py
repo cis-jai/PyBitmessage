@@ -3,13 +3,20 @@ Announce addresses as they are received from other hosts
 """
 import queue as Queue
 
-import state
-from helper_random import randomshuffle
-from network.assemble import assemble_addr
-from network.connectionpool import BMConnectionPool
-from queues import addrQueue
-from network.threads import StoppableThread
-
+try:
+    import state
+    from helper_random import randomshuffle
+    from network.assemble import assemble_addr
+    from network.connectionpool import BMConnectionPool
+    from queues import addrQueue
+    from network.threads import StoppableThread
+except ModuleNotFoundError:
+    from .. import  state
+    from ..helper_random import randomshuffle
+    from ..network.assemble import assemble_addr
+    from ..network.connectionpool import BMConnectionPool
+    from ..queues import addrQueue
+    from ..network.threads import StoppableThread
 
 class AddrThread(StoppableThread):
     """(Node) address broadcasting thread"""

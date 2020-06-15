@@ -2,10 +2,10 @@
 Translating text
 """
 import os
-
-import state
-
-
+try:
+    import state
+except ModuleNotFoundError:
+    from . import state
 class translateClass(object):
     """
     This is used so that the translateText function can be used

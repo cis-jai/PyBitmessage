@@ -8,15 +8,24 @@ import sqlite3
 import sys
 import threading
 import time
-
-import helper_sql
-import helper_startup
-import paths
-import queues
-import state
-import tr
-from bmconfigparser import BMConfigParser
-from debug import logger
+try:
+    import helper_sql
+    import helper_startup
+    import paths
+    import queues
+    import state
+    import tr
+    from bmconfigparser import BMConfigParser
+    from debug import logger
+except ModuleNotFoundError:
+    from . import helper_sql
+    from . import helper_startup
+    from . import paths
+    from . import queues
+    from . import state
+    from . import tr
+    from .bmconfigparser import BMConfigParser
+    from .debug import logger
 # pylint: disable=attribute-defined-outside-init,protected-access
 
 

@@ -16,6 +16,7 @@ class TestBlindSig(unittest.TestCase):
     """
     Test case for ECC blind signature
     """
+
     def test_blind_sig(self):
         """Test full sequence using a random certifier key and a random message"""
         # See page 127 of the paper

@@ -5,11 +5,15 @@ Improved version of asyncore dispatcher
 import socket
 import threading
 import time
-
-import network.asyncore_pollchoose as asyncore
-import state
-from network.threads import BusyError, nonBlocking
-
+try:
+    import network.asyncore_pollchoose as asyncore
+    import state
+    from network.threads import BusyError, nonBlocking
+except ModuleNotFoundError:
+    from . import asyncore_pollchoose as asyncore
+    from .. import state
+    from .threads import BusyError, nonBlocking
+    
 
 class ProcessingError(Exception):
     """General class for protocol parser exception,

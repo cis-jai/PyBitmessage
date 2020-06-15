@@ -10,27 +10,41 @@ Bitmessage commandline interface
 #     * python2-pythondialog
 #  * dialog
 
-import ConfigParser
+import configparser as ConfigParser
 import curses
 import os
 import sys
 import time
 from textwrap import fill
 from threading import Timer
-
 from dialog import Dialog
-import l10n
-import network.stats
-import queues
-import shared
-import shutdown
-import state
 
-from addresses import addBMIfNotPresent, decodeAddress
-from bmconfigparser import BMConfigParser
-from helper_ackPayload import genAckPayload
-from helper_sql import sqlExecute, sqlQuery
-from inventory import Inventory
+try:
+    from dialog import Dialog
+    import l10n
+    import network.stats
+    import queues
+    import shared
+    import shutdown
+
+    from addresses import addBMIfNotPresent, decodeAddress
+    from bmconfigparser import BMConfigParser
+    from helper_ackPayload import genAckPayload
+    from helper_sql import sqlExecute, sqlQuery
+    from inventory import Inventory
+except ModuleNotFoundError:
+    from .. import l10n
+    from ..network import stats
+    from .. import queues
+    from .. import shared
+    from .. import shutdown
+
+    from ..addresses import addBMIfNotPresent, decodeAddress
+    from ..bmconfigparser import BMConfigParser
+    from ..helper_ackPayload import genAckPayload
+    from ..helper_sql import sqlExecute, sqlQuery
+    from ..inventory import Inventory
+    
 # pylint: disable=global-statement
 
 

@@ -5,8 +5,10 @@ Operations with addresses
 import hashlib
 from binascii import hexlify, unhexlify
 from struct import pack, unpack
-
-from debug import logger
+try:
+    from debug import logger
+except ModuleNotFoundError:
+    from .debug import logger
 
 ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 

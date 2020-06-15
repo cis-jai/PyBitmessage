@@ -3,12 +3,15 @@ Path related functions
 """
 # pylint: disable=import-error
 import logging
-import os
+import os   
 import re
 import sys
 from datetime import datetime
 from shutil import move
-from kivy.utils import platform
+try:
+    from kivy.utils import platform
+except:
+    platform = ''
 
 logger = logging.getLogger('default')
 

@@ -7,7 +7,10 @@ import socket
 import struct
 
 
-from network.proxy import GeneralProxyError, Proxy, ProxyError
+try:
+    from network.proxy import Proxy, ProxyError, GeneralProxyError
+except ModuleNotFoundError:
+    from .proxy import Proxy, ProxyError, GeneralProxyError
 
 from .node import Peer
 
