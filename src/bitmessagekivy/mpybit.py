@@ -110,7 +110,7 @@ from kivy.utils import platform
 from kivymd.uix.button import MDIconButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.label import MDLabel
-from kivymd.uix.button import MDFlatButton
+from kivymd.uix.button import MDFlatButton, MDRaisedButton
 from kivymd.uix.list import (
     ILeftBody,
     ILeftBodyTouch,
@@ -451,6 +451,8 @@ class CustomTwoLineAvatarIconListItem(TwoLineAvatarIconListItem):
 class MyAddress(Screen):
     """MyAddress screen uses screen to show widgets of screens"""
 
+    address_label = StringProperty()
+    text_address = StringProperty()
     addresses_list = ListProperty()
     has_refreshed = True
     is_add_created = False
@@ -552,9 +554,19 @@ class MyAddress(Screen):
     def myadd_detail(self, fromaddress, label, *args):
         """Load myaddresses details"""
         if BMConfigParser().get(fromaddress, 'enabled') == 'true':
-            p = MyaddDetailPopup()
-            p.open()
-            p.set_address(fromaddress, label)
+            obj = MyaddDetailPopup()
+            self.address_label = obj.address_label = label
+            self.text_address = obj.address =fromaddress
+            width = .9 if platform == 'android' else .8
+            self.myadddetail_popup = MDDialog(
+                type="custom",
+                size_hint=(width, .25),
+                content_cls=obj,
+            )
+            self.myadddetail_popup.set_normal_height()
+            self.myadddetail_popup.auto_dismiss = False
+            self.myadddetail_popup.open()
+            # p.set_address(fromaddress, label)
         else:
             width = .8 if platform == 'android' else .55
             dialog_box=MDDialog(
@@ -650,6 +662,8 @@ class AddressBook(Screen):
 
     queryreturn = ListProperty()
     has_refreshed = True
+    address_label = StringProperty()
+    address = StringProperty()
 
     def __init__(self, *args, **kwargs):
         """Getting AddressBook Details"""
@@ -737,12 +751,36 @@ class AddressBook(Screen):
         # state.navinstance.ids.sc11.loadAddresslist(None, 'All', '')
         pass
 
-    @staticmethod
-    def addBook_detail(address, label, *args):
+    # @staticmethod
+    def addBook_detail(self, address, label, *args):
         """Addressbook details"""
-        p = AddbookDetailPopup()
-        p.open()
-        p.set_addbook_data(address, label)
+        obj = AddbookDetailPopup()
+        self.address_label = obj.address_label = label
+        self.address = obj.address = address
+        width = .9 if platform == 'android' else .8
+        self.addbook_popup = MDDialog(
+            type="custom",
+            size_hint=(width, .25),
+            content_cls=obj,
+            buttons=[
+                MDRaisedButton(
+                    text="Send message to",
+                    text_color=state.kivyapp.theme_cls.primary_color, 
+                    on_release=self.send_message_to,
+                ),
+                MDRaisedButton(
+                    text="Save", text_color=state.kivyapp.theme_cls.primary_color,
+                    on_release=self.update_addbook_label,
+                ),
+                MDRaisedButton(
+                    text="Cancel", text_color=state.kivyapp.theme_cls.primary_color,
+                    on_release=self.close_pop,
+                ),
+            ],
+        )
+        self.addbook_popup.set_normal_height()
+        self.addbook_popup.auto_dismiss = False
+        self.addbook_popup.open()
 
     def delete_address(self, address, instance, *args):
         """Delete inbox mail from inbox listing"""
@@ -752,6 +790,41 @@ class AddressBook(Screen):
             self.ids.identi_tag.children[0].text = ''
         sqlExecute(
             "DELETE FROM  addressbook WHERE address = '{}';".format(address))
+
+    def close_pop(self, instance):
+        """Pop is Canceled"""
+        self.addbook_popup.dismiss()
+        toast('Canceled')
+
+    def update_addbook_label(self, instance):
+        """Updating the label of address book address"""
+        address_list = kivy_helper_search.search_sql(folder="addressbook")
+        stored_labels = [labels[0] for labels in address_list]
+        add_dict = dict(address_list)
+        label = str(self.addbook_popup.content_cls.ids.add_label.text)
+        if label in stored_labels and self.address == add_dict[label]:
+            stored_labels.remove(label)
+        if label and label not in stored_labels:
+            sqlExecute(
+                "UPDATE addressbook SET label = '{}' WHERE"
+                " address = '{}';".format(
+                    label, self.addbook_popup.content_cls.address))
+            state.kivyapp.root.ids.sc11.ids.ml.clear_widgets()
+            state.kivyapp.root.ids.sc11.loadAddresslist(None, 'All', '')
+            self.addbook_popup.dismiss()
+            toast('Saved')
+
+    def send_message_to(self, instance):
+        """Method used to fill to_address of composer autofield"""
+        state.kivyapp.set_navbar_for_composer()
+        window_obj = state.kivyapp.root.ids
+        window_obj.sc3.children[1].ids.txt_input.text = self.address
+        window_obj.sc3.children[1].ids.ti.text = ''
+        window_obj.sc3.children[1].ids.btn.text = 'Select'
+        window_obj.sc3.children[1].ids.subject.text = ''
+        window_obj.sc3.children[1].ids.body.text = ''
+        window_obj.scr_mngr.current = 'create'
+        self.addbook_popup.dismiss()
 
 
 class SelectableRecycleBoxLayout(
@@ -1775,11 +1848,69 @@ class NavigateApp(MDApp):
             return state.association
         return "Bitmessage Login"
 
-    @staticmethod
-    def addingtoaddressbook():
+    # @staticmethod
+    def addingtoaddressbook(self):
         """Adding to address Book"""
-        p = GrashofPopup()
-        p.open()
+        width = .85 if platform == 'android' else .8
+        self.add_popup = MDDialog(
+            title='add contact\'s',
+            # title="Address:",
+            type="custom",
+            size_hint=(width, .25),
+            content_cls=GrashofPopup(),
+            buttons=[
+                MDRaisedButton(
+                    text="Save",
+                    text_color=self.theme_cls.primary_color, 
+                    on_release=self.savecontact,
+                ),
+                MDRaisedButton(
+                    text="Cancel", text_color=self.theme_cls.primary_color,
+                    on_release=self.close_pop,
+                ),
+                MDRaisedButton(
+                    text="Scan QR code", text_color=self.theme_cls.primary_color
+                ),
+            ],
+        )
+        self.add_popup.set_normal_height()
+        self.add_popup.auto_dismiss = False
+        self.add_popup.open()
+        # p = GrashofPopup()
+        # p.open()
+
+    def savecontact(self, instance):
+        """Method is used for saving contacts"""
+        pupup_obj = self.add_popup.content_cls
+        label = pupup_obj.ids.label.text.strip()
+        address = pupup_obj.ids.address.text.strip()
+        if label == '' and address == '':
+            pupup_obj.ids.label.focus = True
+            pupup_obj.ids.address.focus = True
+        elif address == '':
+            pupup_obj.ids.address.focus = True
+        elif label == '':
+            pupup_obj.ids.label.focus = True
+
+        stored_address = [addr[1] for addr in kivy_helper_search.search_sql(
+            folder="addressbook")]
+        stored_labels = [labels[0] for labels in kivy_helper_search.search_sql(
+            folder="addressbook")]
+        if label and address and address not in stored_address \
+                and label not in stored_labels and pupup_obj.valid:
+            # state.navinstance = self.parent.children[1]
+            queues.UISignalQueue.put(('rerenderAddressBook', ''))
+            self.add_popup.dismiss()
+            sqlExecute("INSERT INTO addressbook VALUES(?,?)", label, address)
+            self.root.ids.sc11.ids.ml.clear_widgets()
+            self.root.ids.sc11.loadAddresslist(None, 'All', '')
+            self.root.ids.scr_mngr.current = 'addressbook'
+            toast('Saved')
+
+    def close_pop(self, instance):
+        """Pop is Canceled"""
+        self.add_popup.dismiss()
+        toast('Canceled')
 
     def getDefaultAccData(self):
         """Getting Default Account Data"""
@@ -2301,7 +2432,7 @@ class NavigateApp(MDApp):
             self.root.ids.sc3.children[1].ids.txt_input.text = text
             self.root.ids.scr_mngr.current = 'create'
 
-class GrashofPopup(Popup):
+class GrashofPopup(BoxLayout):
     """Moule for save contacts and error messages"""
 
     valid = False
@@ -2310,44 +2441,10 @@ class GrashofPopup(Popup):
         """Grash of pop screen settings"""
         super(GrashofPopup, self).__init__(**kwargs)
 
-    def savecontact(self):
-        """Method is used for saving contacts"""
-        label = self.ids.label.text.strip()
-        address = self.ids.address.text.strip()
-        if label == '' and address == '':
-            self.ids.label.focus = True
-            self.ids.address.focus = True
-        elif address == '':
-            self.ids.address.focus = True
-        elif label == '':
-            self.ids.label.focus = True
-
-        stored_address = [addr[1] for addr in kivy_helper_search.search_sql(
-            folder="addressbook")]
-        stored_labels = [labels[0] for labels in kivy_helper_search.search_sql(
-            folder="addressbook")]
-        if label and address and address not in stored_address \
-                and label not in stored_labels and self.valid:
-            # state.navinstance = self.parent.children[1]
-            queues.UISignalQueue.put(('rerenderAddressBook', ''))
-            self.dismiss()
-            sqlExecute("INSERT INTO addressbook VALUES(?,?)", label, address)
-            self.parent.children[1].ids.sc11.ids.ml.clear_widgets()
-            self.parent.children[1].ids.sc11.loadAddresslist(None, 'All', '')
-            self.parent.children[1].ids.scr_mngr.current = 'addressbook'
-            toast('Saved')
-
-    @staticmethod
-    def close_pop():
-        """Pop is Canceled"""
-        toast('Canceled')
-
     def checkAddress_valid(self, instance):
         """Checking address is valid or not"""
-        # my_addresses = (
-        #     self.parent.children[1].children[0].children[0].ids.btn.values)
         my_addresses = (
-            state.kivyapp.root.children[0].children[0].ids.btn.values)
+            state.kivyapp.root.ids.content_drawer.ids.btn.values)
         add_book = [addr[1] for addr in kivy_helper_search.search_sql(
             folder="addressbook")]
         entered_text = str(instance.text).strip()
@@ -2619,7 +2716,7 @@ class MailDetail(Screen):  # pylint: disable=too-many-instance-attributes
         toast(text_item)
 
 
-class MyaddDetailPopup(Popup):
+class MyaddDetailPopup(BoxLayout):
     """MyaddDetailPopup pop is used for showing my address detail"""
 
     address_label = StringProperty()
@@ -2629,33 +2726,26 @@ class MyaddDetailPopup(Popup):
         """My Address Details screen setting"""
         super(MyaddDetailPopup, self).__init__(**kwargs)
 
-    def set_address(self, address, label):
-        """Getting address for displaying details on popup"""
-        self.address_label = label
-        self.address = address
-
     def send_message_from(self):
         """Method used to fill from address of composer autofield"""
         state.kivyapp.set_navbar_for_composer()
-        try:
-            window_obj = self.parent.children[2].ids
-        except Exception:
-            window_obj = self.parent.children[1].ids
+        window_obj = state.kivyapp.root.ids
         window_obj.sc3.children[1].ids.ti.text = self.address
         window_obj.sc3.children[1].ids.btn.text = self.address
         window_obj.sc3.children[1].ids.txt_input.text = ''
         window_obj.sc3.children[1].ids.subject.text = ''
         window_obj.sc3.children[1].ids.body.text = ''
         window_obj.scr_mngr.current = 'create'
-        self.dismiss()
+        self.parent.parent.parent.dismiss()
 
-    @staticmethod
-    def close_pop():
+    # @staticmethod
+    def close_pop(self):
         """Pop is Canceled"""
+        self.parent.parent.parent.dismiss()
         toast('Canceled')
 
 
-class AddbookDetailPopup(Popup):
+class AddbookDetailPopup(BoxLayout):
     """AddbookDetailPopup pop is used for showing my address detail"""
 
     address_label = StringProperty()
@@ -2664,49 +2754,6 @@ class AddbookDetailPopup(Popup):
     def __init__(self, **kwargs):
         """Set screen of address detail page"""
         super(AddbookDetailPopup, self).__init__(**kwargs)
-
-    def set_addbook_data(self, address, label):
-        """Getting address book data for detial dipaly"""
-        self.address_label = label
-        self.address = address
-
-    def update_addbook_label(self, address):
-        """Updating the label of address book address"""
-        address_list = kivy_helper_search.search_sql(folder="addressbook")
-        stored_labels = [labels[0] for labels in address_list]
-        add_dict = dict(address_list)
-        label = str(self.ids.add_label.text)
-        if label in stored_labels and self.address == add_dict[label]:
-            stored_labels.remove(label)
-        if label and label not in stored_labels:
-            sqlExecute(
-                "UPDATE addressbook SET label = '{}' WHERE"
-                " address = '{}';".format(
-                    str(self.ids.add_label.text), address))
-            state.kivyapp.root.ids.sc11.ids.ml.clear_widgets()
-            state.kivyapp.root.ids.sc11.loadAddresslist(None, 'All', '')
-            self.dismiss()
-            toast('Saved')
-
-    def send_message_to(self):
-        """Method used to fill to_address of composer autofield"""
-        state.kivyapp.set_navbar_for_composer()
-        try:
-            window_obj = self.parent.children[2].ids
-        except Exception:
-            window_obj = self.parent.children[1].ids
-        window_obj.sc3.children[1].ids.txt_input.text = self.address
-        window_obj.sc3.children[1].ids.ti.text = ''
-        window_obj.sc3.children[1].ids.btn.text = 'Select'
-        window_obj.sc3.children[1].ids.subject.text = ''
-        window_obj.sc3.children[1].ids.body.text = ''
-        window_obj.scr_mngr.current = 'create'
-        self.dismiss()
-
-    @staticmethod
-    def close_pop():
-        """Pop is Canceled"""
-        toast('Canceled')
 
     def checkLabel_valid(self, instance):
         """Checking address label is unique of not"""
@@ -2729,7 +2776,7 @@ class ShowQRCode(Screen):
     """ShowQRCode Screen uses to show the detail of mails"""
     address = StringProperty()
 
-    def qrdisplay(self):
+    def qrdisplay(self, instasnce, address):
         """Method used for showing QR Code"""
         self.ids.qr.clear_widgets()
         state.kivyapp.set_toolbar_for_QrCode()
@@ -2737,13 +2784,10 @@ class ShowQRCode(Screen):
             from kivy.garden.qrcode import QRCodeWidget
         except Exception as e:
             from kivy_garden.qrcode import QRCodeWidget
-        try:
-            address = self.manager.get_parent_window().children[0].address
-        except Exception:
-            address = self.manager.get_parent_window().children[1].address
         self.address = address
         self.ids.qr.add_widget(QRCodeWidget(data=address))
         self.ids.qr.children[0].show_border = False
+        instasnce.parent.parent.parent.dismiss()
         toast('Show QR code')
 
 
