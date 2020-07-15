@@ -70,7 +70,6 @@ class objectProcessor(threading.Thread):
         """Process the objects from `.queues.objectProcessorQueue`"""
         while True:
             objectType, data = queues.objectProcessorQueue.get()
-            # import pdb; pdb.set_trace()
             self.checkackdata(memoryview_bytes_intances(data))
 
             try:
@@ -460,7 +459,6 @@ class objectProcessor(threading.Thread):
 
     def processmsg(self, data):
         """Process a message object"""
-        # import pdb; pdb.set_trace()
         messageProcessingStartTime = time.time()
         shared.numberOfMessagesProcessed += 1
         queues.UISignalQueue.put((
