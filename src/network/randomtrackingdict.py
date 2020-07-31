@@ -7,7 +7,7 @@ from time import time
 try:
     import helper_random
 except ModuleNotFoundError:
-    from .. import helper_random
+    from pybitmessage import helper_random
 class RandomTrackingDict(object):
     """
     Dict with randomised order and tracking.

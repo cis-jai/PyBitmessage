@@ -21,11 +21,11 @@ try:
     from bmconfigparser import BMConfigParser
     from helper_sql import sqlExecute, sqlQuery
 except ModuleNotFoundError:
-    from ..bitmessagekivy import identiconGeneration
-    from ..bitmessagekivy import kivy_helper_search
-    from ..bitmessagekivy.uikivysignaler import UIkivySignaler
-    from ..bmconfigparser import BMConfigParser
-    from ..helper_sql import sqlExecute, sqlQuery
+    from pybitmessage.bitmessagekivy import identiconGeneration
+    from pybitmessage.bitmessagekivy import kivy_helper_search
+    from pybitmessage.bitmessagekivy.uikivysignaler import UIkivySignaler
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.helper_sql import sqlExecute, sqlQuery
 from kivymd.app import MDApp
 from kivy.clock import Clock
 from kivy.core.clipboard import Clipboard
@@ -81,10 +81,10 @@ try:
     import state
     from addresses import decodeAddress
 except ModuleNotFoundError:
-    from .. import queues
-    from ..semaphores import kivyuisignaler
-    from .. import state
-    from ..addresses import decodeAddress
+    from pybitmessage import queues
+    from pybitmessage.semaphores import kivyuisignaler
+    from pybitmessage import state
+    from pybitmessage.addresses import decodeAddress
 
 
 from datetime import datetime

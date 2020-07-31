@@ -2,7 +2,7 @@
 Test for network group
 """
 import unittest
-from .tests_compatibility.utils import encoded_string
+from pybitmessage.tests.tests_compatibility.utils import encoded_string
 
 class TestNetworkGroup(unittest.TestCase):
     """
@@ -11,7 +11,7 @@ class TestNetworkGroup(unittest.TestCase):
     def test_network_group(self):
         """Test various types of network groups"""
         # pylint: disable=import-error
-        from ..protocol import network_group
+        from pybitmessage.protocol import network_group
 
         test_ip = '1.2.3.4'
         self.assertEqual(encoded_string('\x01\x02'), network_group(test_ip))

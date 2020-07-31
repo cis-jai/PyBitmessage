@@ -7,10 +7,11 @@ try:
     from bmconfigparser import BMConfigParser
     from singleton import Singleton
 except ModuleNotFoundError:
-    from .storage import filesystem
-    from .storage import sqlite
-    from .bmconfigparser import BMConfigParser
-    from .singleton import Singleton
+    from pybitmessage import storage
+    from pybitmessage.storage import filesystem
+    from pybitmessage.storage import sqlite
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.singleton import Singleton
     
 
 @Singleton
@@ -21,6 +22,7 @@ class Inventory(object):
     """
     def __init__(self):
         self._moduleName = BMConfigParser().safeGet("inventory", "storage")
+        print('is I am called the Inventory')
         self._inventoryClass = getattr(
             getattr(storage, self._moduleName),
             "{}Inventory".format(self._moduleName.title())

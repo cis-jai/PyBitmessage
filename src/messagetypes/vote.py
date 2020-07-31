@@ -3,7 +3,7 @@ import logging
 try:
     from messagetypes import MsgBase
 except ModuleNotFoundError:
-    from ..messagetypes import MsgBase
+    from pybitmessage.messagetypes import MsgBase
 # pylint: disable=attribute-defined-outside-init
 
 logger = logging.getLogger('default')

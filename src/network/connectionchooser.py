@@ -11,11 +11,11 @@ try:
     from bmconfigparser import BMConfigParser
     from queues import Queue, portCheckerQueue
 except ModuleNotFoundError:
-    from .. import knownnodes
-    from .. import protocol
-    from .. import state
-    from ..bmconfigparser import BMConfigParser
-    from ..queues import Queue, portCheckerQueue
+    from pybitmessage import knownnodes
+    from pybitmessage import protocol
+    from pybitmessage import state
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.queues import Queue, portCheckerQueue
 
 logger = logging.getLogger('default')
 

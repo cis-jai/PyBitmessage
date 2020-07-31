@@ -74,9 +74,8 @@ class TestAddresses(unittest.TestCase):
     """Test addresses manipulations"""
     def test_privtopub(self):
         """Generate public keys and check the result"""
-        import pdb; pdb.set_trace()
         self.assertEqual(
-            arithmetic.privtopub(sample_privatesigningkey),
+            arithmetic.privtopub(sample_privatesigningkey.encode()),
             hexlify(sample_pubsigningkey)
         )
         self.assertEqual(
@@ -93,7 +92,6 @@ class TestAddresses(unittest.TestCase):
         sha.update(sample_pubsigningkey + sample_pubencryptionkey)
         ripe_hash = RIPEMD160Hash(sha.digest()).digest()
         self.assertEqual(ripe_hash, unhexlify(sample_ripe))
-
         self.assertEqual(
             addresses.encodeAddress(2, 1, ripe_hash), sample_address)
 

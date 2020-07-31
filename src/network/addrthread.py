@@ -11,12 +11,12 @@ try:
     from queues import addrQueue
     from network.threads import StoppableThread
 except ModuleNotFoundError:
-    from .. import  state
-    from ..helper_random import randomshuffle
-    from ..network.assemble import assemble_addr
-    from ..network.connectionpool import BMConnectionPool
-    from ..queues import addrQueue
-    from ..network.threads import StoppableThread
+    from pybitmessage import  state
+    from pybitmessage.helper_random import randomshuffle
+    from pybitmessage.network.assemble import assemble_addr
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.queues import addrQueue
+    from pybitmessage.network.threads import StoppableThread
 
 class AddrThread(StoppableThread):
     """(Node) address broadcasting thread"""

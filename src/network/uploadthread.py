@@ -14,14 +14,14 @@ try:
     from network.threads import StoppableThread
 except ModuleNotFoundError:
 
-    from .. import helper_random
-    from .. import protocol
-    from ..inventory import Inventory
-    from .connectionpool import BMConnectionPool
-    from .dandelion import Dandelion
-    from .randomtrackingdict import RandomTrackingDict
-    from .threads import StoppableThread
+    from pybitmessage import helper_random
+    from pybitmessage import protocol
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.network.dandelion import Dandelion
+    from pybitmessage.network.randomtrackingdict import RandomTrackingDict
 
+    from pybitmessage.network.threads import StoppableThread
 class UploadThread(StoppableThread):
     """
     This is a thread that uploads the objects that the peers requested from me

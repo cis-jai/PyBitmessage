@@ -4,7 +4,7 @@ Sql queries for bitmessagekivy
 try:
     from helper_sql import sqlQuery
 except ModuleNotFoundError:
-    from ..helper_sql import sqlQuery
+    from pybitmessage.helper_sql import sqlQuery
 
 def search_sql(
         xAddress="toaddress", account=None, folder="inbox", where=None,

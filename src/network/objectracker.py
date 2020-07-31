@@ -4,13 +4,13 @@ Module for tracking objects
 import time
 from threading import RLock
 try:
-    import network.connectionpool
+    from network.connectionpool import connectionpool
     from network.dandelion import Dandelion
     from network.randomtrackingdict import RandomTrackingDict
 except:
-    from . import connectionpool
-    from .dandelion import Dandelion
-    from .randomtrackingdict import RandomTrackingDict
+    from pybitmessage.network import connectionpool
+    from pybitmessage.network.dandelion import Dandelion
+    from pybitmessage.network.randomtrackingdict import RandomTrackingDict
 
 haveBloom = False
 
@@ -105,7 +105,7 @@ class ObjectTracker(object):
 
     def handleReceivedObject(self, streamNumber, hashid):
         """Handling received object"""
-        for i in network.connectionpool.BMConnectionPool().connections():
+        for i in connectionpool.BMConnectionPool().connections():
             if not i.fullyEstablished:
                 continue
             try:

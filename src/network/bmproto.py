@@ -31,32 +31,32 @@ try:
     from network.proxy import ProxyError
     from network.objectracker import missingObjects, ObjectTracker
     from network.node import Node, Peer
-    from queues import objectProcessorQueue, portCheckerQueue, invQueue
     from network.randomtrackingdict import RandomTrackingDict
+    from queues import objectProcessorQueue, portCheckerQueue, invQueue
 except ModuleNotFoundError:
-    from .. import addresses
-    from . import connectionpool
-    from .. import knownnodes
-    from .. import protocol
-    from .. import state
-    from ..bmconfigparser import BMConfigParser
-    from ..inventory import Inventory
-    from .advanceddispatcher import AdvancedDispatcher
-    from .bmobject import (
+    from pybitmessage import addresses
+    from pybitmessage.network import connectionpool
+    from pybitmessage import knownnodes
+    from pybitmessage import protocol
+    from pybitmessage import state
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.network.advanceddispatcher import AdvancedDispatcher
+    from pybitmessage.network.bmobject import (
         BMObject, BMObjectAlreadyHaveError, BMObjectExpiredError,
         BMObjectInsufficientPOWError, BMObjectInvalidDataError,
         BMObjectInvalidError, BMObjectUnwantedStreamError
     )
-    from .constants import (
+    from pybitmessage.network.constants import (
         ADDRESS_ALIVE, MAX_MESSAGE_SIZE, MAX_OBJECT_COUNT,
         MAX_OBJECT_PAYLOAD_SIZE, MAX_TIME_OFFSET
     )
-    from .dandelion import Dandelion
-    from .proxy import ProxyError
-    from .objectracker import missingObjects, ObjectTracker
-    from .node import Node, Peer
-    from ..queues import objectProcessorQueue, portCheckerQueue, invQueue
-    from .randomtrackingdict import RandomTrackingDict
+    from pybitmessage.network.dandelion import Dandelion
+    from pybitmessage.network.proxy import ProxyError
+    from pybitmessage.network.objectracker import missingObjects, ObjectTracker
+    from pybitmessage.network.node import Node, Peer
+    from pybitmessage.network.randomtrackingdict import RandomTrackingDict
+    from pybitmessage.queues import objectProcessorQueue, portCheckerQueue, invQueue
 
 logger = logging.getLogger('default')
 

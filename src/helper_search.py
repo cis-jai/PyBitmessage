@@ -6,16 +6,17 @@ Used by :mod:`.bitmessageqt`.
 
 try:
     from helper_sql import sqlQuery
+    from tr import _translate
 except ModuleNotFoundError:
-    from .helper_sql import sqlQuery
+    from pybitmessage.helper_sql import sqlQuery
+    from pybitmessage.tr import _translate
+    
 try:
     from PyQt4 import QtGui
     haveQt = True
 except ImportError:
     haveQt = False
 # pylint: disable=too-many-arguments
-from helper_sql import sqlQuery
-from tr import _translate
 
 
 def search_sql(

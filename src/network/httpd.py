@@ -7,7 +7,7 @@ import socket
 try:
     from .tls import TLSDispatcher
 except ModuleNotFoundError:
-    from ..network.tls import TLSDispatcher
+    from pybitmessage.network.tls import TLSDispatcher
 
 class HTTPRequestHandler(asyncore.dispatcher):
     """Handling HTTP request"""

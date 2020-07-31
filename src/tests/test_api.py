@@ -8,7 +8,7 @@ import time
 import xmlrpc.client as xmlrpclib  # nosec
 
 from .test_process import TestProcessProto, TestProcessShutdown
-
+from .tests_compatibility import utils
 
 class TestAPIProto(TestProcessProto):
     """Test case logic for testing API"""
@@ -16,11 +16,15 @@ class TestAPIProto(TestProcessProto):
 
     @classmethod
     def setUpClass(cls):
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print('is this TestAPIProto')
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        
         """Setup XMLRPC proxy for pybitmessage API"""
         super(TestAPIProto, cls).setUpClass()
         cls.addresses = []
-        cls.api = xmlrpclib.ServerProxy(
-            "http://username:password@127.0.0.1:8442/")
+        cls.api = xmlrpclib.ServerProxy(    
+             "http://username:password@127.0.0.1:8442/")
         for _ in range(5):
             if cls._get_readline('.api_started'):
                 return
@@ -31,6 +35,9 @@ class TestAPIShutdown(TestAPIProto, TestProcessShutdown):
     """Separate test case for API command 'shutdown'"""
     def test_shutdown(self):
         """Shutdown the pybitmessage"""
+        # try:
+        #     self.assertEqual(self.api.shutdown(), 'done')
+        # except Exception:
         self.assertEqual(self.api.shutdown(), 'done')
         for _ in range(5):
             if not self.process.is_running():
@@ -38,7 +45,7 @@ class TestAPIShutdown(TestAPIProto, TestProcessShutdown):
             time.sleep(2)
         else:
             self.fail(
-                '%s has not stopped in 10 sec' % ' '.join(self._process_cmd))
+                 '{} has not stopped in 10 sec'.format(' '.join(self._process_cmd)))
 
 
 class TestAPI(TestAPIProto):
@@ -61,6 +68,10 @@ class TestAPI(TestAPIProto):
 
     def test_connection(self):
         """API command 'helloWorld'"""
+        print('---------67--------------------')
+        print('---------68--------------------')
+        print('***********test_connection**********')
+        print('------70------------------------')
         self.assertEqual(
             self.api.helloWorld('hello', 'world'),
             'hello-world'
@@ -122,7 +133,7 @@ class TestAPI(TestAPIProto):
 
     def test_create_random_address(self):
         """API command 'createRandomAddress': basic BM-address validation"""
-        addr = self._add_random_address('random_1')
+        addr = self._add_random_address('random_1'.encode())
         self.assertRegexpMatches(addr, r'^BM-')
         self.assertRegexpMatches(addr[3:], r'[a-zA-Z1-9]+$')
         # Whitepaper says "around 36 character"
@@ -137,17 +148,17 @@ class TestAPI(TestAPIProto):
             []
         )
         # Add known address
-        self.api.addAddressBookEntry(
-            'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK',
-            base64.encodestring('tiger_4')
-        )
+        self.api.addAddressBookEntry('BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK', 
+                                     base64.encodestring(utils.encoded_string(
+                                         'tiger_4')).decode())
         # Check addressbook entry
         entries = json.loads(
             self.api.listAddressBookEntries()).get('addresses')[0]
         self.assertEqual(
             entries['address'], 'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK')
         self.assertEqual(
-            base64.decodestring(entries['label']), 'tiger_4')
+            base64.decodestring(utils.encoded_string(entries['label'])), 
+            utils.encoded_string('tiger_4'))
         # Remove known address
         self.api.deleteAddressBookEntry(
             'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK')
@@ -159,7 +170,7 @@ class TestAPI(TestAPIProto):
 
     def test_send_broadcast(self):
         """API command 'sendBroadcast': ensure it returns ackData"""
-        addr = self._add_random_address('random_2')
+        addr = self._add_random_address('random_2'.encode())
         ack = self.api.sendBroadcast(
             addr, base64.encodestring('test_subject'),
             base64.encodestring('test message')

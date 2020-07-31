@@ -13,13 +13,13 @@ try:
     from queues import invQueue
     from network.threads import StoppableThread
 except ModuleNotFoundError:
-    from .. import addresses
-    from .. import protocol
-    from .. import state
-    from .connectionpool import BMConnectionPool
-    from .dandelion import Dandelion
-    from ..queues import invQueue
-    from .threads import StoppableThread
+    from pybitmessage import addresses
+    from pybitmessage import protocol
+    from pybitmessage import state
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.network.dandelion import Dandelion
+    from pybitmessage.queues import invQueue
+    from pybitmessage.network.threads import StoppableThread
 
 def handleExpiredDandelion(expired):
     """For expired dandelion objects, mark all remotes as not having

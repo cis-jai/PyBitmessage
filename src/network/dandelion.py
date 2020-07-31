@@ -13,10 +13,10 @@ try:
     from queues import invQueue
     from singleton import Singleton
 except ModuleNotFoundError:
-    from . import connectionpool
-    from .. import state
-    from ..queues import invQueue
-    from ..singleton import Singleton
+    from pybitmessage.network import connectionpool
+    from pybitmessage import state
+    from pybitmessage.queues import invQueue
+    from pybitmessage.singleton import Singleton
 
 # randomise routes after 600 seconds
 REASSIGN_INTERVAL = 600

@@ -52,42 +52,43 @@ try:
     import shutdown
     from statusbar import BMStatusBar
     import sound
+    import bitmessage_icons_rc  # noqa:F401 pylint: disable=unused-import
 except Exception:  
-    from ..debug import logger
-    from ..tr import _translate
-    from ..addresses import decodeAddress, addBMIfNotPresent
-    from .. import shared
-    from .bitmessageui import Ui_MainWindow
-    from ..bmconfigparser import BMConfigParser
-    from .. import namecoin
-    from .messageview import MessageView
-    from .migrationwizard import Ui_MigrationWizard
-    from .foldertree import (
+    from pybitmessage.debug import logger
+    from pybitmessage.tr import _translate
+    from pybitmessage.addresses import decodeAddress, addBMIfNotPresent
+    from pybitmessage import shared
+    from pybitmessage.bitmessageui import Ui_MainWindow
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage import namecoin
+    from pybitmessage.bitmessageui.messageview import MessageView
+    from pybitmessage.bitmessageui.migrationwizard import Ui_MigrationWizard
+    from pybitmessage.bitmessageui.foldertree import (
         AccountMixin, Ui_FolderWidget, Ui_AddressWidget, Ui_SubscriptionWidget,
         MessageList_AddressWidget, MessageList_SubjectWidget,
         Ui_AddressBookWidgetItemLabel, Ui_AddressBookWidgetItemAddress)
-    from . import settingsmixin
-    from . import support
-    from ..helper_ackPayload import genAckPayload
-    from ..helper_sql import sqlQuery, sqlExecute, sqlExecuteChunked, sqlStoredProcedure
-    from .. import helper_search
-    from .. import l10n
-    from .utils import str_broadcast_subscribers, avatarize
-    from .account import (
+    from pybitmessage.bitmessageui import settingsmixin
+    from pybitmessage.bitmessageui import support
+    from pybitmessage.helper_ackPayload import genAckPayload
+    from pybitmessage.helper_sql import sqlQuery, sqlExecute, sqlExecuteChunked, sqlStoredProcedure
+    from pybitmessage import helper_search
+    from pybitmessage import l10n
+    from pybitmessage.bitmessageui.utils import str_broadcast_subscribers, avatarize
+    from pybitmessage.bitmessageui.account import (
         getSortedAccounts, getSortedSubscriptions, accountClass, BMAccount,
         GatewayAccount, MailchuckAccount, AccountColor)
-    from . import dialogs
-    from ..network.stats import pendingDownload, pendingUpload
-    from .uisignaler import UISignaler
-    from .. import paths
-    from ..proofofwork import getPowType
-    from .. import queues
-    from .. import shutdown
-    from .. import state
-    from .statusbar import BMStatusBar
-    from . import sound
+    from pybitmessage.bitmessageui.account import dialogs
+    from pybitmessage.network.stats import pendingDownload, pendingUpload
+    from pybitmessage.bitmessageui.uisignaler import UISignaler
+    from pybitmessage import paths
+    from pybitmessage.proofofwork import getPowType
+    from pybitmessage import queues
+    from pybitmessage import shutdown
+    from pybitmessage import state
+    from pybitmessage.bitmessageui.statusbar import BMStatusBar
+    from pybitmessage.bitmessageui import sound
+    from pybitmessage import bitmessage_icons_rc
 # This is needed for tray icon
-import bitmessage_icons_rc  # noqa:F401 pylint: disable=unused-import
 
 try:
     from plugins.plugin import get_plugin, get_plugins

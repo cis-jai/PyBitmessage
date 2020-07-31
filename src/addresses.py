@@ -151,9 +151,9 @@ def encodeAddress(version, stream, ripe):
                 'Programming error in encodeAddress: The length of'
                 ' a given ripe hash was not 20.'
             )
-        if ripe[:2] == '\x00\x00':
+        if ripe[:2] == '\x00\x00'.encode():
             ripe = ripe[2:]
-        elif ripe[:1] == '\x00':
+        elif ripe[:1] == '\x00'.encode():
             ripe = ripe[1:]
     elif version == 4:
         if len(ripe) != 20:
@@ -245,7 +245,7 @@ def decodeAddress(address):
             data[bytesUsedByVersionNumber + bytesUsedByStreamNumber:-4]
         if len(embeddedRipeData) == 19:
             return status, addressVersionNumber, streamNumber, \
-                '\x00' + embeddedRipeData
+               '\x00'.encode() + embeddedRipeData
         elif len(embeddedRipeData) == 20:
             return status, addressVersionNumber, streamNumber, \
                 embeddedRipeData
@@ -260,7 +260,7 @@ def decodeAddress(address):
     elif addressVersionNumber == 4:
         embeddedRipeData = \
             data[bytesUsedByVersionNumber + bytesUsedByStreamNumber:-4]
-        if embeddedRipeData[0:1] == '\x00':
+        if embeddedRipeData[0:1] == '\x00'.encode():
             # In order to enforce address non-malleability, encoded
             # RIPE data must have NULL bytes removed from the front
             return 'encodingproblem', 0, 0, ''

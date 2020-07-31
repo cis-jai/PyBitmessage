@@ -10,13 +10,13 @@ try:
     from network.advanceddispatcher import AdvancedDispatcher
 
     from bmconfigparser import BMConfigParser
+    from network.node import Peer
 except ModuleNotFoundError:
-    from . import asyncore_pollchoose as asyncore
-    from .advanceddispatcher import AdvancedDispatcher
+    from pybitmessage.network import asyncore_pollchoose as asyncore
+    from pybitmessage.network.advanceddispatcher import AdvancedDispatcher
 
-    from ..bmconfigparser import BMConfigParser
-from .node import Peer
-
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.network.node import Peer
 logger = logging.getLogger('default')
 
 

@@ -14,15 +14,14 @@ try:
     from network.threads import StoppableThread
 
 except ModuleNotFoundError:
-    from .. import addresses
-    from .. import helper_random
-    from .. import protocol
-    from .dandelion import Dandelion
-    from ..inventory import Inventory
-    from .connectionpool import BMConnectionPool
-    from .objectracker import missingObjects
-    #checkded this condition
-    from .threads import StoppableThread
+    from pybitmessage import addresses
+    from pybitmessage import helper_random
+    from pybitmessage import protocol
+    from pybitmessage.network.dandelion import Dandelion
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.network.objectracker import missingObjects
+    from pybitmessage.network.threads import StoppableThread
 
 
 class DownloadThread(StoppableThread):

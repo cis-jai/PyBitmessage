@@ -12,11 +12,11 @@ try:
     from queues import receiveDataQueue
     from network.threads import StoppableThread
 except ModuleNotFoundError:
-    from .. import state
-    from .advanceddispatcher import UnknownStateError
-    from .connectionpool import BMConnectionPool
-    from ..queues import receiveDataQueue
-    from .threads import StoppableThread
+    from pybitmessage import state
+    from pybitmessage.network.advanceddispatcher import UnknownStateError
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.queues import receiveDataQueue
+    from pybitmessage.network.threads import StoppableThread
 
 class ReceiveQueueThread(StoppableThread):
     """This thread processes data received from the network

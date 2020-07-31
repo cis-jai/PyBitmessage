@@ -16,14 +16,14 @@ try:
     from queues import (
         addressGeneratorQueue, objectProcessorQueue, UISignalQueue, workerQueue)
 except ModuleNotFoundError:
-    from . import shared
-    from . import state
-    from .debug import logger
-    from .helper_sql import sqlQuery, sqlStoredProcedure
-    from .inventory import Inventory
-    from .knownnodes import saveKnownNodes
-    from .network import StoppableThread
-    from .queues import (
+    from pybitmessage import shared
+    from pybitmessage import state
+    from pybitmessage.debug import logger
+    from pybitmessage.helper_sql import sqlQuery, sqlStoredProcedure
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.knownnodes import saveKnownNodes
+    from pybitmessage.network import StoppableThread
+    from pybitmessage.queues import (
         addressGeneratorQueue, objectProcessorQueue, UISignalQueue, workerQueue)
 
 def doCleanShutdown():

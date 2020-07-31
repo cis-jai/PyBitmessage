@@ -10,9 +10,9 @@ try:
     import state
     from network.threads import BusyError, nonBlocking
 except ModuleNotFoundError:
-    from . import asyncore_pollchoose as asyncore
-    from .. import state
-    from .threads import BusyError, nonBlocking
+    from pybitmessage.network import asyncore_pollchoose as asyncore
+    from pybitmessage import state
+    from pybitmessage.network.threads import BusyError, nonBlocking
     
 
 class ProcessingError(Exception):

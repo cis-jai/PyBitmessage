@@ -48,7 +48,10 @@ def encode(val, base, minlen=0):
         result = code_string[val % base:val % base + 1] + result
         val = val // base
     if len(result) < minlen:
-        result = code_string[0] * (minlen - len(result)) + result
+        try:
+            result = code_string[0] * (minlen - len(result)) + result
+        except TypeError:
+            result = code_string[0:1] * (minlen - len(result)) + result
     return result
 
 
@@ -91,11 +94,15 @@ def base10_double(a):
     """Double the numbers that are of base10"""
     if a is None:
         return None
-    m = ((3 * a[0] * a[0] + A) * inv(2 * a[1], P)) % P
-    x = (m * m - 2 * a[0]) % P
-    y = (m * (a[0] - x) - a[1]) % P
+    m = int((3 * a[0] * a[0] + A) * inv(2 * a[1], P)) % P
+    x = int(m * m - 2 * a[0]) % P
+    y = int(m * (a[0] - x) - a[1]) % P
+    # print('++++++++++++++++++++++++++++++++')
+    # print('inside the base10_double')
+    # print('the value of x -{}'.format(x))
+    # print('the value of y -{}'.format(y))
+    # print('++++++++++++++++++++++++++++++++')    
     return (x, y)
-
 
 def base10_multiply(a, n):
     """Multiply the numbers that are of base10"""
@@ -104,9 +111,9 @@ def base10_multiply(a, n):
     if n == 1:
         return a
     if (n % 2) == 0:
-        return base10_double(base10_multiply(a, n / 2))
+        return base10_double(base10_multiply(a, n /2))
     if (n % 2) == 1:
-        return base10_add(base10_double(base10_multiply(a, n / 2)), a)
+        return base10_add(base10_double(base10_multiply(a, n /2)), a)
     return None
 
 
@@ -117,7 +124,7 @@ def hex_to_point(h):
 
 def point_to_hex(p):
     """Converting point value to hexadecimal"""
-    return '04' + encode(p[0], 16, 64) + encode(p[1], 16, 64)
+    return '04'.encode() + encode(p[0], 16, 64) + encode(p[1], 16, 64)
 
 
 def multiply(privkey, pubkey):

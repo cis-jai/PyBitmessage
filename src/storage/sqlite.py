@@ -9,8 +9,8 @@ try:
     from helper_sql import sqlQuery, SqlBulkExecute, sqlExecute
     from storage.storage import InventoryStorage, InventoryItem
 except ModuleNotFoundError:
-    from ..helper_sql import sqlQuery, SqlBulkExecute, sqlExecute
-    from ..storage.storage import InventoryStorage, InventoryItem
+    from pybitmessage.helper_sql import sqlQuery, SqlBulkExecute, sqlExecute
+    from pybitmessage.storage.storage import InventoryStorage, InventoryItem
 
 
 class SqliteInventory(InventoryStorage):  # pylint: disable=too-many-ancestors

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3.7
 
 import os
 import shutil
@@ -8,7 +8,6 @@ from setuptools import setup, Extension
 from setuptools.command.install import install
 
 from src.version import softwareVersion
-
 
 EXTRAS_REQUIRE = {
     'gir': ['pygobject'],

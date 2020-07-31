@@ -13,9 +13,9 @@ try:
     from bmconfigparser import BMConfigParser
     from network.node import Peer
 except ModuleNotFoundError:
-    from . import state
-    from .bmconfigparser import BMConfigParser
-    from .network.node import Peer
+    from pybitmessage import state
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.network.node import Peer
 
 knownNodesLock = threading.Lock()
 """Thread lock for knownnodes modification"""

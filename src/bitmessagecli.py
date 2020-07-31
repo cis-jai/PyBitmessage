@@ -1406,7 +1406,9 @@ def clientStatus():
 
 def shutdown():
     """Shutdown the API"""
-
+    print('00000000000000000000000000000000000')
+    print('inside the the api method')
+    print('00000000000000000000000000000000000')    
     try:
         api.shutdown()
     except socket.error:

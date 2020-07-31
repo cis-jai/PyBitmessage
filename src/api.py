@@ -18,7 +18,8 @@ from binascii import hexlify, unhexlify
 
 from xmlrpc.server import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
 from struct import pack
-
+#decode('base64') is depracted on the python3
+from base64 import b64decode
 
 try:
     import defaults
@@ -45,29 +46,29 @@ try:
     from network.threads import StoppableThread
     from version import softwareVersion
 except:
-    from . import defaults
-    from . import helper_inbox
-    from . import helper_sent
-    from .network  import stats
-    from . import proofofwork
-    from . import queues
-    from . import shared
-    from .import shutdown
-    from .import state
-    from .addresses import (
+    from pybitmessage import defaults
+    from pybitmessage import helper_inbox
+    from pybitmessage import helper_sent
+    from pybitmessage.network  import stats
+    from pybitmessage import proofofwork
+    from pybitmessage import queues
+    from pybitmessage import shared
+    from pybitmessage import shutdown
+    from pybitmessage import state
+    from pybitmessage.addresses import (        
         addBMIfNotPresent,
         calculateInventoryHash,
         decodeAddress,
         decodeVarint,
         varintDecodeError
     )
-    from .bmconfigparser import BMConfigParser
-    from .debug import logger
-    from .helper_ackPayload import genAckPayload
-    from .helper_sql import SqlBulkExecute, sqlExecute, sqlQuery, sqlStoredProcedure
-    from .inventory import Inventory
-    from .network.threads import StoppableThread
-    from .version import softwareVersion
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.debug import logger
+    from pybitmessage.helper_ackPayload import genAckPayload
+    from pybitmessage.helper_sql import SqlBulkExecute, sqlExecute, sqlQuery, sqlStoredProcedure
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.network.threads import StoppableThread
+    from pybitmessage.version import softwareVersion
     
 str_chan = '[chan]'
 
@@ -115,7 +116,7 @@ class singleAPI(StoppableThread):
         except BaseException:
             pass
 
-    def run(self):
+    def run(self):        
         port = BMConfigParser().getint('bitmessagesettings', 'apiport')
         try:
             getattr(errno, 'WSAEADDRINUSE')
@@ -127,6 +128,13 @@ class singleAPI(StoppableThread):
                     logger.warning(
                         'Failed to start API listener on port %s', port)
                     port = random.randint(32767, 65535)
+                print('pppppppppppppppppppppppppppppp')
+                print('port-{}'.format(port))
+                print('pppppppppppppppppppppppppppppp')
+                print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
+                print(BMConfigParser().get('bitmessagesettings', 'apiinterface'))
+                print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
                 se = StoppableXMLRPCServer(
                     (BMConfigParser().get(
                         'bitmessagesettings', 'apiinterface'),
@@ -142,6 +150,7 @@ class singleAPI(StoppableThread):
                         'bitmessagesettings', 'apiport', str(port))
                     BMConfigParser().save()
                 break
+        
         se.register_introspection_functions()
 
         apiNotifyPath = BMConfigParser().safeGet(
@@ -181,6 +190,9 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         Note: this method is the same as in SimpleXMLRPCRequestHandler,
         just hacked to handle cookies
         """
+        print('post post post post')
+        print('is this method are')
+        print('post post post post')
         # Check that the path is legal
         if not self.is_rpc_path_valid():
             self.report_404()
@@ -198,7 +210,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
                 chunk_size = min(size_remaining, max_chunk_size)
                 L.append(self.rfile.read(chunk_size))
                 size_remaining -= len(L[-1])
-            data = ''.join(L)
+            data = bytes().join(L)
 
             # In previous versions of SimpleXMLRPCServer, _dispatch
             # could be overridden in this class, instead of in
@@ -239,11 +251,10 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
     def APIAuthenticateClient(self):
         """Predicate to check for valid API credentials in the request header"""
-
         if 'Authorization' in self.headers:
             # handle Basic authentication
             _, encstr = self.headers.get('Authorization').split()
-            emailid, password = encstr.decode('base64').split(':')
+            emailid, password = b64decode(encstr).decode().split(':')
             return (
                 emailid == BMConfigParser().get(
                     'bitmessagesettings', 'apiusername') and
@@ -350,11 +361,11 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         data = '{"addresses":['
         for row in queryreturn:
             label, address = row
-            label = shared.fixPotentiallyInvalidUTF8Data(label)
+            # label = shared.fixPotentiallyInvalidUTF8Data(label)
             if len(data) > 20:
                 data += ','
             data += json.dumps({
-                'label': base64.b64encode(label),
+                'label': base64.b64encode(label).decode(),
                 'address': address}, indent=4, separators=(',', ': '))
         data += ']}'
         return data
@@ -572,7 +583,6 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
     def HandleGetDeterministicAddress(self, params):
         """Handle a request to get a deterministic address"""
-
         if len(params) != 3:
             raise APIError(0, 'I need exactly 3 parameters.')
         passphrase, addressVersionNumber, streamNumber = params
@@ -580,7 +590,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         eighteenByteRipe = False
         if not passphrase:
             raise APIError(1, 'The specified passphrase is blank.')
-        passphrase = self._decode(passphrase, "base64")
+        passphrase = self._decode(passphrase.data, "base64")
         # if addressVersionNumber != 3 and addressVersionNumber != 4:
         if addressVersionNumber not in (3, 4):
             raise APIError(
@@ -1438,7 +1448,6 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
     def HandleShutdown(self, params):
         """Handle a request to shutdown the node"""
-
         if not params:
             # backward compatible trick because False == 0 is True
             state.shutdown = False
@@ -1514,7 +1523,10 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
     def _dispatch(self, method, params):
         # pylint: disable=attribute-defined-outside-init
         self.cookies = []
-
+        print('111111111111111111111')
+        print('inside the _dispatch')
+        print('print the method name are -{}'.format(method))
+        print('1111111111111111111111')
         validuser = self.APIAuthenticateClient()
         if not validuser:
             time.sleep(2)
@@ -1523,11 +1535,13 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         try:
             return self._handle_request(method, params)
         except APIError as e:
+            print('except 11111111111111111111')
             return str(e)
         except varintDecodeError as e:
+            print('except 222222222222222222222')
             logger.error(e)
             return "API Error 0026: Data contains a malformed varint. Some details: %s" % e
         except Exception as e:
+            print('except 333333333333333333333')
             logger.exception(e)
-
             return "API Error 0021: Unexpected API Failure - %s" % e

@@ -53,13 +53,13 @@ class BMConfigParser(configparser.ConfigParser):
     # pylint: disable=too-many-ancestors
     _temp = {}
 
-    def set(self, section, option, value=None):
-        if self._optcre is self.OPTCRE or value:
-            if not isinstance(value, str):
-                raise TypeError("option values must be strings")
-        if not self.validate(section, option, value):
-            raise ValueError("Invalid value %s" % value)
-        return configparser.ConfigParser.set(self, section, option, value)
+    def set(self, section, option, vars=None):
+        if self._optcre is self.OPTCRE or vars:
+            if not isinstance(vars, str):
+                raise TypeError("option vars must be strings")
+        if not self.validate(section, option, vars):
+            raise ValueError("Invalid vars %s" % vars)
+        return configparser.ConfigParser.set(self, section, option, vars)
 
     def get(self, section, option, raw=False, vars=None):
         # pylint: disable=unused-argument
@@ -138,6 +138,10 @@ class BMConfigParser(configparser.ConfigParser):
         return ''.join([x for x in BMConfigParser().sections() if x.startswith('BM-') and BMConfigParser().safeGetBoolean(x, 'payment')])
 
     def read(self, filenames):
+        # print('111111111111111111111111111111111')
+        # print('state.appdata-{}'.format(state.appdata))
+        # print('filenames-{}'.format(filenames))
+        # print('111111111111111111111111111111111')
         configparser.ConfigParser.read(self, filenames)
         for section in self.sections():
             for option in self.options(section):
@@ -158,6 +162,11 @@ class BMConfigParser(configparser.ConfigParser):
                     continue
 
     def save(self):
+        # print('***********************************')
+        # print('22222222222222222222222222222222222')
+        # print('state.appdata-{}'.format(state.appdata))
+        # # print('filenames-{}'.format(filenames))
+        # print('222222222222222222222222222222222222')
         """Save the runtime config onto the filesystem"""
         fileName = os.path.join(state.appdata, 'keys.dat')
         fileNameBak = '.'.join([

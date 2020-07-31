@@ -8,11 +8,11 @@ try:
     from queues import excQueue
     from network.threads import StoppableThread
 except ModuleNotFoundError:
-    from . import asyncore_pollchoose as asyncore
-    from .. import state
-    from .connectionpool import BMConnectionPool
-    from ..queues import excQueue
-    from .threads import StoppableThread
+    from pybitmessage.network import asyncore_pollchoose as asyncore
+    from pybitmessage import state
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.queues import excQueue
+    from pybitmessage.network.threads import StoppableThread
 
 class BMNetworkThread(StoppableThread):
     """Main network thread"""

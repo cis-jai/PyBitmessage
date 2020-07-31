@@ -33,17 +33,17 @@ try:
     from helper_sql import sqlExecute, sqlQuery
     from inventory import Inventory
 except ModuleNotFoundError:
-    from .. import l10n
-    from ..network import stats
-    from .. import queues
-    from .. import shared
-    from .. import shutdown
+    from pybitmessage import l10n
+    from pybitmessage.network import stats
+    from pybitmessage import queues
+    from pybitmessage import shared
+    from pybitmessage import shutdown
 
-    from ..addresses import addBMIfNotPresent, decodeAddress
-    from ..bmconfigparser import BMConfigParser
-    from ..helper_ackPayload import genAckPayload
-    from ..helper_sql import sqlExecute, sqlQuery
-    from ..inventory import Inventory
+    from pybitmessage.addresses import addBMIfNotPresent, decodeAddress
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.helper_ackPayload import genAckPayload
+    from pybitmessage.helper_sql import sqlExecute, sqlQuery
+    from pybitmessage.inventory import Inventory
     
 # pylint: disable=global-statement
 

@@ -10,11 +10,11 @@ try:
     from inventory import Inventory
     from network.dandelion import Dandelion
 except ModuleNotFoundError:
-    from .. import protocol
-    from .. import state
-    from ..addresses import calculateInventoryHash
-    from ..inventory import Inventory
-    from .dandelion import Dandelion
+    from pybitmessage import protocol
+    from pybitmessage import state
+    from pybitmessage.addresses import calculateInventoryHash
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.network.dandelion import Dandelion
 
 logger = logging.getLogger('default')
 

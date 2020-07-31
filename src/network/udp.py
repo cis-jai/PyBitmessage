@@ -9,16 +9,16 @@ try:
     import protocol
     from network.bmproto import BMProto
     from network.objectracker import ObjectTracker
-    from .node import Peer
+    from network.node import Peer
     import state
     from queues import receiveDataQueue
 
 except ModuleNotFoundError:
-    from .. import protocol
-    from .. import state
-    from .bmproto import BMProto
-    from .objectracker import ObjectTracker
-    from .node import Peer
+    from pybitmessage import protocol
+    from pybitmessage import state
+    from pybitmessage.network.bmproto import BMProto
+    from pybitmessage.network.objectracker import ObjectTracker
+    from pybitmessage.network.node import Peer
 
 logger = logging.getLogger('default')
 # pylint: disable=logging-format-interpolation

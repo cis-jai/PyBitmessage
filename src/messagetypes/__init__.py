@@ -11,8 +11,8 @@ try:
     import paths
     
 except ModuleNotFoundError:
-    from .. import messagetypes
-    from .. import paths
+    from pybitmessage import messagetypes
+    from pybitmessage import paths
 
 logger = logging.getLogger('default')   
 

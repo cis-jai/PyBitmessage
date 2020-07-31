@@ -11,8 +11,8 @@ try:
     from paths import lookupAppdataFolder
     from storage.storage import InventoryStorage, InventoryItem
 except ModuleNotFoundError:
-    from ..paths import lookupAppdataFolder
-    from ..storage.storage import InventoryStorage, InventoryItem
+    from pybitmessage.paths import lookupAppdataFolder
+    from pybitmessage.storage.storage import InventoryStorage, InventoryItem
 
 class FilesystemInventory(InventoryStorage):
     """Filesystem for inventory storage"""

@@ -11,51 +11,35 @@ import string
 import time
 import unittest
 
+try:
+    import knownnodes
+    import protocol
+    import state
+    from bmconfigparser import BMConfigParser
+    from helper_msgcoding import MsgEncode, MsgDecode
+    from helper_startup import start_proxyconfig
+    from network import asyncore_pollchoose as asyncore
+    from network.bmproto import BMProto
+    from network.connectionpool import BMConnectionPool
+    from network.node import Node, Peer
+    from network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
+    from queues import excQueue
+    from version import softwareVersion
 
-from pybitmessage import knownnodes
-from pybitmessage import protocol
-from pybitmessage import state
-from pybitmessage.bmconfigparser import BMConfigParser
-from pybitmessage.helper_msgcoding import MsgEncode, MsgDecode
-from pybitmessage.helper_startup import start_proxyconfig
-from pybitmessage.network import asyncore_pollchoose as asyncore
-from pybitmessage.network.bmproto import BMProto
-from pybitmessage.network.connectionpool import BMConnectionPool
-from pybitmessage.network.node import Node, Peer
-from pybitmessage.network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
-from pybitmessage.queues import excQueue
-from pybitmessage.version import softwareVersion
-
-# try:
-#     import knownnodes
-#     import protocol
-#     import state
-#     from bmconfigparser import BMConfigParser
-#     from helper_msgcoding import MsgEncode, MsgDecode
-#     from helper_startup import start_proxyconfig
-#     from network import asyncore_pollchoose as asyncore
-#     from network.bmproto import BMProto
-#     from network.connectionpool import BMConnectionPool
-#     from network.node import Node, Peer
-#     from network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
-#     from queues import excQueue
-#     from version import softwareVersion
-
-# except ModuleNotFoundError:
-#     import pdb; pdb.set_trace()
-#     from pybitmessage import knownnodes
-#     from pybitmessage import protocol
-#     from pybitmessage import state
-#     from pybitmessage.bmconfigparser import BMConfigParser
-#     from pybitmessage.helper_msgcoding import MsgEncode, MsgDecode
-#     from pybitmessage.helper_startup import start_proxyconfig
-#     from pybitmessage.network import asyncore_pollchoose as asyncore
-#     from pybitmessage.network.bmproto import BMProto
-#     from pybitmessage.network.connectionpool import BMConnectionPool
-#     from pybitmessage.network.node import Peer
-#     from pybitmessage.network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
-#     from pybitmessage.queues import excQueue
-#     from pybitmessage.version import softwareVersion
+except ModuleNotFoundError:
+    from pybitmessage import knownnodes
+    from pybitmessage import protocol
+    from pybitmessage import state
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.helper_msgcoding import MsgEncode, MsgDecode
+    from pybitmessage.helper_startup import start_proxyconfig
+    from pybitmessage.network import asyncore_pollchoose as asyncore
+    from pybitmessage.network.bmproto import BMProto
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.network.node import Peer
+    from pybitmessage.network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
+    from pybitmessage.queues import excQueue
+    from pybitmessage.version import softwareVersion
 try:
     import stem.version as stem_version
 except ImportError:
@@ -145,8 +129,8 @@ class TestCore(unittest.TestCase):
     @staticmethod
     def _outdate_knownnodes():
         with knownnodes.knownNodesLock:
-            for nodes in knownnodes.knownNodes.itervalues():
-                for node in nodes.itervalues():
+            for nodes in iter(knownnodes.knownNodes.values()):
+                for node in iter(nodes.values()):
                     node['lastseen'] -= 2419205  # older than 28 days
 
     def test_knownnodes_pickle(self):
@@ -171,10 +155,6 @@ class TestCore(unittest.TestCase):
 
     def test_0_cleaner(self):
         """test known   nodes starvation leading to IndexError in Asyncore"""
-        import sys
-        print('-----------------------------------------')
-        print(sys.version_info)
-        print('-----------------------------------------')
         self._outdate_knownnodes()
         # time.sleep(303)  # singleCleaner wakes up every 5 min
         knownnodes.cleanupKnownNodes()
@@ -268,7 +248,7 @@ class TestCore(unittest.TestCase):
         decoded = self._decode_msg(msg, "IQQiiQlsLv")
         peer, _, ua, streams = self._decode_msg(msg, "IQQiiQlsLv")[4:]
         self.assertEqual(peer, Node(3, '127.0.0.1', 8444))
-        self.assertEqual(ua, '/PyBitmessage:' + softwareVersion + '/')
+        self.assertEqual(ua, ('/PyBitmessage:' + softwareVersion + '/').encode())
         self.assertEqual(streams, [1])
         # with multiple streams
         msg = protocol.assembleVersionMessage('127.0.0.1', 8444, [1, 2, 3])
@@ -291,3 +271,4 @@ def run():
         qt_tests = loader.loadTestsFromModule(bitmessageqt.tests)
         suite.addTests(qt_tests)
     return unittest.TextTestRunner(verbosity=2).run(suite)
+

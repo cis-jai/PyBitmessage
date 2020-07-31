@@ -12,10 +12,10 @@ try:
     from network.advanceddispatcher import AdvancedDispatcher
     from queues import receiveDataQueue
 except ModuleNotFoundError:
-    from . import asyncore_pollchoose as asyncore
-    from .. import paths
-    from .advanceddispatcher import AdvancedDispatcher
-    from ..queues import receiveDataQueue
+    from pybitmessage.network import asyncore_pollchoose as asyncore
+    from pybitmessage import paths
+    from pybitmessage.network.advanceddispatcher import AdvancedDispatcher
+    from pybitmessage.queues import receiveDataQueue
 
 
 logger = logging.getLogger('default')

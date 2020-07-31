@@ -8,9 +8,9 @@ try:
     import state
     from semaphores import kivyuisignaler
 except ModuleNotFoundError:
-    from .. import queues
-    from .. import state
-    from ..semaphores import kivyuisignaler
+    from pybitmessage import queues
+    from pybitmessage import state
+    from pybitmessage.semaphores import kivyuisignaler
 
 class UIkivySignaler(Thread):
     """Kivy ui signaler"""

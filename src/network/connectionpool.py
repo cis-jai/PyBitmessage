@@ -22,19 +22,19 @@ try:
     from network.udp import UDPSocket
     from singleton import Singleton
 except ModuleNotFoundError:
-    from . import asyncore_pollchoose as asyncore
-    from .. import helper_random
-    from .. import knownnodes
-    from .. import protocol
-    from .. import state
-    from ..bmconfigparser import BMConfigParser
-    from .connectionchooser import chooseConnection
-    from .proxy import Proxy
+    from pybitmessage.network import asyncore_pollchoose as asyncore
+    from pybitmessage import helper_random
+    from pybitmessage import knownnodes
+    from pybitmessage import protocol
+    from pybitmessage import state
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.network.connectionchooser import chooseConnection
+    from pybitmessage.network.proxy import Proxy
 
-    from .tcp import (
+    from pybitmessage.network.tcp import (
         TCPServer, Socks5BMConnection, Socks4aBMConnection, TCPConnection, bootstrap)
-    from .udp import UDPSocket
-    from ..singleton import Singleton
+    from pybitmessage.network.udp import UDPSocket
+    from pybitmessage.singleton import Singleton
     
 from .node import Peer
 

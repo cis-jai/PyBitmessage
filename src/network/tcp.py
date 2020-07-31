@@ -32,28 +32,28 @@ try:
     from .node import Peer
     from queues import UISignalQueue, invQueue, receiveDataQueue
 except ModuleNotFoundError:
-    from .. import addresses
-    from . import asyncore_pollchoose as asyncore
-    from . import connectionpool
-    from .. import helper_random
-    from .. import knownnodes
-    from .. import protocol
-    from .. import shared
-    from .. import state
-    from ..bmconfigparser import BMConfigParser
-    from ..helper_random import randomBytes
-    from ..inventory import Inventory
-    from .advanceddispatcher import AdvancedDispatcher
-    from .assemble import assemble_addr
-    from .bmproto import BMProto
-    from .constants import MAX_OBJECT_COUNT
-    from .dandelion import Dandelion
-    from .objectracker import ObjectTracker
-    from .socks4a import Socks4aConnection
-    from .socks5 import Socks5Connection
-    from .tls import TLSDispatcher
-    from .node import Peer
-    from ..queues import UISignalQueue, invQueue, receiveDataQueue
+    from pybitmessage import addresses
+    from pybitmessage import helper_random
+    from pybitmessage import knownnodes
+    from pybitmessage import protocol
+    from pybitmessage import shared
+    from pybitmessage import state
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.helper_random import randomBytes
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.network import connectionpool
+    from pybitmessage.network import asyncore_pollchoose as asyncore
+    from pybitmessage.network.advanceddispatcher import AdvancedDispatcher
+    from pybitmessage.network.assemble import assemble_addr
+    from pybitmessage.network.bmproto import BMProto
+    from pybitmessage.network.constants import MAX_OBJECT_COUNT
+    from pybitmessage.network.dandelion import Dandelion
+    from pybitmessage.network.objectracker import ObjectTracker
+    from pybitmessage.network.socks4a import Socks4aConnection
+    from pybitmessage.network.socks5 import Socks5Connection
+    from pybitmessage.network.tls import TLSDispatcher
+    from pybitmessage.network.node import Peer
+    from pybitmessage.queues import UISignalQueue, invQueue, receiveDataQueue
     # pylint: disable=logging-format-interpolation
 
 logger = logging.getLogger('default')

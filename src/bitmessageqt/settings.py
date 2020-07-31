@@ -41,22 +41,22 @@ try:
     from network.asyncore_pollchoose import set_rates
     from tr import _translate
 except:
-    from .. import debug
-    from .. import defaults
-    from .. import knownnodes
-    from .. import namecoin
-    from .. import openclpow
-    from .. import paths
-    from .. import queues
-    from .. import shared
-    from .. import state
-    # from .. import tempfile
+    from pybitmessage import debug
+    from pybitmessage import defaults
+    from pybitmessage import knownnodes
+    from pybitmessage import namecoin
+    from pybitmessage import openclpow
+    from pybitmessage import paths
+    from pybitmessage import queues
+    from pybitmessage import shared
+    from pybitmessage import state
+    # from pybitmessage import tempfile
     # import widgets
-    from ..bmconfigparser import BMConfigParser
-    from ..helper_sql import sqlExecute, sqlStoredProcedure
-    from ..helper_startup import start_proxyconfig
-    from ..network.asyncore_pollchoose import set_rates
-    from ..tr import _translate
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.helper_sql import sqlExecute, sqlStoredProcedure
+    from pybitmessage.helper_startup import start_proxyconfig
+    from pybitmessage.network.asyncore_pollchoose import set_rates
+    from pybitmessage.tr import _translate
     
 def getSOCKSProxyType(config):
     """Get user socksproxytype setting from *config*"""

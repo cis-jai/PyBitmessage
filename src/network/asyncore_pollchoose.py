@@ -22,7 +22,7 @@ from threading import current_thread
 try:
     import helper_random
 except ModuleNotFoundError:
-    from .. import helper_random
+    from pybitmessage import helper_random
 try:
     from errno import WSAEWOULDBLOCK
 except (ImportError, AttributeError):
