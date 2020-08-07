@@ -3,8 +3,8 @@ try:
     import state
     from bitmessagemain import main
 except ModuleNotFoundError:
-    from . import  state
-    from .bitmessagemain import main
+    from pybitmessage import  state
+    from pybitmessage.bitmessagemain import main
 # import state
 
     
@@ -14,5 +14,5 @@ if __name__ == '__main__':
     try:
         from bitmessagemain import main
     except ModuleNotFoundError:
-        from .bitmessagemain import main
+        from pybitmessage.bitmessagemain import main
     main()

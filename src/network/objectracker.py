@@ -7,7 +7,7 @@ try:
     from network.connectionpool import connectionpool
     from network.dandelion import Dandelion
     from network.randomtrackingdict import RandomTrackingDict
-except:
+except (ModuleNotFoundError,ImportError):
     from pybitmessage.network import connectionpool
     from pybitmessage.network.dandelion import Dandelion
     from pybitmessage.network.randomtrackingdict import RandomTrackingDict

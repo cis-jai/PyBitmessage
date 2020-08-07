@@ -11,10 +11,10 @@ try:
     from debug import logger
     from state import shutdown
 except ModuleNotFoundError:
-    from . import paths
-    from .bmconfigparser import BMConfigParser
-    from .debug import logger
-    from .state import shutdown
+    from pybitmessage import paths
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.debug import logger
+    from pybitmessage.state import shutdown
 
 libAvailable = True
 ctx = False

@@ -124,50 +124,59 @@ class singleAPI(StoppableThread):
             errno.WSAEADDRINUSE = errno.EADDRINUSE
         for attempt in range(50):
             try:
+                print('+++++++++++++++++++++++127+++++++++++++++')
                 if attempt > 0:
+                    print('+++++++++++++++++++++++128+++++++++++++++')
                     logger.warning(
                         'Failed to start API listener on port %s', port)
                     port = random.randint(32767, 65535)
-                print('pppppppppppppppppppppppppppppp')
-                print('port-{}'.format(port))
-                print('pppppppppppppppppppppppppppppp')
-                print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-                print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
-                print(BMConfigParser().get('bitmessagesettings', 'apiinterface'))
-                print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
+                    print('+++++++++++++++++++++++133+++++++++++++++')
+                print('+++++++++++++++++++++++133+++++++++++++++')
                 se = StoppableXMLRPCServer(
                     (BMConfigParser().get(
                         'bitmessagesettings', 'apiinterface'),
                      port),
                     MySimpleXMLRPCRequestHandler, True, True)
+                print('+++++++++++++++++++++++140+++++++++++++++')
             except socket.error as e:
+                print('+++++++++++++++++++++++142+++++++++++++++')
                 if e.errno in (errno.EADDRINUSE, errno.WSAEADDRINUSE):
+                    print('+++++++++++++++++++++++144+++++++++++++++')
                     continue
             else:
                 if attempt > 0:
+                    print('+++++++++++++++++++++++148+++++++++++++++')
                     logger.warning('Setting apiport to %s', port)
                     BMConfigParser().set(
                         'bitmessagesettings', 'apiport', str(port))
                     BMConfigParser().save()
+                    print('+++++++++++++++++++++++153+++++++++++++++')
                 break
         
+        print('+++++++++++++++++++++++156+++++++++++++++')
         se.register_introspection_functions()
-
+        print('+++++++++++++++++++++++158+++++++++++++++')
         apiNotifyPath = BMConfigParser().safeGet(
             'bitmessagesettings', 'apinotifypath')
-
+        print('------------161-------------------')
         if apiNotifyPath:
+            print('------------162-------------------')
             logger.info('Trying to call %s', apiNotifyPath)
+            print('------------165-------------------')
             try:
+                print('------------167-------------------')
                 subprocess.call([apiNotifyPath, "startingUp"])
             except OSError:
+                print('------------170-------------------')
                 logger.warning(
                     'Failed to call %s, removing apinotifypath setting',
                     apiNotifyPath)
                 BMConfigParser().remove_option(
                     'bitmessagesettings', 'apinotifypath')
-
+        print('------------176-------------------')
         se.serve_forever()
+        print('---------178------------------------')
+        
 
 
 class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):

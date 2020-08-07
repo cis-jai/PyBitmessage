@@ -13,7 +13,7 @@ try:
     import state
     from queues import receiveDataQueue
 
-except ModuleNotFoundError:
+except (ModuleNotFoundError,ImportError):
     from pybitmessage import protocol
     from pybitmessage import state
     from pybitmessage.network.bmproto import BMProto

@@ -35,26 +35,26 @@ try:
     from inventory import Inventory
     from network.threads import StoppableThread
 except ModuleNotFoundError:
-    from . import defaults
-    from . import helper_inbox
-    from . import helper_msgcoding
-    from . import helper_random
-    from . import highlevelcrypto
-    from . import l10n
-    from . import proofofwork
-    from . import protocol
-    from . import queues
-    from . import shared
-    from . import state
-    from . import tr
-    from .addresses import (
+    from pybitmessage import defaults
+    from pybitmessage import helper_inbox
+    from pybitmessage import helper_msgcoding
+    from pybitmessage import helper_random
+    from pybitmessage import highlevelcrypto
+    from pybitmessage import l10n
+    from pybitmessage import proofofwork
+    from pybitmessage import protocol
+    from pybitmessage import queues
+    from pybitmessage import shared
+    from pybitmessage import state
+    from pybitmessage import tr
+    from pybitmessage.addresses import (
         calculateInventoryHash, decodeAddress, decodeVarint, encodeVarint
     )
 
-    from .bmconfigparser import BMConfigParser
-    from .helper_sql import sqlExecute, sqlQuery
-    from .inventory import Inventory
-    from .network.threads import StoppableThread
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.helper_sql import sqlExecute, sqlQuery
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.network.threads import StoppableThread
 # This thread, of which there is only one, does the heavy lifting:
 # calculating POWs.
 

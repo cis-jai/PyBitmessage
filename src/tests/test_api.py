@@ -13,6 +13,10 @@ from .tests_compatibility import utils
 class TestAPIProto(TestProcessProto):
     """Test case logic for testing API"""
     _process_cmd = ['pybitmessage', '-t']
+    # _files = (
+    #     'keys.dat', 'messages.dat', 'knownnodes.dat',
+    #     '.api_started', 'unittest.lock'
+    # )
 
     @classmethod
     def setUpClass(cls):
@@ -21,15 +25,19 @@ class TestAPIProto(TestProcessProto):
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         
         """Setup XMLRPC proxy for pybitmessage API"""
-        super(TestAPIProto, cls).setUpClass()
+        # super(TestAPIProto, cls).tearDownClass()
+        try:
+            super(TestAPIProto, cls).setUpClass()
+        except:
+            pass
+
         cls.addresses = []
         cls.api = xmlrpclib.ServerProxy(    
-             "http://username:password@127.0.0.1:8442/")
+            "http://username:password@127.0.0.1:8442/")
         for _ in range(5):
             if cls._get_readline('.api_started'):
                 return
             time.sleep(1)
-
 
 class TestAPIShutdown(TestAPIProto, TestProcessShutdown):
     """Separate test case for API command 'shutdown'"""
@@ -66,7 +74,7 @@ class TestAPI(TestAPIProto):
             ' authentication at all.'
         )
 
-    def test_connection(self):
+    def test_connection(self):  
         """API command 'helloWorld'"""
         print('---------67--------------------')
         print('---------68--------------------')

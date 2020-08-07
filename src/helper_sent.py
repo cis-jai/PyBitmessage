@@ -4,7 +4,7 @@ Insert values into sent table
 try:
     from helper_sql import sqlExecute
 except ModuleNotFoundError:
-    from .helper_sql import sqlExecute
+    from pybitmessage.helper_sql import sqlExecute
 
 def insert(t):
     """Perform an insert into the `sent` table"""

@@ -23,11 +23,11 @@ try:
     from class_singleWorker import singleWorker
     from class_sqlThread import sqlThread
 except ModuleNotFoundError:
-    from .class_addressGenerator import addressGenerator
-    from .class_objectProcessor import objectProcessor
-    from .class_singleCleaner import singleCleaner
-    from .class_singleWorker import singleWorker
-    from .class_sqlThread import sqlThread
+    from pybitmessage.class_addressGenerator import addressGenerator
+    from pybitmessage.class_objectProcessor import objectProcessor
+    from pybitmessage.class_singleCleaner import singleCleaner
+    from pybitmessage.class_singleWorker import singleWorker
+    from pybitmessage.class_sqlThread import sqlThread
 try:
     import prctl
 except ImportError:

@@ -7,7 +7,7 @@ import sys
 from setuptools import setup, Extension
 from setuptools.command.install import install
 
-from src.version import softwareVersion
+from pybitmessage.version import softwareVersion
 
 EXTRAS_REQUIRE = {
     'gir': ['pygobject'],
@@ -18,7 +18,7 @@ EXTRAS_REQUIRE = {
     'sound;platform_system=="Windows"': ['winsound'],
     'tor': ['stem'],
     'docs': ['sphinx', 'sphinxcontrib-apidoc', 'm2r'],
-    'qrcode':['qrcode']
+    # 'qrcode':['qrcode']
 }
 
 if sys.version_info[0] == 2:
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         classifiers=[
             "License :: OSI Approved :: MIT License"
             "Operating System :: OS Independent",
-            "Programming Language :: Python :: 2.7 :: Only",
+            "Programming Language :: Python :: 3.7 :: Only",
             "Topic :: Internet",
             "Topic :: Security :: Cryptography",
             "Topic :: Software Development :: Libraries :: Python Modules",

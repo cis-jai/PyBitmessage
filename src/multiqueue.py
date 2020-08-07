@@ -9,7 +9,7 @@ from collections import deque
 try:
     import helper_random
 except ModuleNotFoundError:
-    from . import helper_random
+    from pybitmessage import helper_random
 
 class MultiQueue(Queue.Queue):
     """A base queue class"""

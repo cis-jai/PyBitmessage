@@ -29,9 +29,9 @@ try:
     from network.socks4a import Socks4aConnection
     from network.socks5 import Socks5Connection
     from network.tls import TLSDispatcher
-    from .node import Peer
+    from network.node import Peer
     from queues import UISignalQueue, invQueue, receiveDataQueue
-except ModuleNotFoundError:
+except (ModuleNotFoundError,ImportError):
     from pybitmessage import addresses
     from pybitmessage import helper_random
     from pybitmessage import knownnodes

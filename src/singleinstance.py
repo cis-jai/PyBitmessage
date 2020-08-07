@@ -10,7 +10,7 @@ import sys
 try:
     import state
 except ModuleNotFoundError:
-    from . import state
+    from pybitmessage import state
 try:
     import fcntl  # @UnresolvedImport
 except ImportError:

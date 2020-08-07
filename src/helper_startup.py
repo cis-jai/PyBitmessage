@@ -16,11 +16,11 @@ try:
     import state
     from bmconfigparser import BMConfigParser
 except ModuleNotFoundError:
-    from . import defaults
-    from . import helper_random ,paths, state
-    from .bmconfigparser import BMConfigParser
+    from pybitmessage import defaults
+    from pybitmessage import helper_random ,paths, state
+    from pybitmessage.bmconfigparser import BMConfigParser
 try:
-    from .plugins.plugin import get_plugin
+    from pybitmessage.plugins.plugin import get_plugin
 except ImportError:
     get_plugin = None
 

@@ -11,10 +11,10 @@ try:
     from tr import _translate
 
 except ModuleNotFoundError:
-    from . import messagetypes
-    from .bmconfigparser import BMConfigParser
-    from .debug import logger
-    from .tr import _translate
+    from pybitmessage import messagetypes
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.debug import logger
+    from pybitmessage.tr import _translate
 
 try:
     import msgpack

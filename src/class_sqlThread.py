@@ -18,14 +18,14 @@ try:
     from bmconfigparser import BMConfigParser
     from debug import logger
 except ModuleNotFoundError:
-    from . import helper_sql
-    from . import helper_startup
-    from . import paths
-    from . import queues
-    from . import state
-    from . import tr
-    from .bmconfigparser import BMConfigParser
-    from .debug import logger
+    from pybitmessage import helper_sql
+    from pybitmessage import helper_startup
+    from pybitmessage import paths
+    from pybitmessage import queues
+    from pybitmessage import state
+    from pybitmessage import tr
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.debug import logger
 # pylint: disable=attribute-defined-outside-init,protected-access
 
 

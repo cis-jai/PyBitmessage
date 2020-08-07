@@ -37,16 +37,16 @@ try:
     from network.threads import StoppableThread
 
 except ModuleNotFoundError:
-    from . import shared
-    from . import knownnodes
-    from . import queues
-    from . import state
-    from . import tr
-    from .bmconfigparser import BMConfigParser
-    from .helper_sql import sqlExecute, sqlQuery
-    from .inventory import Inventory
-    from .network.connectionpool import BMConnectionPool
-    from .network.threads import StoppableThread
+    from pybitmessage import shared
+    from pybitmessage import knownnodes
+    from pybitmessage import queues
+    from pybitmessage import state
+    from pybitmessage import tr
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.helper_sql import sqlExecute, sqlQuery
+    from pybitmessage.inventory import Inventory
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.network.threads import StoppableThread
 
 #: Equals 4 weeks. You could make this longer if you want
 #: but making it shorter would not be advisable because

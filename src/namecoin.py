@@ -17,11 +17,11 @@ try:
     from bmconfigparser import BMConfigParser
     from debug import logger
 except ModuleNotFoundError:
-    from . import defaults
-    from . import tr  # translate
-    from .addresses import decodeAddress
-    from .bmconfigparser import BMConfigParser
-    from .debug import logger
+    from pybitmessage import defaults
+    from pybitmessage import tr  # translate
+    from pybitmessage.addresses import decodeAddress
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.debug import logger
     
 
 configSection = "bitmessagesettings"

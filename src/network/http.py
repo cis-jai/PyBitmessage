@@ -8,11 +8,11 @@ try:
     from socks5 import Socks5Connection, Socks5Resolver
     from socks4a import Socks4aConnection, Socks4aResolver
 except ModuleNotFoundError:
-    from .advanceddispatcher import AdvancedDispatcher
-    from . import asyncore_pollchoose as asyncore
-    from .proxy import ProxyError
-    from .socks5 import Socks5Connection, Socks5Resolver
-    from .socks4a import Socks4aConnection, Socks4aResolver
+    from pybitmessage.network.advanceddispatcher import AdvancedDispatcher
+    import pybitmessage.network.asyncore_pollchoose as asyncore
+    from pybitmessage.network.proxy import ProxyError
+    from pybitmessage.network.socks5 import Socks5Connection, Socks5Resolver
+    from pybitmessage.network.socks4a import Socks4aConnection, Socks4aResolver
 
 class HttpError(ProxyError):
     pass

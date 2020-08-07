@@ -36,28 +36,28 @@ try:
     from network import bmproto
     from network.node import Peer
 except ModuleNotFoundError:
-    from . import helper_bitcoin
-    from . import helper_inbox
-    from . import helper_msgcoding
-    from . import helper_sent
-    from . import highlevelcrypto
-    from . import knownnodes
-    from . import l10n
-    from . import protocol
-    from . import queues
-    from . import shared
-    from . import state
-    from . import tr
-    from .addresses import (
+    from pybitmessage import helper_bitcoin
+    from pybitmessage import helper_inbox
+    from pybitmessage import helper_msgcoding
+    from pybitmessage import helper_sent
+    from pybitmessage import highlevelcrypto
+    from pybitmessage import knownnodes
+    from pybitmessage import l10n
+    from pybitmessage import protocol
+    from pybitmessage import queues
+    from pybitmessage import shared
+    from pybitmessage import state
+    from pybitmessage import tr
+    from pybitmessage.addresses import (
         calculateInventoryHash, decodeAddress, decodeVarint,
         encodeAddress, encodeVarint, varintDecodeError
     )
-    from .bmconfigparser import BMConfigParser
-    from .fallback import RIPEMD160Hash
-    from .helper_ackPayload import genAckPayload
-    from .helper_sql import SqlBulkExecute, sqlExecute, sqlQuery
-    from .network import bmproto
-    from .network.node import Peer
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.fallback import RIPEMD160Hash
+    from pybitmessage.helper_ackPayload import genAckPayload
+    from pybitmessage.helper_sql import SqlBulkExecute, sqlExecute, sqlQuery
+    from pybitmessage.network import bmproto
+    from pybitmessage.network.node import Peer
 # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
 
 logger = logging.getLogger('default')

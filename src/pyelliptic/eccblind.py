@@ -14,7 +14,10 @@ import time
 from hashlib import sha256
 from struct import pack, unpack
 
-from .openssl import OpenSSL
+try:
+    from pyelliptic.openssl import OpenSSL
+except:
+    from pybitmessage.pyelliptic.openssl import OpenSSL
 
 # first byte in serialisation can contain data
 Y_BIT = 0x01

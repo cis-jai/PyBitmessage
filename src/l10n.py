@@ -8,7 +8,7 @@ import time
 try:
     from bmconfigparser import BMConfigParser
 except ModuleNotFoundError:
-    from .bmconfigparser import BMConfigParser
+    from pybitmessage.bmconfigparser import BMConfigParser
 
 logger = logging.getLogger('default')
 

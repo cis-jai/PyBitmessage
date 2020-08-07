@@ -9,7 +9,7 @@ from importlib import import_module
 try:
     import state
 except ModuleNotFoundError:
-    from . import  state
+    from pybitmessage import  state
     
 # Only really old versions of Python don't have sys.hexversion. We don't
 # support them. The logging module was introduced in Python 2.3
@@ -278,8 +278,10 @@ def check_openssl():
     openssl_cflags = None
 
     cflags_regex = re.compile(r'(?:OPENSSL_NO_)(AES|EC|ECDH|ECDSA)(?!\w)')
-
-    import pyelliptic.openssl
+    try:
+        from pyelliptic import openssl
+    except:
+        from pybitmessage.pyelliptic import openssl
 
     for path in paths:
         logger.info('Checking OpenSSL at %s', path)
@@ -290,7 +292,7 @@ def check_openssl():
         logger.info('OpenSSL Name: %s', library._name)
         try:
             openssl_version, openssl_hexversion, openssl_cflags = \
-                pyelliptic.openssl.get_version(library)
+                openssl.get_version(library)
         except AttributeError:  # sphinx chokes
             return True
         if not openssl_version:

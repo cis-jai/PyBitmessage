@@ -4,8 +4,8 @@ try:
     import queues
     from helper_sql import sqlExecute, sqlQuery
 except ModuleNotFoundError:
-    from . import queues
-    from .helper_sql import sqlExecute, sqlQuery
+    from pybitmessage import queues
+    from pybitmessage.helper_sql import sqlExecute, sqlQuery
 
 def insert(t):
     """Perform an insert into the "inbox" table"""

@@ -26,7 +26,7 @@ import xmlrpc.client as xmlrpclib
 try:
     from bmconfigparser import BMConfigParser
 except:
-    from .bmconfigparser import BMConfigParser
+    from pybitmessage.bmconfigparser import BMConfigParser
 
 api = ''
 keysName = 'keys.dat'

@@ -22,13 +22,13 @@ try:
 
 except ModuleNotFoundError:
     try:
-        from . import openclpow
-        from . import paths
-        from . import queues
-        from . import state
-        from . import tr
-        from .bmconfigparser import BMConfigParser
-        from .debug import logger
+        from pybitmessage import openclpow
+        from pybitmessage import paths
+        from pybitmessage import queues
+        from pybitmessage import state
+        from pybitmessage import tr
+        from pybitmessage.bmconfigparser import BMConfigParser
+        from pybitmessage.debug import logger
     except ImportError:
         import openclpow
 try:        

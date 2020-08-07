@@ -20,11 +20,11 @@ try:
     import shutdown
     from debug import logger
 except ModuleNotFoundError:
-    from . import shared
-    from . import state
-    from . import queues
-    from . import shutdown
-    from .debug import logger
+    from pybitmessage import shared
+    from pybitmessage import state
+    from pybitmessage import queues
+    from pybitmessage import shutdown
+    from pybitmessage.debug import logger
 
 def powQueueSize():
     curWorkerQueue = queues.workerQueue.qsize()

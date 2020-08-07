@@ -31,14 +31,14 @@ try:
     from helper_sql import sqlQuery
 except ModuleNotFoundError:
     try:
-        from . import state
-        from .bmconfigparser import BMConfigParser
-        from .addresses import decodeAddress, encodeVarint
-        from .debug import logger
-        from . import highlevelcrypto
-        from .helper_sql import sqlQuery
+        from pybitmessage import state
+        from pybitmessage.bmconfigparser import BMConfigParser
+        from pybitmessage.addresses import decodeAddress, encodeVarint
+        from pybitmessage.debug import logger
+        from pybitmessage import highlevelcrypto
+        from pybitmessage.helper_sql import sqlQuery
         platform = ''
-        from .pyelliptic import arithmetic
+        from pybitmessage.pyelliptic import arithmetic
     except ImportError:
         import state
         from bmconfigparser import BMConfigParser

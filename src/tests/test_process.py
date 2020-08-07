@@ -30,13 +30,9 @@ class TestProcessProto(unittest.TestCase):
     """
     _process_cmd = ['pybitmessage', '-d']
     _threads_count = 15
-    '''
-    debug.log is removed because debug.log are pending to implement on the 
-    python3
-    '''
     _files = (
-        'keys.dat', 'messages.dat', 'knownnodes.dat',
-        '.api_started', 'unittest.lock'
+        'keys.dat', 'debug.log', 'messages.dat', 'knownnodes.dat',
+        '.api_started', 'unittest.lock','singleton.lock'
     )
  
     @classmethod
@@ -55,7 +51,7 @@ class TestProcessProto(unittest.TestCase):
         pfile = os.path.join(cls.home, pfile)
         try:
             return open(pfile, 'rb').readline().strip()
-        except (OSError, IOError):
+        except (OSError, IOError, FileNotFoundError):
             pass
 
     @classmethod
@@ -78,11 +74,14 @@ class TestProcessProto(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         """Ensures that pybitmessage stopped and removes files"""
+        print('######################################')
+        print('is this are even called tearDownClass')
+        print('######################################')
         try:
             if not cls._stop_process():
                 print(open(os.path.join(cls.home, 'debug.log'), 'rb').read())
                 cls.process.kill()
-        except psutil.NoSuchProcess:
+        except (psutil.NoSuchProcess, FileNotFoundError, AttributeError) as e:
             pass
         finally:
             cls._cleanup_files()
@@ -128,7 +127,7 @@ class TestProcess(TestProcessProto):
     """A test case for pybitmessage process"""
     def test_process_name(self):
         """Check PyBitmessage process name"""
-        self.assertEqual(self.process.name(), 'PyBitmessage')
+        self.assertEqual(self.process.name(), 'pybitmessage')
 
     def test_files(self):
         """Check existence of PyBitmessage files"""

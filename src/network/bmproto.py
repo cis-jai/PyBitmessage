@@ -33,7 +33,7 @@ try:
     from network.node import Node, Peer
     from network.randomtrackingdict import RandomTrackingDict
     from queues import objectProcessorQueue, portCheckerQueue, invQueue
-except ModuleNotFoundError:
+except (ModuleNotFoundError,ImportError):
     from pybitmessage import addresses
     from pybitmessage.network import connectionpool
     from pybitmessage import knownnodes

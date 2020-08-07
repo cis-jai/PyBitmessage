@@ -8,13 +8,21 @@ For modern cryptography with ECC, AES, HMAC, Blowfish, ...
 
 This is an abandoned package maintained inside of the PyBitmessage.
 """
+try:
+    from pyelliptic.cipher import Cipher
+    from pyelliptic.ecc import ECC
+    from pyelliptic.eccblind import ECCBlind
+    from pyelliptic.eccblindchain import ECCBlindChain
+    from pyelliptic.hash import hmac_sha256, hmac_sha512, pbkdf2
+    from pyelliptic.openssl import OpenSSL
+except:
+    from pybitmessage.pyelliptic.cipher import Cipher
+    from pybitmessage.pyelliptic.ecc import ECC
+    from pybitmessage.pyelliptic.eccblind import ECCBlind
+    from pybitmessage.pyelliptic.eccblindchain import ECCBlindChain
+    from pybitmessage.pyelliptic.hash import hmac_sha256, hmac_sha512, pbkdf2
+    from pybitmessage.pyelliptic.openssl import OpenSSL
 
-from .cipher import Cipher
-from .ecc import ECC
-from .eccblind import ECCBlind
-from .eccblindchain import ECCBlindChain
-from .hash import hmac_sha256, hmac_sha512, pbkdf2
-from .openssl import OpenSSL
 
 __version__ = '1.3'
 

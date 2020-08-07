@@ -44,8 +44,8 @@ try:
     import helper_startup
     import state
 except ModuleNotFoundError:
-    from . import helper_startup, state
-    from . import state
+    from pybitmessage import helper_startup, state
+    from pybitmessage import state
 
 helper_startup.loadConfig()
 # Now can be overriden from a config file, which uses standard python

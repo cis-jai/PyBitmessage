@@ -10,7 +10,7 @@ try:
     from network.threads import StoppableThread
     from network.uploadthread import UploadThread
 
-except ModuleNotFoundError:
+except (ModuleNotFoundError,ImportError):
     from pybitmessage.network.addrthread import AddrThread
     from pybitmessage.network.announcethread import AnnounceThread
     from pybitmessage.network.connectionpool import BMConnectionPool

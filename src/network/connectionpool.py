@@ -21,7 +21,8 @@ try:
         TCPServer, Socks5BMConnection, Socks4aBMConnection, TCPConnection, bootstrap)
     from network.udp import UDPSocket
     from singleton import Singleton
-except ModuleNotFoundError:
+    from network.node import Peer
+except (ModuleNotFoundError,ImportError):
     from pybitmessage.network import asyncore_pollchoose as asyncore
     from pybitmessage import helper_random
     from pybitmessage import knownnodes
@@ -35,8 +36,7 @@ except ModuleNotFoundError:
         TCPServer, Socks5BMConnection, Socks4aBMConnection, TCPConnection, bootstrap)
     from pybitmessage.network.udp import UDPSocket
     from pybitmessage.singleton import Singleton
-    
-from .node import Peer
+    from pybitmessage.network.node import Peer
 
 logger = logging.getLogger('default')
 
@@ -187,6 +187,7 @@ class BMConnectionPool(object):
     @staticmethod
     def getListeningIP():
         """What IP are we supposed to be listening on?"""
+        #its need to this fix
         if BMConfigParser().safeGet(
                 "bitmessagesettings", "onionhostname").endswith(".onion"):
             host = BMConfigParser().safeGet(

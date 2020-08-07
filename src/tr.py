@@ -5,7 +5,7 @@ import os
 try:
     import state
 except ModuleNotFoundError:
-    from . import state
+    from pybitmessage import state
 class translateClass(object):
     """
     This is used so that the translateText function can be used

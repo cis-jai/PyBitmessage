@@ -8,7 +8,7 @@ import random
 try:
     from pyelliptic.openssl import OpenSSL
 except ModuleNotFoundError:
-    from .pyelliptic.openssl import OpenSSL
+    from pybitmessage.pyelliptic.openssl import OpenSSL
 
 NoneType = type(None)
 

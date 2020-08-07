@@ -7,7 +7,7 @@ import time
 try:
     from multiqueue import MultiQueue
 except ModuleNotFoundError:
-    from .multiqueue import MultiQueue
+    from pybitmessage.multiqueue import MultiQueue
 
 class ObjectProcessorQueue(Queue.Queue):
     """Special queue class using lock for `.threads.objectProcessor`"""

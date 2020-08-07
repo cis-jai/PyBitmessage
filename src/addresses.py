@@ -8,7 +8,7 @@ from struct import pack, unpack
 try:
     from debug import logger
 except ModuleNotFoundError:
-    from .debug import logger
+    from pybitmessage.debug import logger
 
 ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 

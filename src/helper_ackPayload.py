@@ -10,9 +10,9 @@ try:
     import highlevelcrypto
     from addresses import encodeVarint
 except ModuleNotFoundError:
-    from . import helper_random
-    from . import highlevelcrypto
-    from .addresses import encodeVarint
+    from pybitmessage import helper_random
+    from pybitmessage import highlevelcrypto
+    from pybitmessage.addresses import encodeVarint
 
 def genAckPayload(streamNumber=1, stealthLevel=0):
     """

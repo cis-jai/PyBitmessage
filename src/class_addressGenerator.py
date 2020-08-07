@@ -18,18 +18,18 @@ try:
     from pyelliptic.openssl import OpenSSL
     from network.threads import StoppableThread
 except ModuleNotFoundError:
-    from . import defaults
-    from .import highlevelcrypto
-    from . import queues
-    from . import shared
-    from . import state
-    from . import tr
-    from .addresses import decodeAddress, encodeAddress, encodeVarint
-    from .bmconfigparser import BMConfigParser
-    from .fallback import RIPEMD160Hash
-    from .pyelliptic import arithmetic
-    from .pyelliptic.openssl import OpenSSL
-    from .network.threads import StoppableThread
+    from pybitmessage import defaults
+    from pybitmessage import highlevelcrypto
+    from pybitmessage import queues
+    from pybitmessage import shared
+    from pybitmessage import state
+    from pybitmessage import tr
+    from pybitmessage.addresses import decodeAddress, encodeAddress, encodeVarint
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.fallback import RIPEMD160Hash
+    from pybitmessage.pyelliptic import arithmetic
+    from pybitmessage.pyelliptic.openssl import OpenSSL
+    from pybitmessage.network.threads import StoppableThread
 
 class addressGenerator(StoppableThread):
     """A thread for creating addresses"""

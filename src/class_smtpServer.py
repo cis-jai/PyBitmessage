@@ -21,13 +21,13 @@ try:
     from network.threads import StoppableThread
     from version import softwareVersion
 except ModuleNotFoundError:
-    from . import queues
-    from .addresses import decodeAddress
-    from .bmconfigparser import BMConfigParser
-    from .helper_ackPayload import genAckPayload
-    from .helper_sql import sqlExecute
-    from .network.threads import StoppableThread
-    from .version import softwareVersion
+    from pybitmessage import queues
+    from pybitmessage.addresses import decodeAddress
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.helper_ackPayload import genAckPayload
+    from pybitmessage.helper_sql import sqlExecute
+    from pybitmessage.network.threads import StoppableThread
+    from pybitmessage.version import softwareVersion
 
 SMTPDOMAIN = "bmaddr.lan"
 LISTENPORT = 8425

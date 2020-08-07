@@ -60,7 +60,7 @@ else:
             import_module(".{}".format(splitted[0]), "messagetypes")
         except ModuleNotFoundError:
             try:
-                from . import chatmsg
+                from pybitmessage.messagetypes import chatmsg
             except ImportError:
                 logger.error("Error importing %s", mod, exc_info=True)
         else:

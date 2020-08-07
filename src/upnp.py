@@ -23,15 +23,15 @@ try:
     from network.node import Peer
     from network.threads import StoppableThread
 except ModuleNotFoundError:
-    from . import knownnodes
-    from . import queues
-    from . import state
-    from . import tr
-    from .bmconfigparser import BMConfigParser
-    from .debug import logger
-    from .network.connectionpool import BMConnectionPool
-    from .network.node import Peer
-    from .network.threads import StoppableThread
+    from pybitmessage import knownnodes
+    from pybitmessage import queues
+    from pybitmessage import state
+    from pybitmessage import tr
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.debug import logger
+    from pybitmessage.network.connectionpool import BMConnectionPool
+    from pybitmessage.network.node import Peer
+    from pybitmessage.network.threads import StoppableThread
     
 
 def createRequestXML(service, action, arguments=None):

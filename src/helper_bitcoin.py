@@ -7,8 +7,8 @@ try:
     from debug import logger
     from pyelliptic import arithmetic
 except ModuleNotFoundError:
-    from .debug import logger
-    from .pyelliptic import arithmetic
+    from pybitmessage.debug import logger
+    from pybitmessage.pyelliptic import arithmetic
     
 
 def calculateBitcoinAddressFromPubkey(pubkey):

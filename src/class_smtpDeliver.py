@@ -14,10 +14,10 @@ try:
     from network.threads import StoppableThread
 
 except ModuleNotFoundError:
-    from . import queues
-    from . import state
-    from .bmconfigparser import BMConfigParser
-    from .network.threads import StoppableThread
+    from pybitmessage import queues
+    from pybitmessage import state
+    from pybitmessage.bmconfigparser import BMConfigParser
+    from pybitmessage.network.threads import StoppableThread
     
     
 SMTPDOMAIN = "bmaddr.lan"
