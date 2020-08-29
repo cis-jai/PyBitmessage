@@ -131,3 +131,8 @@ thisapp = None
 """Singleton instance"""
 
 imageDir = None
+import tempfile
+import os
+tmp = os.environ['BITMESSAGE_HOME'] = tempfile.gettempdir()
+log_file = os.path.join(tmp, 'debuging.log')
+dst = open(log_file,'a')

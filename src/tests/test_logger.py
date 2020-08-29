@@ -58,10 +58,10 @@ handlers=default
         except ImportError:
             self.fail('There is no package pybitmessage. Things gone wrong.')
         finally:
-            os.remove(log_config)
+            pass
+            # os.remove(log_config)
         logger_ = logging.getLogger('default')
 
         self.assertEqual(logger, logger_)
-
         logger_.info('Testing the logger...')
         self.assertRegex(open(log_file).read(), pattern)

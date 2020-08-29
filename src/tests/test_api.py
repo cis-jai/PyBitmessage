@@ -10,6 +10,7 @@ import xmlrpc.client as xmlrpclib  # nosec
 from .test_process import TestProcessProto, TestProcessShutdown
 from .tests_compatibility import utils
 
+from pybitmessage.debug import logger
 class TestAPIProto(TestProcessProto):
     """Test case logic for testing API"""
     _process_cmd = ['pybitmessage', '-t']
@@ -49,6 +50,9 @@ class TestAPIShutdown(TestAPIProto, TestProcessShutdown):
         self.assertEqual(self.api.shutdown(), 'done')
         for _ in range(5):
             if not self.process.is_running():
+                logger.info('-----------------------------------------')      
+                logger.info('test_shutdown test_shutdown test_shutdown inside the break condition')
+                logger.info('-----------------------------------------')      
                 break
             time.sleep(2)
         else:
@@ -139,6 +143,7 @@ class TestAPI(TestAPIProto):
             r'API Error 0003:'
         )
 
+    #currently working on this condition
     def test_create_random_address(self):
         """API command 'createRandomAddress': basic BM-address validation"""
         addr = self._add_random_address('random_1'.encode())

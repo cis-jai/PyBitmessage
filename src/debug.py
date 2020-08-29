@@ -52,8 +52,7 @@ helper_startup.loadConfig()
 # logging.config.fileConfig interface
 # examples are here:
 # https://bitmessage.org/forum/index.php/topic,4820.msg11163.html#msg11163
-log_level = 'WARNING'
-
+log_level = 'INFO'
 
 def log_uncaught_exceptions(ex_cls, ex, tb):
     """The last resort logging function used for sys.excepthook"""
@@ -69,14 +68,19 @@ def configureLogging():
     sys.excepthook = log_uncaught_exceptions
     fail_msg = ''
     try:
-        logging_config = os.path.join(state.appdata, 'logging.dat')
-        logging.config.fileConfig(
-            logging_config, disable_existing_loggers=False)
-        return (
-            False,
-            'Loaded logger configuration from %s' % logging_config
-        )
+        logger = logging.getLogger(state.appdata+'/logging.dat')
+        logger.setLevel(logging.DEBUG)
+        # create console handler and set level to debug
+        logging_streamHandler = logging.StreamHandler()
+        logging_streamHandler.setLevel(logging.DEBUG)
+        # create formatter
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        # add formatter to ch
+        logging_streamHandler.setFormatter(formatter)
+        # add ch to logger
+        logger.addHandler(logging_streamHandler)
     except (OSError, configparser.NoSectionError):
+        logging_config = os.path.join(state.appdata, 'logging.dat')
         if os.path.isfile(logging_config):
             fail_msg = \
                 'Failed to load logger configuration from %s, using default' \
@@ -142,23 +146,14 @@ def resetLogging():
     """Reconfigure logging in runtime when state.appdata dir changed"""
     # pylint: disable=global-statement, used-before-assignment
     global logger
-    try:
-        for i in logger.handlers:
-            logger.removeHandler(i)
-            iresetLogging.flush()
-            i.close()
-        configureLogging()
-    except:
-        pass
+    for i in logger.handlers:
+        logger.removeHandler(i)
+        i.flush()
+        i.close()
+    configureLogging()
     logger = logging.getLogger('default')
 
-
-# !
-try:
-    preconfigured, msg = configureLogging()
-    if msg:
-        logger.log(logging.WARNING if preconfigured else logging.INFO, msg)
-
-except:
-    pass
+preconfigured, msg = configureLogging()
 logger = logging.getLogger('default')
+if msg:
+    logger.log(logging.WARNING if preconfigured else logging.INFO, msg)

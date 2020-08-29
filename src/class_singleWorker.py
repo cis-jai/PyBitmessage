@@ -278,7 +278,7 @@ class singleWorker(StoppableThread):
         TTL = int(28 * 24 * 60 * 60 + helper_random.randomrandrange(-300, 300))
         embeddedTime = int(time.time() + TTL)
         payload = pack('>Q', (embeddedTime))
-        payload += '\x00\x00\x00\x01'  # object type: pubkey
+        payload += '\x00\x00\x00\x01'.encode()  # object type: pubkey
         payload += encodeVarint(addressVersionNumber)  # Address version number
         payload += encodeVarint(streamNumber)
         # bitfield of features supported by me (see the wiki).
@@ -352,7 +352,7 @@ class singleWorker(StoppableThread):
         # expiresTime time.
 
         payload = pack('>Q', (embeddedTime))
-        payload += '\x00\x00\x00\x01'  # object type: pubkey
+        payload += '\x00\x00\x00\x01'.encode()  # object type: pubkey
         payload += encodeVarint(addressVersionNumber)  # Address version number
         payload += encodeVarint(streamNumber)
         # bitfield of features supported by me (see the wiki).

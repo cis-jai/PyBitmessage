@@ -4,6 +4,7 @@ A thread for creating addresses
 import hashlib
 import time
 from binascii import hexlify
+import threading
 try:
     import defaults
     import highlevelcrypto
@@ -19,6 +20,7 @@ try:
     from network.threads import StoppableThread
 except ModuleNotFoundError:
     from pybitmessage import defaults
+    from pybitmessage.debug import logger 
     from pybitmessage import highlevelcrypto
     from pybitmessage import queues
     from pybitmessage import shared
@@ -50,7 +52,12 @@ class addressGenerator(StoppableThread):
         # pylint: disable=too-many-locals, too-many-branches
         # pylint: disable=protected-access, too-many-statements
         while state.shutdown == 0:
+            logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+            logger.info('inside the class_addressGenerator\n')
+            logger.info('current thread -{}'.format(threading.current_thread().name))
             queueValue = queues.addressGeneratorQueue.get()
+            logger.info('$$$$$$$$$$$$ queueValue  $$$$$$$$$$$$-{}'.format(queueValue))
+            logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
             nonceTrialsPerByte = 0
             payloadLengthExtraBytes = 0
             live = True
@@ -85,6 +92,9 @@ class addressGenerator(StoppableThread):
                         # the default
                         numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif len(queueValue) == 9:
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.info('---------94--------------')
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
                 command, addressVersionNumber, streamNumber, label, \
                     numberOfAddressesToMake, deterministicPassphrase, \
                     eighteenByteRipe, nonceTrialsPerByte, \
@@ -102,9 +112,12 @@ class addressGenerator(StoppableThread):
                         # the default
                         numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif queueValue[0] == 'stopThread':
+                logger.info('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                logger.info('queueValue[0] == stopThread is this condition are true')
+                logger.info('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 break
             else:
-                self.logger.error(
+                self.logger.info(
                     'Programming error: A structure with the wrong number'
                     ' of values was passed into the addressGeneratorQueue.'
                     ' Here is the queueValue: %r\n', queueValue)
@@ -132,6 +145,9 @@ class addressGenerator(StoppableThread):
                 queues.UISignalQueue.put((
                     'updateStatusBar', ""
                 ))
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.info('---------144--------------')
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
                 # This next section is a little bit strange. We're going
                 # to generate keys over and over until we find one
                 # that starts with either \x00 or \x00\x00. Then when
@@ -142,6 +158,9 @@ class addressGenerator(StoppableThread):
                 potentialPrivSigningKey = OpenSSL.rand(32)
                 potentialPubSigningKey = highlevelcrypto.pointMult(
                     potentialPrivSigningKey)
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.info('---------157--------------')
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
                 while True:
                     numberOfAddressesWeHadToMakeBeforeWeFoundOneWithTheCorrectRipePrefix += 1
                     potentialPrivEncryptionKey = OpenSSL.rand(32)
@@ -156,6 +175,9 @@ class addressGenerator(StoppableThread):
                         '\x00'.encode('utf-8') * numberOfNullBytesDemandedOnFrontOfRipeHash
                     ):
                         break
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.info('---------174--------------')
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
                 self.logger.info(
                     'Generated address with ripe digest: %s', hexlify(ripe))
                 try:
@@ -170,20 +192,22 @@ class addressGenerator(StoppableThread):
                     # The user must have a pretty fast computer.
                     # time.time() - startTime equaled zero.
                     pass
-
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.info('---------191--------------')
+                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
                 address = encodeAddress(
                     addressVersionNumber, streamNumber, ripe)
 
                 # An excellent way for us to store our keys
                 # is in Wallet Import Format. Let us convert now.
                 # https://en.bitcoin.it/wiki/Wallet_import_format
-                privSigningKey = '\x80'.encode('utf-8')[1:] + potentialPrivSigningKey
+                privSigningKey = '\x80'.encode('raw_unicode_escape') + potentialPrivSigningKey
                 checksum = hashlib.sha256(hashlib.sha256(
                     privSigningKey).digest()).digest()[0:4]
                 privSigningKeyWIF = arithmetic.changebase(
                     privSigningKey + checksum, 256, 58)
 
-                privEncryptionKey = '\x80'.encode('utf-8')[1:] + potentialPrivEncryptionKey
+                privEncryptionKey = '\x80'.encode('raw_unicode_escape') + potentialPrivEncryptionKey
                 checksum = hashlib.sha256(hashlib.sha256(
                     privEncryptionKey).digest()).digest()[0:4]
                 privEncryptionKeyWIF = arithmetic.changebase(
@@ -267,13 +291,13 @@ class addressGenerator(StoppableThread):
                 # An excellent way for us to store our keys
                 # is in Wallet Import Format. Let us convert now.
                 # https://en.bitcoin.it/wiki/Wallet_import_format
-                privSigningKey = '\x80'.encode('utf-8')[1:] + potentialPrivSigningKey
+                privSigningKey ='\x80'.encode('raw_unicode_escape') + potentialPrivSigningKey
                 checksum = hashlib.sha256(hashlib.sha256(
                     privSigningKey).digest()).digest()[0:4]
                 privSigningKeyWIF = arithmetic.changebase(
                     privSigningKey + checksum, 256, 58)
 
-                privEncryptionKey = '\x80'.encode('utf-8')[1:] + potentialPrivEncryptionKey
+                privEncryptionKey ='\x80'.encode('raw_unicode_escape') + potentialPrivEncryptionKey
                 checksum = hashlib.sha256(hashlib.sha256(
                     privEncryptionKey).digest()).digest()[0:4]
                 privEncryptionKeyWIF = arithmetic.changebase(
@@ -333,7 +357,7 @@ class addressGenerator(StoppableThread):
                 # We fill out this list no matter what although we only
                 # need it if we end up passing the info to the API.
                 listOfNewAddressesToSendOutThroughTheAPI = []
-
+                logger
                 for _ in range(numberOfAddressesToMake):
                     # This next section is a little bit strange. We're
                     # going to generate keys over and over until we find
@@ -365,7 +389,7 @@ class addressGenerator(StoppableThread):
                         ripe = RIPEMD160Hash(sha.digest()).digest()
                         if (
                             ripe[:numberOfNullBytesDemandedOnFrontOfRipeHash] ==
-                            '\x00' * numberOfNullBytesDemandedOnFrontOfRipeHash
+                            '\x00'.encode() * numberOfNullBytesDemandedOnFrontOfRipeHash
                         ):
                             break
 
@@ -402,13 +426,13 @@ class addressGenerator(StoppableThread):
                         # An excellent way for us to store our keys is
                         # in Wallet Import Format. Let us convert now.
                         # https://en.bitcoin.it/wiki/Wallet_import_format
-                        privSigningKey = '\x80' + potentialPrivSigningKey
+                        privSigningKey = '\x80'.encode('raw_unicode_escape') + potentialPrivSigningKey
                         checksum = hashlib.sha256(hashlib.sha256(
                             privSigningKey).digest()).digest()[0:4]
                         privSigningKeyWIF = arithmetic.changebase(
                             privSigningKey + checksum, 256, 58)
 
-                        privEncryptionKey = '\x80' + \
+                        privEncryptionKey = '\x80'.encode('raw_unicode_escape') + \
                             potentialPrivEncryptionKey
                         checksum = hashlib.sha256(hashlib.sha256(
                             privEncryptionKey).digest()).digest()[0:4]
@@ -502,6 +526,8 @@ class addressGenerator(StoppableThread):
                 elif command == 'getDeterministicAddress':
                     queues.apiAddressGeneratorReturnQueue.put(address)
             else:
+                logger.info("Error in the addressGenerator thread. Thread was" +
+                    " given a command it could not understand:{} " .format(command))
                 raise Exception(
                     "Error in the addressGenerator thread. Thread was" +
                     " given a command it could not understand: " + command)

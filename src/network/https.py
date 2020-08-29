@@ -1,8 +1,12 @@
 # pylint: disable=missing-docstring
 import asyncore
 
-from .http import HttpConnection
-from .tls import TLSDispatcher
+try:
+    from .http import HttpConnection
+    from .tls import TLSDispatcher
+except:
+    from pybitmessage.network.http import HttpConnection
+    from pybitmessage.network.tls import TLSDispatcher
 """
 self.sslSock = ssl.wrap_socket(
     self.sock,

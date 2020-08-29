@@ -31,7 +31,7 @@ class TestProcessProto(unittest.TestCase):
     _process_cmd = ['pybitmessage', '-d']
     _threads_count = 15
     _files = (
-        'keys.dat', 'debug.log', 'messages.dat', 'knownnodes.dat',
+        'keys.dat', 'messages.dat', 'knownnodes.dat',
         '.api_started', 'unittest.lock','singleton.lock'
     )
  
@@ -65,8 +65,38 @@ class TestProcessProto(unittest.TestCase):
 
     @classmethod
     def _cleanup_files(cls):
+        print('the printing  _cleanup_files -{}'.format(cls._files))
         for pfile in cls._files:
             try:
+                if pfile == 'debug.log':
+                    print('***************************')
+                    print('72727272727272772727272727')
+                    print('going to open the  debug.log file-{}'.format(pfile))
+                    print(os.path.join(cls.home, pfile))
+                    print('75757575757575757575757')
+                    import pdb; pdb.set_trace()
+                    try:
+                        with open(os.path.join(cls.home, pfile), 'r') as outfile:
+                            print(outfile.readlines())
+                            print('with with with with ')
+                            print('is coming inside the open function')
+                            print('with with with with ')
+                    except:
+                        print('!!!!!!!!!!!!!!!!!!!!!!!!!')
+                        print('expectation are occured ')
+                        print('!!!!!!!!!!!!!!!!!!!!!!!!!')
+                    print('***************************')
+                print('----------------------------')
+                print(' pfile pfile pfile -{}'.format(pfile))
+                try:
+                    with open(os.path.join(cls.home, pfile), 'r') as outfile:
+                        pass
+                        # print(outfile.read())
+                    print('----------------------------')
+                except:
+                    print('``````````````````````````````````````')
+                    print('exceptation are occured while working opening th file-{}'.format(pfile))
+                    print('``````````````````````````````````````')
                 os.remove(os.path.join(cls.home, pfile))
             except OSError:
                 pass
@@ -79,7 +109,6 @@ class TestProcessProto(unittest.TestCase):
         print('######################################')
         try:
             if not cls._stop_process():
-                print(open(os.path.join(cls.home, 'debug.log'), 'rb').read())
                 cls.process.kill()
         except (psutil.NoSuchProcess, FileNotFoundError, AttributeError) as e:
             pass

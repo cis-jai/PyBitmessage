@@ -8,7 +8,7 @@ import struct
 try:
     from network.proxy import Proxy, ProxyError, GeneralProxyError
 except ModuleNotFoundError:
-    from .proxy import Proxy, ProxyError, GeneralProxyError
+    from pybitmessage.network.proxy import Proxy, ProxyError, GeneralProxyError
     
 
 class Socks4aError(ProxyError):

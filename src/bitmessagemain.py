@@ -183,12 +183,8 @@ class Main(object):
         adjustHalfOpenConnectionsLimit()
         config = BMConfigParser()
         daemon = config.safeGetBoolean('bitmessagesettings', 'daemon')
-        print('+++++++++++++++++++++++++++++++++++++++++++++++')
         print('config.safeGetBoolean(bitmessagesettings' 'daemon)-{}'.format(
             config.safeGetBoolean('bitmessagesettings', 'daemon')))
-        print('daemon -{}'.format(daemon))
-        print('+++++++++++++++++++++++++++++++++++++++++++++++')
-        print('------------------192-------------------------')
         try:
             opts, _ = getopt.getopt(
                 sys.argv[1:], "hcdt",
@@ -197,7 +193,6 @@ class Main(object):
         except getopt.GetoptError:
             self.usage()
             sys.exit(2)
-        print('------------------196-------------------------')
         for opt, _ in opts:
             if opt in ("-h", "--help"):
                 self.usage()
@@ -210,8 +205,7 @@ class Main(object):
                 state.testmode = True
                 if os.path.isfile(os.path.join(
                         state.appdata, 'unittest.lock')):
-                    pass
-                    # daemon = True
+                    daemon = True
                 # run without a UI
                 state.enableGUI = False
                 # Fallback: in case when no api command was issued
@@ -227,18 +221,12 @@ class Main(object):
                     'bitmessagesettings', 'apinotifypath',
                     os.path.join(app_dir, 'tests', 'apinotify_handler.py')
                 )
-        print('------------------225-------------------------')
-        print('+++++++++++++++++++++++++++++++++++++++++++++++')
-        print('config.safeGetBoolean(bitmessagesettings' 'daemon)-{}'.format(
-            config.safeGetBoolean('bitmessagesettings', 'daemon')))
-        print('daemon -{}'.format(daemon))
-        print('+++++++++++++++++++++++++++++++++++++++++++++++')
+            config.safeGetBoolean('bitmessagesettings', 'daemon')
         if daemon:
             # run without a UI
             state.enableGUI = False
 
         # is the application already running?  If yes then exit.
-        print('------------------232-------------------------')
         if state.enableGUI and not state.curses and not state.kivy and not depends.check_pyqt():
             sys.exit(
                 'PyBitmessage requires PyQt unless you want'
@@ -254,7 +242,6 @@ class Main(object):
             )
         # is the application already running?  If yes then exit.
         state.thisapp = singleinstance("", daemon)
-        print('------------------248-------------------------')
         if daemon:
             with printLock:
                 print('Running as a daemon. Send TERM signal to end.')
@@ -266,12 +253,9 @@ class Main(object):
 
         state.dandelion = config.safeGet('network', 'dandelion')
         # dandelion requires outbound connections, without them,
-        # stem objects will get stuck forever
-        print('------------------261-------------------------')
-        
+        # stem objects will get stuck forever        
         if state.dandelion and not (config.safeGet('bitmessagesettings', 'sendoutgoingconnections') == 'True'):
             state.dandelion = 0
-        print('------------------265-------------------------')
         if state.testmode or config.safeGetBoolean(
                 'bitmessagesettings', 'extralowdifficulty'):
             defaults.networkDefaultProofOfWorkNonceTrialsPerByte = int(
@@ -282,7 +266,6 @@ class Main(object):
         readKnownNodes()
 
         # Not needed if objproc is disabled
-        print('------------------276-------------------------')
         if state.enableObjProc:
 
             # Start the address generation thread
@@ -298,7 +281,6 @@ class Main(object):
             singleWorkerThread.start()
             # set_thread_name("singleWorkerThread")
         # Start the SQL thread
-        print('------------------292-------------------------') 
         sqlLookup = sqlThread()
         # DON'T close the main program even if there are threads left.
         # The closeEvent should command this thread to exit gracefully.
@@ -309,8 +291,6 @@ class Main(object):
         # init, needs to be early because other thread may access it early
         Dandelion()
         # Enable object processor and SMTP only if objproc enabled
-        print('------------------303-------------------------') 
-        
         if state.enableObjProc:
             # SMTP delivery thread
             if daemon and config.safeGet(
@@ -341,7 +321,6 @@ class Main(object):
         singleCleanerThread.start()
         # set_thread_name("singleCleanerThread")
         # Not needed if objproc disabled
-        print('------------------335-------------------------') 
         if state.enableObjProc:
             shared.reloadMyAddressHashes()
             shared.reloadBroadcastSendersForWhichImWatching()
@@ -355,7 +334,6 @@ class Main(object):
                 singleAPIThread.start()
                 # set_thread_name("singleAPIThread")
         # start network components if networking is enabled
-        print('------------------351-------------------------') 
         if state.enableNetwork:
             start_proxyconfig()
             BMConnectionPool().connectToStream(1)
@@ -388,7 +366,6 @@ class Main(object):
             state.uploadThread.daemon = True
             state.uploadThread.start()
             # set_thread_name("downloadThread")
-            print('------------------383-------------------------') 
 
             if config.safeGetBoolean('bitmessagesettings', 'upnp'):
                 import upnp
@@ -418,10 +395,7 @@ class Main(object):
                 # bitmessageqt.run()
         else:
             config.remove_option('bitmessagesettings', 'dontconnect')
-
-        print('2222222222222222222222222222222222222222222222222222')
-        print('bitmessagemain is the excaution are coming to this part')
-        print('2222222222222222222222222222222222222222222222222222')           
+           
         if daemon:
             while state.shutdown == 0:
                 time.sleep(1)
@@ -450,88 +424,58 @@ class Main(object):
     @staticmethod
     def daemonize():
         """Running as a daemon. Send signal in end."""
-        print('---------------441-------------------')
         grandfatherPid = os.getpid()
-        print('---------------444-------------------')
         parentPid = None
         try:
-            print('---------------447-------------------')
             if os.fork():
                 # unlock
-                print('---------------450-------------------')
                 state.thisapp.cleanup()
-                print('---------------452-------------------')        
                 # wait until grandchild ready
-                print('---------------454-------------------')
                 while True:
                     time.sleep(1)
-                print('---------------457-------------------')
                 os._exit(0)  # pylint: disable=protected-access
         except AttributeError:
             # fork not implemented
-            print('---------------461-------------------')
             pass
         else:
-            print('---------------465-------------------')
             parentPid = os.getpid()
-            print('---------------466-------------------')
             state.thisapp.lock()  # relock
-            print('---------------468-------------------')
-        print('---------------469-------------------')
         os.umask(0)
         try:
-            print('---------------472-------------------')
             os.setsid()
         except AttributeError:
             # setsid not implemented
-            print('---------------476-------------------')
             pass
         try:
-            print('---------------479-------------------')
             if os.fork():
                 # unlock
-                print('---------------482-------------------')
                 state.thisapp.cleanup()
-                print('---------------485-------------------')
                 # wait until child ready
-                print('---------------485-------------------')
                 
                 # while True:
                     # print('---------------489-------------------')
                     # time.sleep(1)
                 os._exit(0)  # pylint: disable=protected-access
         except AttributeError:
-            print('---------------493-------------------')
-            # fork not implemented
             pass
         else:
-            print('---------------497-------------------')
             state.thisapp.lock()  # relock
-        print('---------------499-------------------')
         state.thisapp.lockPid = None  # indicate we're the final child
-        print('---------------501-------------------')
         sys.stdout.flush()
-        print('---------------502-------------------')
         sys.stderr.flush()
-        print('---------------505-------------------')
         if not sys.platform.startswith('win'):
             si = open(os.devnull)
             so = open(os.devnull, 'a+')
             se = open(os.devnull, 'a+')
             try:
                 os.dup2(si.fileno(), sys.stdin.fileno())
-                print('99999999999999999999999999999999999')
                 os.dup2(so.fileno(), sys.stdout.fileno())
-                print('8888888888888888888888888888888')
                 os.dup2(se.fileno(), sys.stderr.fileno())
-                print('777777777777777777777777777777777')
             except:
                 pass
         if parentPid:
             # signal ready
-            print('---------------522-------------------')
             os.kill(parentPid, signal.SIGTERM)
-            print('---------------524-------------------')
             os.kill(grandfatherPid, signal.SIGTERM)
 
     @staticmethod
