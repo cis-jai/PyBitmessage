@@ -451,11 +451,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
                 smallMessageDifficulty)
         else:
             raise APIError(0, 'Too many parameters!')
-        label = self._decode(label, "base64")
-        try:
-            unicode(label, 'utf-8')
-        except BaseException:
-            raise APIError(17, 'Label is not valid UTF-8 data.')
+        label = self._decode(label.data, "base64")
         queues.apiAddressGeneratorReturnQueue.queue.clear()
         streamNumberForAddress = 1
         queues.addressGeneratorQueue.put((
@@ -627,23 +623,35 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
         elif len(params) == 1:
             passphrase, = params
-        passphrase = self._decode(passphrase, "base64")
-
+        passphrase = self._decode(passphrase.data, "base64")
+        logger.info('****************************')
+        logger.info('the value of the passphrase -{}'.format(passphrase))
+        logger.info('the value of the str_chan-{}'.format(type(str_chan)))   
+        logger.info('****************************')  
         if not passphrase:
             raise APIError(1, 'The specified passphrase is blank.')
         # It would be nice to make the label the passphrase but it is
         # possible that the passphrase contains non-utf-8 characters.
-        try:
-            unicode(passphrase, 'utf-8')
-            label = str_chan + ' ' + passphrase
-        except BaseException:
-            label = str_chan + ' ' + repr(passphrase)
-
+        # try:
+        #     unicode(passphrase, 'utf-8')
+        #     label = str_chan + ' ' + passphrase
+        # except BaseException:
+        label = str_chan + ' ' + passphrase.decode()
+        logger.info('111111111111111111111111111111111111')
+        logger.info('************************************')
+        logger.info('Is flow are coming then value of-{}'.format(label))
+        logger.info('* ***********************************')
         addressVersionNumber = 4
         streamNumber = 1
         queues.apiAddressGeneratorReturnQueue.queue.clear()
-        logger.debug(
-            'Requesting that the addressGenerator create chan %s.', passphrase)
+        logger.info(
+            'Requesting that the addressGenerator create chan {}.'.format(passphrase))
+        logger.info('!!!!!!!!!!!55555555!!!!!!!!!!!!!!!!!!!!!')
+        logger.info('createChan')
+        logger.info('addressVersionNumber-{}'.format(addressVersionNumber))
+        logger.info('passphrase-{}'.format(passphrase.decode()))
+        logger.info('label-{}'.format(label))
+        logger.info('!!!!!!!!!!!55555555!!!!!!!!!!!!!!!!!!!!!')
         queues.addressGeneratorQueue.put((
             'createChan', addressVersionNumber, streamNumber, label,
             passphrase, True
@@ -909,7 +917,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
                 encodingtype, status, ackdata = row
             subject = shared.fixPotentiallyInvalidUTF8Data(subject)
             message = shared.fixPotentiallyInvalidUTF8Data(message)
-            data += json.dumps({
+            data += json.dumps({    
                 'msgid': hexlify(msgid),
                 'toAddress': toAddress,
                 'fromAddress': fromAddress,
@@ -1426,7 +1434,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             'status': status,
             'addressVersion': addressVersion,
             'streamNumber': streamNumber,
-            'ripe': base64.b64encode(ripe)
+            'ripe': base64.b64encode(ripe).decode()
         }, indent=4, separators=(',', ': '))
 
     def HandleHelloWorld(self, params):

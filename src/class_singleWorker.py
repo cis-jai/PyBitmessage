@@ -132,7 +132,7 @@ class singleWorker(StoppableThread):
         for oldack in state.ackdataForWhichImWatching:
             if len(oldack) == 32:
                 # attach legacy header, always constant (msg/1/1)
-                newack = '\x00\x00\x00\x02\x01\x01' + oldack
+                newack = '\x00\x00\x00\x02\x01\x01'.encode() + oldack
                 state.ackdataForWhichImWatching[newack] = 0
                 sqlExecute(
                     'UPDATE sent SET ackdata=? WHERE ackdata=?',
@@ -594,7 +594,7 @@ class singleWorker(StoppableThread):
             TTL = int(TTL + helper_random.randomrandrange(-300, 300))
             embeddedTime = int(time.time() + TTL)
             payload = pack('>Q', embeddedTime)
-            payload += '\x00\x00\x00\x03'  # object type: broadcast
+            payload += '\x00\x00\x00\x03'.encode()  # object type: broadcast
 
             if addressVersionNumber <= 3:
                 payload += encodeVarint(4)  # broadcast version

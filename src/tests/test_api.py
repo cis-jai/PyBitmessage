@@ -80,10 +80,6 @@ class TestAPI(TestAPIProto):
 
     def test_connection(self):  
         """API command 'helloWorld'"""
-        print('---------67--------------------')
-        print('---------68--------------------')
-        print('***********test_connection**********')
-        print('------70------------------------')
         self.assertEqual(
             self.api.helloWorld('hello', 'world'),
             'hello-world'
@@ -124,6 +120,7 @@ class TestAPI(TestAPIProto):
         self.assertEqual(result['streamNumber'], 1)
 
     def test_create_deterministic_addresses(self):
+        #11111111111111111111111111
         """API command 'getDeterministicAddress': with various params"""
         self.assertEqual(
             self.api.getDeterministicAddress(self._seed, 4, 1),
@@ -145,6 +142,7 @@ class TestAPI(TestAPIProto):
 
     #currently working on this condition
     def test_create_random_address(self):
+        #22222222222222222222222222222222
         """API command 'createRandomAddress': basic BM-address validation"""
         addr = self._add_random_address('random_1'.encode())
         self.assertRegexpMatches(addr, r'^BM-')

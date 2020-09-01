@@ -40,8 +40,8 @@ def sqlQuery(sqlStatement, *args):
         sqlSubmitQueue.put('')
     elif isinstance(args[0], (list, tuple)):
         sqlSubmitQueue.put(args[0])
-    elif isinstance(args[0], memoryview):
-        sqlSubmitQueue.put(bytes(args[0]))
+    # elif isinstance(args[0], memoryview):
+    #     sqlSubmitQueue.put(bytes(args[0]))
     else:
         sqlSubmitQueue.put(args)
     queryreturn, _ = sqlReturnQueue.get()

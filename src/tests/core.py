@@ -36,7 +36,7 @@ except ModuleNotFoundError:
     from pybitmessage.network import asyncore_pollchoose as asyncore
     from pybitmessage.network.bmproto import BMProto
     from pybitmessage.network.connectionpool import BMConnectionPool
-    from pybitmessage.network.node import Peer
+    from pybitmessage.network.node import Node, Peer
     from pybitmessage.network.tcp import Socks4aBMConnection, Socks5BMConnection, TCPConnection
     from pybitmessage.queues import excQueue
     from pybitmessage.version import softwareVersion
