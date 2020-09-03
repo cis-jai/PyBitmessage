@@ -52,12 +52,12 @@ class addressGenerator(StoppableThread):
         # pylint: disable=too-many-locals, too-many-branches
         # pylint: disable=protected-access, too-many-statements
         while state.shutdown == 0:
-            logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-            logger.info('inside the class_addressGenerator\n')
-            logger.info('current thread -{}'.format(threading.current_thread().name))
             queueValue = queues.addressGeneratorQueue.get()
-            logger.info('$$$$$$$$$$$$ queueValue  $$$$$$$$$$$$-{}'.format(queueValue))
-            logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+            # logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+            # logger.info('inside the class_addressGenerator\n')
+            # logger.info('current thread -{}'.format(threading.current_thread().name))
+            # logger.info('$$$$$$$$$$$$ queueValue  $$$$$$$$$$$$-{}'.format(queueValue))
+            # logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
             nonceTrialsPerByte = 0
             payloadLengthExtraBytes = 0
             live = True
