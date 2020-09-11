@@ -52,7 +52,7 @@ helper_startup.loadConfig()
 # logging.config.fileConfig interface
 # examples are here:
 # https://bitmessage.org/forum/index.php/topic,4820.msg11163.html#msg11163
-log_level = 'INFO'
+log_level = 'DEBUG'
 
 def log_uncaught_exceptions(ex_cls, ex, tb):
     """The last resort logging function used for sys.excepthook"""

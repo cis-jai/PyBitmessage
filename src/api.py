@@ -618,16 +618,12 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
     def HandleCreateChan(self, params):
         """Handle a request to create a chan"""
 
+        queueReturn = ''
         if not params:
             raise APIError(0, 'I need parameters.')
-
         elif len(params) == 1:
             passphrase, = params
-        passphrase = self._decode(passphrase.data, "base64")
-        logger.info('****************************')
-        logger.info('the value of the passphrase -{}'.format(passphrase))
-        logger.info('the value of the str_chan-{}'.format(type(str_chan)))   
-        logger.info('****************************')  
+        passphrase = self._decode(passphrase.data, "base64")  
         if not passphrase:
             raise APIError(1, 'The specified passphrase is blank.')
         # It would be nice to make the label the passphrase but it is
@@ -637,26 +633,22 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         #     label = str_chan + ' ' + passphrase
         # except BaseException:
         label = str_chan + ' ' + passphrase.decode()
-        logger.info('111111111111111111111111111111111111')
-        logger.info('************************************')
-        logger.info('Is flow are coming then value of-{}'.format(label))
-        logger.info('* ***********************************')
         addressVersionNumber = 4
         streamNumber = 1
-        queues.apiAddressGeneratorReturnQueue.queue.clear()
-        logger.info(
-            'Requesting that the addressGenerator create chan {}.'.format(passphrase))
-        logger.info('!!!!!!!!!!!55555555!!!!!!!!!!!!!!!!!!!!!')
-        logger.info('createChan')
-        logger.info('addressVersionNumber-{}'.format(addressVersionNumber))
-        logger.info('passphrase-{}'.format(passphrase.decode()))
-        logger.info('label-{}'.format(label))
-        logger.info('!!!!!!!!!!!55555555!!!!!!!!!!!!!!!!!!!!!')
-        queues.addressGeneratorQueue.put((
-            'createChan', addressVersionNumber, streamNumber, label,
-            passphrase, True
-        ))
-        queueReturn = queues.apiAddressGeneratorReturnQueue.get()
+        try:
+            queues.addressGeneratorQueue.put((
+                'createChan', addressVersionNumber, streamNumber, label,
+                passphrase, True
+            ))
+            logger.info(
+                '@@@@@@@@ before printing the queueReturn @@@@@@@@@')
+            queueReturn = queues.apiAddressGeneratorReturnQueue.get()            
+            logger.info('***********************************')
+            logger.info('queueReturn-{}'.format(queueReturn))
+            logger.info('***********************************')
+            
+        except Exception as e:
+            logger.info(e)
         if not queueReturn:
             raise APIError(24, 'Chan address is already present.')
         address = queueReturn[0]
@@ -669,16 +661,17 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             raise APIError(0, 'I need two parameters.')
         elif len(params) == 2:
             passphrase, suppliedAddress = params
-        passphrase = self._decode(passphrase, "base64")
+        passphrase = self._decode(passphrase.data, "base64")
         if not passphrase:
             raise APIError(1, 'The specified passphrase is blank.')
         # It would be nice to make the label the passphrase but it is
         # possible that the passphrase contains non-utf-8 characters.
-        try:
-            unicode(passphrase, 'utf-8')
-            label = str_chan + ' ' + passphrase
-        except BaseException:
-            label = str_chan + ' ' + repr(passphrase)
+        # try:
+        #     unicode(passphrase, 'utf-8')
+        #     label = str_chan + ' ' + passphrase
+        # except BaseException:
+        #     label = str_chan + ' ' + repr(passphrase)
+        label  = str_chan + ' ' + passphrase.decode()
         status, addressVersionNumber, streamNumber, toRipe = (
             self._verifyAddress(suppliedAddress))
         suppliedAddress = addBMIfNotPresent(suppliedAddress)

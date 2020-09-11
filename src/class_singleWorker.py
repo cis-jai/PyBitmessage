@@ -55,6 +55,7 @@ except ModuleNotFoundError:
     from pybitmessage.helper_sql import sqlExecute, sqlQuery
     from pybitmessage.inventory import Inventory
     from pybitmessage.network.threads import StoppableThread
+    from pybitmessage.debug import logger
 # This thread, of which there is only one, does the heavy lifting:
 # calculating POWs.
 
@@ -83,17 +84,19 @@ class singleWorker(StoppableThread):
             queues.workerQueue.put(("stopThread", "data"))
         except:
             pass
-        super(singleWorker, self).stopThread()
+        super(singleWorker, self).stopThread()  
 
     def run(self):
         # pylint: disable=attribute-defined-outside-init
 
+        logger.error
         while not state.sqlReady and state.shutdown == 0:
             self.stop.wait(2)
-        if state.shutdown > 0:
+        if state.shutdown > 0:                                                                                                                                                                                 
             return
 
         # Initialize the neededPubkeys dictionary.
+        
         queryreturn = sqlQuery(
             '''SELECT DISTINCT toaddress FROM sent'''
             ''' WHERE (status='awaitingpubkey' AND folder LIKE '%sent%')''')

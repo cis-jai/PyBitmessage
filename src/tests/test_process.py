@@ -9,6 +9,8 @@ import tempfile
 import time
 import unittest
 
+from  pybitmessage.debug import logger
+
 try:
     import psutil
 except ModuleNotFoundError:
@@ -19,15 +21,12 @@ def put_signal_file(path, filename):
     """Creates file, presence of which is a signal about some event."""
     with open(os.path.join(path, filename), 'wb') as outfile:
         outfile.write(str(time.time()).encode())
-    print('************************************************')
-    with open(os.path.join(path, filename), 'r') as outfile:
-        print(outfile.read())
-    print('************************************************')
 
 class TestProcessProto(unittest.TestCase):
     """Test case implementing common logic for external testing:
               it starts pybitmessage in setUpClass() and stops it in tearDownClass()
     """
+    
     _process_cmd = ['pybitmessage', '-d']
     _threads_count = 15
     _files = (
@@ -45,6 +44,16 @@ class TestProcessProto(unittest.TestCase):
         time.sleep(5)
         cls.pid = int(cls._get_readline('singleton.lock'))
         cls.process = psutil.Process(cls.pid)
+        #comment
+        # logger.error('~~~$$$$$$$$^^^^&&&&&&&~~~')
+        # logger.info('cls.proccess_pid -{}'.format(
+        #     cls.process.pid))
+        # logger.error('cls.proccess_name -{}'.format(
+        #     cls.process.name))
+        # logger.error('cls.proccess_create_time -{}'.format(
+        #     cls.process._create_time))
+        # logger.error('~~~$$$$$$$$^^^^&&&&&&&~~~')
+ 
 
     @classmethod
     def _get_readline(cls, pfile):
@@ -74,7 +83,6 @@ class TestProcessProto(unittest.TestCase):
                     print('going to open the  debug.log file-{}'.format(pfile))
                     print(os.path.join(cls.home, pfile))
                     print('75757575757575757575757')
-                    import pdb; pdb.set_trace()
                     try:
                         with open(os.path.join(cls.home, pfile), 'r') as outfile:
                             print(outfile.readlines())

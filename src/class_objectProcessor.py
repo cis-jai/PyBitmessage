@@ -937,10 +937,10 @@ class objectProcessor(threading.Thread):
             return
         readPosition += sendersStreamLength
         readPosition += 4
-        sendersPubSigningKey = '\x04' + \
+        sendersPubSigningKey = '\x04'.encode() + \
             decryptedData[readPosition:readPosition + 64]
         readPosition += 64
-        sendersPubEncryptionKey = '\x04' + \
+        sendersPubEncryptionKey = '\x04'.encode() + \
             decryptedData[readPosition:readPosition + 64]
         readPosition += 64
         if sendersAddressVersion >= 3:

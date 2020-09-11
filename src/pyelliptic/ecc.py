@@ -495,7 +495,7 @@ class ECC(object):
         blocksize = OpenSSL.get_cipher(ciphername).get_blocksize()
         iv = data[:blocksize]
         i = blocksize
-        _, pubkey_x, pubkey_y, i2 = ECC._decode_pubkey(data[i:])
+        _, pubkey_x, pubkey_y, i2 = ECC._decode_pubkey(bytes(data[i:]))
         i += i2
         ciphertext = data[i:len(data) - 32]
         i += len(ciphertext)

@@ -2,7 +2,8 @@
 import queue as Queue
 
 import threading
-import time
+import time 
+import traceback
 
 try:
     from multiqueue import MultiQueue
@@ -37,10 +38,34 @@ class ObjectProcessorQueue(Queue.Queue):
             self.curSize -= len(item[1])
         return item
 
+class addressGeneratorQueueClass(Queue.Queue):
+    
+    debug_file = open("/tmp/addressgenerator.log", "a")
+    
+    def __init__(self):
+        Queue.Queue.__init__(self)
+        
+    def put(self, item, block =True, timeout=None):
+        self.debug_file.write('-------------------\n')
+        self.debug_file.write('this put condition- ')
+        self.debug_file.write(threading.current_thread().name)
+        self.debug_file.write(traceback.print_exc())
+        Queue.Queue.put(self, item, block, timeout)
+        self.debug_file.write('-------------------\n')
+        
+    
+    def get(self, item, block =True, timeout=None):
+        self.debug_file.write('-------------------\n')
+        self.debug_file.write('this get condition -')
+        self.debug_file.write(threading.current_thread().name)
+        self.debug_file.write(traceback.print_exc())
+        item = Queue.Queue.get(self, block, timeout)
+        self.debug_file.write('-------------------\n')
+        return item
 
 workerQueue = Queue.Queue()
 UISignalQueue = Queue.Queue()
-addressGeneratorQueue = Queue.Queue()
+addressGeneratorQueue = addressGeneratorQueueClass()
 #: `.network.ReceiveQueueThread` instances dump objects they hear
 #: on the network into this queue to be processed.
 objectProcessorQueue = ObjectProcessorQueue()
@@ -53,3 +78,6 @@ receiveDataQueue = Queue.Queue()
 apiAddressGeneratorReturnQueue = Queue.Queue()
 #: for exceptions
 excQueue = Queue.Queue()
+
+
+#new 

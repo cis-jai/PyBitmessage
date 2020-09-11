@@ -18,6 +18,7 @@ try:
     from pyelliptic import arithmetic
     from pyelliptic.openssl import OpenSSL
     from network.threads import StoppableThread
+    from debug import logger 
 except ModuleNotFoundError:
     from pybitmessage import defaults
     from pybitmessage.debug import logger 
@@ -51,23 +52,38 @@ class addressGenerator(StoppableThread):
         """
         # pylint: disable=too-many-locals, too-many-branches
         # pylint: disable=protected-access, too-many-statements
+        # logger.info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        # logger.info('inside the class_addressGenerator\n')
+        # logger.info('current thread -{}'.format(threading.current_thread().name))
+        # logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
+        import time
+        time.sleep(1)
+        # logger.info('MMMMMMMMMMMMMMMMM33333333333333333333333333')
+        # logger.info(
+        #     'queues.addressGeneratorQueue.queue -{}'.format(
+        #         queues.addressGeneratorQueue.queue
+        #     )
+        # )
+        # logger.info('state.shutdown-{}'.format(state.shutdown))
+        # logger.info('MMMMMMMMMMMMMMMMM33333333333333333333333333')        
+        # state.shutdown = 0
         while state.shutdown == 0:
             queueValue = queues.addressGeneratorQueue.get()
-            # logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-            # logger.info('inside the class_addressGenerator\n')
-            # logger.info('current thread -{}'.format(threading.current_thread().name))
-            # logger.info('$$$$$$$$$$$$ queueValue  $$$$$$$$$$$$-{}'.format(queueValue))
-            # logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
             nonceTrialsPerByte = 0
+            logger.info('$$$$$$$$$$$$ queueValue  @@@@@@@@@@@-{}'.format(queueValue))
             payloadLengthExtraBytes = 0
-            live = True
+            live = True 
             if queueValue[0] == 'createChan':
+                logger.info(
+                    'OOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
                 command, addressVersionNumber, streamNumber, label, \
                     deterministicPassphrase, live = queueValue
                 eighteenByteRipe = False
                 numberOfAddressesToMake = 1
                 numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif queueValue[0] == 'joinChan':
+                logger.info(
+                    '111111111111111111111111111111111111111')
                 command, chanAddress, label, deterministicPassphrase, \
                     live = queueValue
                 eighteenByteRipe = False
@@ -76,6 +92,8 @@ class addressGenerator(StoppableThread):
                 numberOfAddressesToMake = 1
                 numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif len(queueValue) == 7:
+                logger.info(
+                    '22222222222222222222222222222222222222')
                 command, addressVersionNumber, streamNumber, label, \
                     numberOfAddressesToMake, deterministicPassphrase, \
                     eighteenByteRipe = queueValue
@@ -92,9 +110,9 @@ class addressGenerator(StoppableThread):
                         # the default
                         numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif len(queueValue) == 9:
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-                logger.info('---------94--------------')
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
+                
+                logger.info(
+                    '33333333333333333333333333333333333333')
                 command, addressVersionNumber, streamNumber, label, \
                     numberOfAddressesToMake, deterministicPassphrase, \
                     eighteenByteRipe, nonceTrialsPerByte, \
@@ -112,12 +130,11 @@ class addressGenerator(StoppableThread):
                         # the default
                         numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif queueValue[0] == 'stopThread':
-                logger.info('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-                logger.info('queueValue[0] == stopThread is this condition are true')
-                logger.info('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                logger.info(
+                    '444444444444444444444444444444444444444444')
                 break
             else:
-                self.logger.info(
+                logger.info(
                     'Programming error: A structure with the wrong number'
                     ' of values was passed into the addressGeneratorQueue.'
                     ' Here is the queueValue: %r\n', queueValue)
