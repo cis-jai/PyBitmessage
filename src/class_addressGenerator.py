@@ -38,6 +38,10 @@ class addressGenerator(StoppableThread):
     """A thread for creating addresses"""
     name = "addressGenerator"
 
+    def __init__(self):
+        StoppableThread.__init__(self)
+        self.lock = threading.Lock()
+    
     def stopThread(self):
         try:
             queues.addressGeneratorQueue.put(("stopThread", "data"))
@@ -56,8 +60,6 @@ class addressGenerator(StoppableThread):
         # logger.info('inside the class_addressGenerator\n')
         # logger.info('current thread -{}'.format(threading.current_thread().name))
         # logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-        import time
-        time.sleep(1)
         # logger.info('MMMMMMMMMMMMMMMMM33333333333333333333333333')
         # logger.info(
         #     'queues.addressGeneratorQueue.queue -{}'.format(
@@ -67,14 +69,26 @@ class addressGenerator(StoppableThread):
         # logger.info('state.shutdown-{}'.format(state.shutdown))
         # logger.info('MMMMMMMMMMMMMMMMM33333333333333333333333333')        
         # state.shutdown = 0
+        logger.error('addressGenerator addressGenerator')
+        logger.error('state.shutdown-{}'.format(state.shutdown))
+        logger.error('--------self----{}'.format(self))
         while state.shutdown == 0:
-            queueValue = queues.addressGeneratorQueue.get()
+            logger.error(
+                    'qqqqqqqqq1111111111111111111111111111111')
+            with self.lock:
+                queueValue = queues.addressGeneratorQueue.get()
+            logger.error(
+                    'qqqqqqqqq2222222222222222222222222222222')
             nonceTrialsPerByte = 0
-            logger.info('$$$$$$$$$$$$ queueValue  @@@@@@@@@@@-{}'.format(queueValue))
+            # logger.error('$$$$$$$$$$$$ queueValue  @@@@@@@@@@@-{}'.format(queueValue))
             payloadLengthExtraBytes = 0
-            live = True 
+            live = True
+            logger.error(
+                    'qqqqqqqqq3333333333333333333333333333333')
+            logger.error(
+                    'qqqqqqqqq33333333333333-{}'.format(queueValue[0] ))
             if queueValue[0] == 'createChan':
-                logger.info(
+                logger.error(
                     'OOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
                 command, addressVersionNumber, streamNumber, label, \
                     deterministicPassphrase, live = queueValue

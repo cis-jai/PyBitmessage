@@ -46,22 +46,68 @@ class addressGeneratorQueueClass(Queue.Queue):
         Queue.Queue.__init__(self)
         
     def put(self, item, block =True, timeout=None):
+        self.debug_file.write('---this put condition--\n')
+        self.debug_file.write('this put condition- ')
+        self.debug_file.write('Current-thread-{} \n'.format(
+            threading.current_thread().name))
+        self.debug_file.write('Traceback-{} \n'.format(
+            str(traceback.print_exc())))
+        self.debug_file.write('Printig the put item-{}'.format(
+            item))
+        Queue.Queue.put(self, item, block, timeout)
+        self.debug_file.write('-------------------\n \n')
+        
+    
+    def get(self, block =True, timeout=None):
+        self.debug_file.write('---this get condition ---\n')
+        self.debug_file.write('Current-thread-{} \n '.format(
+            threading.current_thread().name))
+        self.debug_file.write('Traceback-{} \n'.format(
+            str(traceback.print_exc())))
+        item = Queue.Queue.get(self, block, timeout)
+        self.debug_file.write('Printig the get item-{}'.format(
+            str(item)))
+        self.debug_file.write('-------------------\n \n')
+        return item
+
+
+class apiAddressGeneratorReturnQueueQueueClass(Queue.Queue):
+    
+    debug_file = open("/tmp/apiAddressGeneratorReturnQueue.log", "a")
+    
+    def __init__(self):
+        self.debug_file.write(
+            'apiAddressGeneratorReturnQueueQueue started.....\n'
+        )
+        Queue.Queue.__init__(self)
+
+    def put(self, item, block =True, timeout=None):
         self.debug_file.write('-------------------\n')
         self.debug_file.write('this put condition- ')
+        self.debug_file.write('@@@@@@ put 51 @@@@@@\n')
         self.debug_file.write(threading.current_thread().name)
-        self.debug_file.write(traceback.print_exc())
+        self.debug_file.write('@@@@@@ put 53 @@@@@@\n')
+        self.debug_file.write(str(traceback.print_exc()))
+        self.debug_file.write('@@@@@@ put 55 @@@@@@\n')
         Queue.Queue.put(self, item, block, timeout)
+        self.debug_file.write('@@@@@@ put 57 @@@@@@\n') 
         self.debug_file.write('-------------------\n')
         
     
-    def get(self, item, block =True, timeout=None):
+    def get(self, block =True, timeout=None):
         self.debug_file.write('-------------------\n')
         self.debug_file.write('this get condition -')
+        self.debug_file.write('@@@@@@ get 64 @@@@@@')
         self.debug_file.write(threading.current_thread().name)
-        self.debug_file.write(traceback.print_exc())
+        self.debug_file.write('@@@@@@ get 66 @@@@@@')
+        self.debug_file.write(str(traceback.print_exc()))
+        self.debug_file.write('@@@@@@ get 68 @@@@@@')
         item = Queue.Queue.get(self, block, timeout)
+        self.debug_file.write('@@@@@@ get 70 @@@@@@')
         self.debug_file.write('-------------------\n')
         return item
+
+
 
 workerQueue = Queue.Queue()
 UISignalQueue = Queue.Queue()
@@ -75,7 +121,7 @@ portCheckerQueue = Queue.Queue()
 receiveDataQueue = Queue.Queue()
 #: The address generator thread uses this queue to get information back
 #: to the API thread.
-apiAddressGeneratorReturnQueue = Queue.Queue()
+apiAddressGeneratorReturnQueue = apiAddressGeneratorReturnQueueQueueClass()
 #: for exceptions
 excQueue = Queue.Queue()
 
