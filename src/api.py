@@ -39,7 +39,7 @@ try:
         varintDecodeError
     )
     from bmconfigparser import BMConfigParser
-    from debug import logger
+    from debug import logg
     from helper_ackPayload import genAckPayload
     from helper_sql import SqlBulkExecute, sqlExecute, sqlQuery, sqlStoredProcedure
     from inventory import Inventory
@@ -638,7 +638,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         try:
             queues.addressGeneratorQueue.put((
                 'createChan', addressVersionNumber, streamNumber, label,
-                passphrase, True
+                passphrase.decode(), True
             ))
             logger.info(
                 '@@@@@@@@ before printing the queueReturn @@@@@@@@@')

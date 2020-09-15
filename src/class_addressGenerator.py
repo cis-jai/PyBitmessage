@@ -75,10 +75,15 @@ class addressGenerator(StoppableThread):
         while state.shutdown == 0:
             logger.error(
                     'qqqqqqqqq1111111111111111111111111111111')
-            with self.lock:
+            try:
                 queueValue = queues.addressGeneratorQueue.get()
-            logger.error(
-                    'qqqqqqqqq2222222222222222222222222222222')
+                logger.error('SuccessFully Loaded')
+            except Exception as e:
+                import traceback
+                logger.error('Traceback-{} \n'.format(
+                    str(traceback.format_stack())))
+                logger.error('Address Genertor excepation 7777')
+                logger.error(e)
             nonceTrialsPerByte = 0
             # logger.error('$$$$$$$$$$$$ queueValue  @@@@@@@@@@@-{}'.format(queueValue))
             payloadLengthExtraBytes = 0

@@ -51,7 +51,7 @@ class addressGeneratorQueueClass(Queue.Queue):
         self.debug_file.write('Current-thread-{} \n'.format(
             threading.current_thread().name))
         self.debug_file.write('Traceback-{} \n'.format(
-            str(traceback.print_exc())))
+            str(traceback.format_stack())))
         self.debug_file.write('Printig the put item-{}'.format(
             item))
         Queue.Queue.put(self, item, block, timeout)
@@ -63,7 +63,7 @@ class addressGeneratorQueueClass(Queue.Queue):
         self.debug_file.write('Current-thread-{} \n '.format(
             threading.current_thread().name))
         self.debug_file.write('Traceback-{} \n'.format(
-            str(traceback.print_exc())))
+            str(traceback.format_stack())))
         item = Queue.Queue.get(self, block, timeout)
         self.debug_file.write('Printig the get item-{}'.format(
             str(item)))
