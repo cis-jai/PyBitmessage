@@ -54,21 +54,6 @@ class addressGenerator(StoppableThread):
         Process the requests for addresses generation
         from `.queues.addressGeneratorQueue`
         """
-        # pylint: disable=too-many-locals, too-many-branches
-        # pylint: disable=protected-access, too-many-statements
-        # logger.info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        # logger.info('inside the class_addressGenerator\n')
-        # logger.info('current thread -{}'.format(threading.current_thread().name))
-        # logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-        # logger.info('MMMMMMMMMMMMMMMMM33333333333333333333333333')
-        # logger.info(
-        #     'queues.addressGeneratorQueue.queue -{}'.format(
-        #         queues.addressGeneratorQueue.queue
-        #     )
-        # )
-        # logger.info('state.shutdown-{}'.format(state.shutdown))
-        # logger.info('MMMMMMMMMMMMMMMMM33333333333333333333333333')        
-        # state.shutdown = 0
         logger.error('addressGenerator addressGenerator')
         logger.error('state.shutdown-{}'.format(state.shutdown))
         logger.error('--------self----{}'.format(self))
@@ -97,8 +82,11 @@ class addressGenerator(StoppableThread):
                     'OOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
                 command, addressVersionNumber, streamNumber, label, \
                     deterministicPassphrase, live = queueValue
+                logger.error('++++++++++++100++++++++++++')
                 eighteenByteRipe = False
+                logger.error('++++++++++++102++++++++++++')
                 numberOfAddressesToMake = 1
+                logger.error('++++++++++++104++++++++++++')
                 numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif queueValue[0] == 'joinChan':
                 logger.info(
@@ -164,20 +152,25 @@ class addressGenerator(StoppableThread):
                     ' one version %s address which it cannot do.\n',
                     addressVersionNumber)
             if nonceTrialsPerByte == 0:
+                logger.error('++++++++++++170++++++++++++')
                 nonceTrialsPerByte = BMConfigParser().getint(
                     'bitmessagesettings', 'defaultnoncetrialsperbyte')
             if nonceTrialsPerByte < \
                     defaults.networkDefaultProofOfWorkNonceTrialsPerByte:
+                logger.error('++++++++++++175++++++++++++')
                 nonceTrialsPerByte = \
                     defaults.networkDefaultProofOfWorkNonceTrialsPerByte
             if payloadLengthExtraBytes == 0:
+                logger.error('++++++++++++179++++++++++++')
                 payloadLengthExtraBytes = BMConfigParser().getint(
                     'bitmessagesettings', 'defaultpayloadlengthextrabytes')
             if payloadLengthExtraBytes < \
                     defaults.networkDefaultPayloadLengthExtraBytes:
+                logger.error('++++++++++++184++++++++++++')
                 payloadLengthExtraBytes = \
                     defaults.networkDefaultPayloadLengthExtraBytes
             if command == 'createRandomAddress':
+                logger.error('++++++++++++188++++++++++++')
                 queues.UISignalQueue.put((
                     'updateStatusBar', ""
                 ))
@@ -194,9 +187,9 @@ class addressGenerator(StoppableThread):
                 potentialPrivSigningKey = OpenSSL.rand(32)
                 potentialPubSigningKey = highlevelcrypto.pointMult(
                     potentialPrivSigningKey)
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-                logger.info('---------157--------------')
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
+                logger.error('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.error('---------157--------------')
+                logger.error('&&&&&&&&&&&&&&&&&&&&&&&\n')
                 while True:
                     numberOfAddressesWeHadToMakeBeforeWeFoundOneWithTheCorrectRipePrefix += 1
                     potentialPrivEncryptionKey = OpenSSL.rand(32)
@@ -211,10 +204,10 @@ class addressGenerator(StoppableThread):
                         '\x00'.encode('utf-8') * numberOfNullBytesDemandedOnFrontOfRipeHash
                     ):
                         break
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-                logger.info('---------174--------------')
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
-                self.logger.info(
+                logger.error('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.error('---------174--------------')
+                logger.error('&&&&&&&&&&&&&&&&&&&&&&&\n')
+                self.logger.error(
                     'Generated address with ripe digest: %s', hexlify(ripe))
                 try:
                     self.logger.info(
@@ -228,9 +221,9 @@ class addressGenerator(StoppableThread):
                     # The user must have a pretty fast computer.
                     # time.time() - startTime equaled zero.
                     pass
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-                logger.info('---------191--------------')
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
+                logger.error('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.error('---------191--------------')
+                logger.error('&&&&&&&&&&&&&&&&&&&&&&&\n')
                 address = encodeAddress(
                     addressVersionNumber, streamNumber, ripe)
 
@@ -375,6 +368,7 @@ class addressGenerator(StoppableThread):
                     'getDeterministicAddress',
                     'createChan',
                     'joinChan'):
+                logger.error('++++++++++++++387+++++++++++')
                 if not deterministicPassphrase:
                     self.logger.warning(
                         'You are creating deterministic'
@@ -388,12 +382,14 @@ class addressGenerator(StoppableThread):
                             "Generating %1 new addresses."
                         ).arg(str(numberOfAddressesToMake))
                     ))
+                logger.error('++++++++++401++++++++++++++')
                 signingKeyNonce = 0
                 encryptionKeyNonce = 1
                 # We fill out this list no matter what although we only
                 # need it if we end up passing the info to the API.
+                logger.error('++++++++++406++++++++++++++')
                 listOfNewAddressesToSendOutThroughTheAPI = []
-                logger
+                logger.error('++++++++++409++++++++++++++')
                 for _ in range(numberOfAddressesToMake):
                     # This next section is a little bit strange. We're
                     # going to generate keys over and over until we find
@@ -401,37 +397,63 @@ class addressGenerator(StoppableThread):
                     # \x00 or \x00\x00. Then when we pack them into a
                     # Bitmessage address, we won't store the \x00 or
                     # \x00\x00 bytes thus making the address shorter.
+                    logger.error('++++++++++416++++++++++++++')
                     startTime = time.time()
+                    logger.error('++++++++++418++++++++++++++')
                     numberOfAddressesWeHadToMakeBeforeWeFoundOneWithTheCorrectRipePrefix = 0
                     while True:
+                        logger.error('++++++++++421++++++++++++++')
                         numberOfAddressesWeHadToMakeBeforeWeFoundOneWithTheCorrectRipePrefix += 1
+                        logger.error('++++++++++423++++++++++++++')
+                        logger.error('signingKeyNonce  424 -{}+++++++'.format(
+                            signingKeyNonce
+                        ))
+                        logger.error('encodeVarint(signingKeyNonce)  427 -{}+'.format(
+                            encodeVarint(signingKeyNonce)
+                        ))
+                        logger.error('deterministicPassphrase  427 -{}+'.format(
+                            deterministicPassphrase
+                        ))
                         potentialPrivSigningKey = hashlib.sha512(
-                            deterministicPassphrase +
+                            deterministicPassphrase.encode('raw_unicode_escape') +
                             encodeVarint(signingKeyNonce)
                         ).digest()[:32]
+                        logger.error('++++++++++428++++++++++++++')
+                        logger.error('++++++++++++429-{}+++++++++'.format(
+                            encryptionKeyNonce
+                        ))
                         potentialPrivEncryptionKey = hashlib.sha512(
-                            deterministicPassphrase +
+                            deterministicPassphrase.encode('raw_unicode_escape') +
                             encodeVarint(encryptionKeyNonce)
                         ).digest()[:32]
+                        logger.error('++++++++++433++++++++++++++')
                         potentialPubSigningKey = highlevelcrypto.pointMult(
                             potentialPrivSigningKey)
+                        logger.error('++++++++++437++++++++++++++')
                         potentialPubEncryptionKey = highlevelcrypto.pointMult(
                             potentialPrivEncryptionKey)
+                        logger.error('++++++++++439++++++++++++++')
                         signingKeyNonce += 2
+                        logger.error('++++++++++441++++++++++++++')
                         encryptionKeyNonce += 2
+                        logger.error('++++++++++443++++++++++++++')
                         sha = hashlib.new('sha512')
                         sha.update(
                             potentialPubSigningKey + potentialPubEncryptionKey)
+                        logger.error('++++++++++447++++++++++++++')
                         ripe = RIPEMD160Hash(sha.digest()).digest()
+                        logger.error('++++++++++449++++++++++++++')
                         if (
                             ripe[:numberOfNullBytesDemandedOnFrontOfRipeHash] ==
                             '\x00'.encode() * numberOfNullBytesDemandedOnFrontOfRipeHash
                         ):
+                            logger.error('++++++++++454++++++++++++++')
                             break
-
+                    logger.error('++++++++++418++++++++++++++')                    
                     self.logger.info(
                         'Generated address with ripe digest: %s', hexlify(ripe))
                     try:
+                        logger.error('++++++++++460++++++++++++++')                    
                         self.logger.info(
                             'Address generator calculated %s addresses'
                             ' at %s addresses per second before finding'
@@ -441,51 +463,76 @@ class addressGenerator(StoppableThread):
                             (time.time() - startTime)
                         )
                     except ZeroDivisionError:
+                        logger.error('++++++++++470++++++++++++++')                    
+                        
                         # The user must have a pretty fast computer.
                         # time.time() - startTime equaled zero.
                         pass
+                    logger.error('++++++++++475++++++++++++++')                    
+                    
                     address = encodeAddress(
                         addressVersionNumber, streamNumber, ripe)
+                    logger.error('++++++++++479++++++++++++++')                    
 
                     saveAddressToDisk = True
                     # If we are joining an existing chan, let us check
                     # to make sure it matches the provided Bitmessage address
+                    logger.error('++++++++++484++++++++++++++')                    
+                    
                     if command == 'joinChan':
+                        logger.error('++++++++++487++++++++++++++')                    
+                        
                         if address != chanAddress:
+                            logger.error('++++++++++490++++++++++++++')                    
+                            
                             listOfNewAddressesToSendOutThroughTheAPI.append(
                                 'chan name does not match address')
+                            logger.error('++++++++++494++++++++++++++')                    
                             saveAddressToDisk = False
                     if command == 'getDeterministicAddress':
                         saveAddressToDisk = False
+                        logger.error('++++++++++498++++++++++++++')                    
+                        
 
                     if saveAddressToDisk and live:
+                        logger.error('++++++++++501++++++++++++++')                    
+                        
                         # An excellent way for us to store our keys is
                         # in Wallet Import Format. Let us convert now.
                         # https://en.bitcoin.it/wiki/Wallet_import_format
                         privSigningKey = '\x80'.encode('raw_unicode_escape') + potentialPrivSigningKey
+                        logger.error('++++++++++508++++++++++++++')                    
+                        
                         checksum = hashlib.sha256(hashlib.sha256(
                             privSigningKey).digest()).digest()[0:4]
+                        logger.error('++++++++++512++++++++++++++')                    
                         privSigningKeyWIF = arithmetic.changebase(
                             privSigningKey + checksum, 256, 58)
-
+                        logger.error('++++++++++515++++++++++++++')                    
                         privEncryptionKey = '\x80'.encode('raw_unicode_escape') + \
                             potentialPrivEncryptionKey
+                        logger.error('++++++++++518++++++++++++++')                    
                         checksum = hashlib.sha256(hashlib.sha256(
                             privEncryptionKey).digest()).digest()[0:4]
+                        logger.error('++++++++++521++++++++++++++')                    
                         privEncryptionKeyWIF = arithmetic.changebase(
                             privEncryptionKey + checksum, 256, 58)
-
+                        logger.error('++++++++++524++++++++++++++')                    
                         try:
+                            logger.error('++++++++++526++++++++++++++')                    
                             BMConfigParser().add_section(address)
                             addressAlreadyExists = False
                         except:
+                            logger.error('++++++++++530++++++++++++++')                    
                             addressAlreadyExists = True
 
                         if addressAlreadyExists:
+                            logger.error('++++++++++534++++++++++++++')                    
                             self.logger.info(
                                 '%s already exists. Not adding it again.',
                                 address
                             )
+                            logger.error('++++++++++539++++++++++++++')                    
                             queues.UISignalQueue.put((
                                 'updateStatusBar',
                                 tr._translate(
@@ -495,49 +542,63 @@ class addressGenerator(StoppableThread):
                                 ).arg(address)
                             ))
                         else:
+                            logger.error('++++++++++549++++++++++++++')                    
                             self.logger.debug('label: %s', label)
                             BMConfigParser().set(address, 'label', label)
                             BMConfigParser().set(address, 'enabled', 'true')
                             BMConfigParser().set(address, 'decoy', 'false')
+                            logger.error('++++++++++554++++++++++++++')                    
                             # if command == 'joinChan' or command == 'createChan':
                             if command in ('joinChan', 'createChan'):
                                 BMConfigParser().set(address, 'chan', 'true')
+                                logger.error('++++++++++558++++++++++++++')                    
                             BMConfigParser().set(
                                 address, 'noncetrialsperbyte',
                                 str(nonceTrialsPerByte))
+                            logger.error('++++++++++562++++++++++++++')                    
                             BMConfigParser().set(
                                 address, 'payloadlengthextrabytes',
                                 str(payloadLengthExtraBytes))
+                            logger.error('++++++++++566++++++++++++++')                    
                             BMConfigParser().set(
                                 address, 'privSigningKey',
                                 privSigningKeyWIF)
+                            logger.error('++++++++++570++++++++++++++')                    
                             BMConfigParser().set(
                                 address, 'privEncryptionKey',
                                 privEncryptionKeyWIF)
                             BMConfigParser().save()
+                            logger.error('++++++++++575++++++++++++++')                    
 
                             queues.UISignalQueue.put((
                                 'writeNewAddressToTable',
                                 (label, address, str(streamNumber))
                             ))
+                            logger.error('++++++++++581++++++++++++++')                    
                             listOfNewAddressesToSendOutThroughTheAPI.append(
                                 address)
+                            logger.error('++++++++++584++++++++++++++')                    
                             shared.myECCryptorObjects[ripe] = \
                                 highlevelcrypto.makeCryptor(
                                     hexlify(potentialPrivEncryptionKey))
+                            logger.error('++++++++++588++++++++++++++')                    
                             shared.myAddressesByHash[ripe] = address
                             tag = hashlib.sha512(hashlib.sha512(
                                 encodeVarint(addressVersionNumber) +
                                 encodeVarint(streamNumber) + ripe
                             ).digest()).digest()[32:]
+                            logger.error('++++++++++594++++++++++++++')                    
                             shared.myAddressesByTag[tag] = address
                             if addressVersionNumber == 3:
+                                logger.error('++++++++++597++++++++++++++')                    
+                                
                                 # If this is a chan address,
                                 # the worker thread won't send out
                                 # the pubkey over the network.
                                 queues.workerQueue.put((
                                     'sendOutOrStoreMyV3Pubkey', ripe))
                             elif addressVersionNumber == 4:
+                                logger.error('++++++++++605++++++++++++++')                    
                                 queues.workerQueue.put((
                                     'sendOutOrStoreMyV4Pubkey', address))
                             queues.UISignalQueue.put((
@@ -553,10 +614,12 @@ class addressGenerator(StoppableThread):
                 # Done generating addresses.
                 # if command == 'createDeterministicAddresses' \
                 #         or command == 'joinChan' or command == 'createChan':
+                logger.error('++++++++++621++++++++++++++')                    
                 if command in (
                         'createDeterministicAddresses',
                         'joinChan',
                         'createChan'):
+                    logger.error('++++++++++++++626+++++++++++')
                     queues.apiAddressGeneratorReturnQueue.put(
                         listOfNewAddressesToSendOutThroughTheAPI)
                 elif command == 'getDeterministicAddress':

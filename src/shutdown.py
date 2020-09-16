@@ -26,6 +26,7 @@ except ModuleNotFoundError:
     from pybitmessage.queues import (
         addressGeneratorQueue, objectProcessorQueue, UISignalQueue, workerQueue)
 
+    from pybitmessage.tests.test_process import TestProcessProto
 def doCleanShutdown():
     """
     Used to tell all the treads to finish work and exit.
@@ -35,8 +36,6 @@ def doCleanShutdown():
     objectProcessorQueue.put(('checkShutdownVariable', 'no data'))
     for thread in threading.enumerate():
         if thread.isAlive() and isinstance(thread, StoppableThread):
-            logger.error('!!!! thread !!! -{}'.format(
-                thread))
             thread.stopThread()
 
     UISignalQueue.put((
@@ -67,23 +66,6 @@ def doCleanShutdown():
     time.sleep(.25)
 
     for thread in threading.enumerate():
-        if thread.name == 'singleAPI':
-            try:
-                logger.error('inside the shutdown try')
-                logger.error(
-                    'thread flag -{}'.format(
-                        thread.stop._flag))
-                thread.stop.set()
-                thread.stop.clear()
-                logger.error(
-                    'After set clear thread flag -{}'.format(
-                        thread.stop._flag))
-                # thread.stop.set()
-            except Exception as e:
-                logger.error(
-                    '======inside the shutdown except======='
-                )
-                logger.error(str(e))   
         if (
             thread is not threading.currentThread()
             and isinstance(thread, StoppableThread)
