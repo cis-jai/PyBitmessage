@@ -118,22 +118,27 @@ class addressGenerator(StoppableThread):
                         numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif len(queueValue) == 9:
                 
-                logger.info(
-                    '33333333333333333333333333333333333333')
+                logger.error('createRandomAddress 122')
                 command, addressVersionNumber, streamNumber, label, \
                     numberOfAddressesToMake, deterministicPassphrase, \
                     eighteenByteRipe, nonceTrialsPerByte, \
                     payloadLengthExtraBytes = queueValue
+                logger.error('createRandomAddress 126')
                 try:
+                    logger.error('createRandomAddress 128')
                     numberOfNullBytesDemandedOnFrontOfRipeHash = \
                         BMConfigParser().getint(
                             'bitmessagesettings',
                             'numberofnullbytesonaddress'
                         )
+                    logger.error('createRandomAddress 134')
                 except:
+                    logger.error('createRandomAddress 136')
                     if eighteenByteRipe:
+                        logger.error('createRandomAddress 138')
                         numberOfNullBytesDemandedOnFrontOfRipeHash = 2
                     else:
+                        logger.error('createRandomAddress 141')
                         # the default
                         numberOfNullBytesDemandedOnFrontOfRipeHash = 1
             elif queueValue[0] == 'stopThread':
@@ -145,46 +150,63 @@ class addressGenerator(StoppableThread):
                     'Programming error: A structure with the wrong number'
                     ' of values was passed into the addressGeneratorQueue.'
                     ' Here is the queueValue: %r\n', queueValue)
+            logger.error('createRandomAddress 153')
             if addressVersionNumber < 3 or addressVersionNumber > 4:
                 self.logger.error(
                     'Program error: For some reason the address generator'
                     ' queue has been given a request to create at least'
                     ' one version %s address which it cannot do.\n',
                     addressVersionNumber)
+            logger.error('createRandomAddress 160')
             if nonceTrialsPerByte == 0:
                 logger.error('++++++++++++170++++++++++++')
                 nonceTrialsPerByte = BMConfigParser().getint(
                     'bitmessagesettings', 'defaultnoncetrialsperbyte')
-            if nonceTrialsPerByte < \
-                    defaults.networkDefaultProofOfWorkNonceTrialsPerByte:
-                logger.error('++++++++++++175++++++++++++')
-                nonceTrialsPerByte = \
-                    defaults.networkDefaultProofOfWorkNonceTrialsPerByte
+            logger.error('createRandomAddress 165')
+            try:
+                if nonceTrialsPerByte < \
+                        defaults.networkDefaultProofOfWorkNonceTrialsPerByte:
+                    logger.error('++++++++++++175++++++++++++')
+                    nonceTrialsPerByte = \
+                        defaults.networkDefaultProofOfWorkNonceTrialsPerByte
+            except Exception as e:
+                logger.error('type(nonceTrialsPerByte) -{}'.format(
+                    type(nonceTrialsPerByte)))
+                logger.error('type(defaults.networkDefaultProofOfWorkNonceTrialsPerByte) -{}'.format(
+                    type(defaults.networkDefaultProofOfWorkNonceTrialsPerByte)))
+                logger.error('createRandomAddress except')
+                logger.error(str(e))
+            logger.error('createRandomAddress 171')
             if payloadLengthExtraBytes == 0:
                 logger.error('++++++++++++179++++++++++++')
                 payloadLengthExtraBytes = BMConfigParser().getint(
                     'bitmessagesettings', 'defaultpayloadlengthextrabytes')
+            logger.error('createRandomAddress 176')
             if payloadLengthExtraBytes < \
                     defaults.networkDefaultPayloadLengthExtraBytes:
                 logger.error('++++++++++++184++++++++++++')
                 payloadLengthExtraBytes = \
                     defaults.networkDefaultPayloadLengthExtraBytes
+            logger.error('createRandomAddress 181')
             if command == 'createRandomAddress':
                 logger.error('++++++++++++188++++++++++++')
                 queues.UISignalQueue.put((
                     'updateStatusBar', ""
                 ))
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&')
-                logger.info('---------144--------------')
-                logger.info('&&&&&&&&&&&&&&&&&&&&&&&\n')
+                logger.error('&&&&&&&&&&&&&&&&&&&&&&&')
+                logger.error('---------144--------------')
+                logger.error('&&&&&&&&&&&&&&&&&&&&&&&')
                 # This next section is a little bit strange. We're going
                 # to generate keys over and over until we find one
                 # that starts with either \x00 or \x00\x00. Then when
                 # we pack them into a Bitmessage address, we won't store
                 # the \x00 or \x00\x00 bytes thus making the address shorter.
+                logger.error('createRandomAddress 190')
                 startTime = time.time()
                 numberOfAddressesWeHadToMakeBeforeWeFoundOneWithTheCorrectRipePrefix = 0
+                logger.error('createRandomAddress 193')
                 potentialPrivSigningKey = OpenSSL.rand(32)
+                logger.error('createRandomAddress 194')
                 potentialPubSigningKey = highlevelcrypto.pointMult(
                     potentialPrivSigningKey)
                 logger.error('&&&&&&&&&&&&&&&&&&&&&&&')

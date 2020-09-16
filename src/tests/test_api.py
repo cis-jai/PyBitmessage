@@ -21,22 +21,12 @@ class TestAPIProto(TestProcessProto):
 
     @classmethod
     def setUpClass(cls):
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        print('is this TestAPIProto')
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        
         """Setup XMLRPC proxy for pybitmessage API"""
         # super(TestAPIProto, cls).tearDownClass()
         try:
-            print('*****************************')
-            print('try block is I am successfully called the ')
-            print('*****************************')
             super(TestAPIProto, cls).setUpClass()
         except:
-            print('(((((((((((((((((((((((')
-            print('except block because of this condition are getting failed')
-            print('))))))))))))))))))))))))')
-
+            pass
         cls.addresses = []
         cls.api = xmlrpclib.ServerProxy(    
             "http://username:password@127.0.0.1:8442/")
@@ -125,7 +115,6 @@ class TestAPI(TestAPIProto):
         self.assertEqual(result['streamNumber'], 1)
 
     def test_create_deterministic_addresses(self):
-        #11111111111111111111111111
         """API command 'getDeterministicAddress': with various params"""
         self.assertEqual(
             self.api.getDeterministicAddress(self._seed, 4, 1),
@@ -135,23 +124,22 @@ class TestAPI(TestAPIProto):
             self.api.getDeterministicAddress(self._seed, 3, 1),
             'BM-2DBPTgeSawWYZceFD69AbDT5q4iUWtj1ZN'
         )
-        self.assertRegexpMatches(
+        self.assertRegex(
             self.api.getDeterministicAddress(self._seed, 2, 1),
             r'^API Error 0002:'
         )
         # This is here until the streams will be implemented
-        self.assertRegexpMatches(
+        self.assertRegex(
             self.api.getDeterministicAddress(self._seed, 3, 2),
             r'API Error 0003:'
         )
 
     #currently working on this condition
     def test_create_random_address(self):
-        #22222222222222222222222222222222
         """API command 'createRandomAddress': basic BM-address validation"""
         addr = self._add_random_address('random_1'.encode())
-        self.assertRegexpMatches(addr, r'^BM-')
-        self.assertRegexpMatches(addr[3:], r'[a-zA-Z1-9]+$')
+        self.assertRegex(addr, r'^BM-')
+        self.assertRegex(addr[3:], r'[a-zA-Z1-9]+$')
         # Whitepaper says "around 36 character"
         self.assertLessEqual(len(addr[3:]), 40)
         self.assertEqual(self.api.deleteAddress(addr), 'success')
@@ -159,6 +147,7 @@ class TestAPI(TestAPIProto):
     def test_addressbook(self):
         """Testing API commands for addressbook manipulations"""
         # Initially it's empty
+        #
         self.assertEqual(
             json.loads(self.api.listAddressBookEntries()).get('addresses'),
             []
@@ -188,9 +177,9 @@ class TestAPI(TestAPIProto):
         """API command 'sendBroadcast': ensure it returns ackData"""
         addr = self._add_random_address('random_2'.encode())
         ack = self.api.sendBroadcast(
-            addr, base64.encodestring('test_subject'),
-            base64.encodestring('test message')
-        )
+            addr, base64.encodebytes('test_subject'.encode()),
+            base64.encodebytes('test message'.encode())
+        ).data
         try:
             int(ack, 16)
         except ValueError:
@@ -206,19 +195,20 @@ class TestAPI(TestAPIProto):
             'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK'
         )
         # # cleanup
-        # self.assertEqual(
-        #     self.api.leaveChan('BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK'),
-        #     'success'
-        # )
+        self.assertEqual(
+            self.api.leaveChan('BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK'),
+            'success'
+        )
         # # Join chan with addresses of version 3 or 4
-        # for addr in (
-        #         'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK',
-        #         'BM-2DBPTgeSawWYZceFD69AbDT5q4iUWtj1ZN'
-        # ):
-        #     self.assertEqual(self.api.joinChan(self._seed, addr), 'success')
-        #     self.assertEqual(self.api.leaveChan(addr), 'success')
+        #Today
+        for addr in (
+                'BM-2cWzSnwjJ7yRP3nLEWUV5LisTZyREWSzUK',
+                'BM-2DBPTgeSawWYZceFD69AbDT5q4iUWtj1ZN'
+        ):
+            self.assertEqual(self.api.joinChan(self._seed, addr), 'success')
+            self.assertEqual(self.api.leaveChan(addr), 'success')
         # # Joining with wrong address should fail
-        # self.assertRegexpMatches(
-        #     self.api.joinChan(self._seed, 'BM-2cWzSnwjJ7yRP3nLEW'),
-        #     r'^API Error 0008:'
-        # )
+        self.assertRegex(
+            self.api.joinChan(self._seed, 'BM-2cWzSnwjJ7yRP3nLEW'),
+            r'^API Error 0008:'
+        )

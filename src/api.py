@@ -451,12 +451,13 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
                 smallMessageDifficulty)
         else:
             raise APIError(0, 'Too many parameters!')
-        label = self._decode(label.data, "base64")
+        label = self._decode(label.data, "base64").decode()
         queues.apiAddressGeneratorReturnQueue.queue.clear()
         streamNumberForAddress = 1
         queues.addressGeneratorQueue.put((
             'createRandomAddress', 4, streamNumberForAddress, label, 1, "",
-            eighteenByteRipe, nonceTrialsPerByte, payloadLengthExtraBytes
+            eighteenByteRipe, int(nonceTrialsPerByte),
+            int(payloadLengthExtraBytes)
         ))
         return queues.apiAddressGeneratorReturnQueue.get()
 
@@ -575,7 +576,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         queues.addressGeneratorQueue.put((
             'createDeterministicAddresses', addressVersionNumber, streamNumber,
             'unused API address', numberOfAddresses, passphrase,
-            eighteenByteRipe, nonceTrialsPerByte, payloadLengthExtraBytes
+            eighteenByteRipe, int(nonceTrialsPerByte), int(payloadLengthExtraBytes)
         ))
         data = '{"addresses":['
         queueReturn = queues.apiAddressGeneratorReturnQueue.get()
@@ -595,7 +596,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         eighteenByteRipe = False
         if not passphrase:
             raise APIError(1, 'The specified passphrase is blank.')
-        passphrase = self._decode(passphrase.data, "base64")
+        passphrase = self._decode(passphrase.data, "base64").decode()
         # if addressVersionNumber != 3 and addressVersionNumber != 4:
         if addressVersionNumber not in (3, 4):
             raise APIError(
@@ -623,32 +624,19 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             raise APIError(0, 'I need parameters.')
         elif len(params) == 1:
             passphrase, = params
-        passphrase = self._decode(passphrase.data, "base64")  
+        passphrase = self._decode(passphrase.data, "base64").decode()
         if not passphrase:
             raise APIError(1, 'The specified passphrase is blank.')
         # It would be nice to make the label the passphrase but it is
-        # possible that the passphrase contains non-utf-8 characters.
-        # try:
-        #     unicode(passphrase, 'utf-8')
-        #     label = str_chan + ' ' + passphrase
-        # except BaseException:
-        label = str_chan + ' ' + passphrase.decode()
+
+        label = str_chan + ' ' + passphrase
         addressVersionNumber = 4
         streamNumber = 1
-        try:
-            queues.addressGeneratorQueue.put((
-                'createChan', addressVersionNumber, streamNumber, label,
-                passphrase.decode(), True
-            ))
-            logger.info(
-                '@@@@@@@@ before printing the queueReturn @@@@@@@@@')
-            queueReturn = queues.apiAddressGeneratorReturnQueue.get()            
-            logger.info('***********************************')
-            logger.info('queueReturn-{}'.format(queueReturn))
-            logger.info('***********************************')
-            
-        except Exception as e:
-            logger.info(e)
+        queues.addressGeneratorQueue.put((
+            'createChan', addressVersionNumber, streamNumber, label,
+            passphrase, True
+        ))
+        queueReturn = queues.apiAddressGeneratorReturnQueue.get()
         if not queueReturn:
             raise APIError(24, 'Chan address is already present.')
         address = queueReturn[0]
@@ -661,23 +649,17 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             raise APIError(0, 'I need two parameters.')
         elif len(params) == 2:
             passphrase, suppliedAddress = params
-        passphrase = self._decode(passphrase.data, "base64")
+        passphrase = self._decode(passphrase.data, "base64").decode()
         if not passphrase:
             raise APIError(1, 'The specified passphrase is blank.')
-        # It would be nice to make the label the passphrase but it is
-        # possible that the passphrase contains non-utf-8 characters.
-        # try:
-        #     unicode(passphrase, 'utf-8')
-        #     label = str_chan + ' ' + passphrase
-        # except BaseException:
-        #     label = str_chan + ' ' + repr(passphrase)
-        label  = str_chan + ' ' + passphrase.decode()
+        label  = str_chan + ' ' + passphrase
         status, addressVersionNumber, streamNumber, toRipe = (
             self._verifyAddress(suppliedAddress))
         suppliedAddress = addBMIfNotPresent(suppliedAddress)
         queues.apiAddressGeneratorReturnQueue.queue.clear()
         queues.addressGeneratorQueue.put((
-            'joinChan', suppliedAddress, label, passphrase, True
+            'joinChan', suppliedAddress, label,
+             passphrase, True
         ))
         addressGeneratorReturnValue = \
             queues.apiAddressGeneratorReturnQueue.get()
@@ -707,7 +689,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
                 25, 'Specified address is not a chan address.'
                 ' Use deleteAddress API call instead.')
         BMConfigParser().remove_section(address)
-        with open(state.appdata + 'keys.dat', 'wb') as configfile:
+        with open(state.appdata + 'keys.dat', 'w') as configfile:
             BMConfigParser().write(configfile)
         return 'success'
 
@@ -725,7 +707,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             raise APIError(
                 13, 'Could not find this address in your keys.dat file.')
         BMConfigParser().remove_section(address)
-        with open(state.appdata + 'keys.dat', 'wb') as configfile:
+        with open(state.appdata + 'keys.dat', 'w') as configfile:
             BMConfigParser().write(configfile)
         queues.UISignalQueue.put(('writeNewAddressToTable', ('', '', '')))
         shared.reloadMyAddressHashes()
@@ -1096,10 +1078,9 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
     def HandleSendBroadcast(self, params):
         """Handle a request to send a broadcast message"""
-
         if not params:
             raise APIError(0, 'I need parameters!')
-
+        logger.error('HandleSendBroadcast 1085')
         if len(params) == 3:
             fromAddress, subject, message = params
             encodingType = 2
@@ -1113,10 +1094,11 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
         if encodingType not in [2, 3]:
             raise APIError(6, 'The encoding type must be 2 or 3.')
-
-        subject = self._decode(subject, "base64")
-        message = self._decode(message, "base64")
+        subject = self._decode(subject.data, "base64").decode()
+        message = self._decode(message.data, "base64").decode()
+        logger.error('HandleSendBroadcast 1106')
         if len(subject + message) > (2 ** 18 - 500):
+            logger.error('HandleSendBroadcast 1108')
             raise APIError(27, 'Message is too long.')
         if TTL < 60 * 60:
             TTL = 60 * 60
@@ -1133,7 +1115,6 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         ackdata = genAckPayload(streamNumber, 0)
         toAddress = '[Broadcast subscribers]'
         ripe = ''
-
         t = ('',
              toAddress,
              ripe,
@@ -1150,7 +1131,6 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
              2,
              TTL)
         helper_sent.insert(t)
-
         toLabel = '[Broadcast subscribers]'
         queues.UISignalQueue.put(('displayNewSentMessage', (
             toAddress, toLabel, fromAddress, subject, message, ackdata)))
