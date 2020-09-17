@@ -22,7 +22,6 @@ class Inventory(object):
     """
     def __init__(self):
         self._moduleName = BMConfigParser().safeGet("inventory", "storage")
-        print('is I am called the Inventory')
         self._inventoryClass = getattr(
             getattr(storage, self._moduleName),
             "{}Inventory".format(self._moduleName.title())

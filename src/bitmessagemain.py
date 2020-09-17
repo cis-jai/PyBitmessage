@@ -183,8 +183,6 @@ class Main(object):
         adjustHalfOpenConnectionsLimit()
         config = BMConfigParser()
         daemon = config.safeGetBoolean('bitmessagesettings', 'daemon')
-        print('config.safeGetBoolean(bitmessagesettings' 'daemon)-{}'.format(
-            config.safeGetBoolean('bitmessagesettings', 'daemon')))
         try:
             opts, _ = getopt.getopt(
                 sys.argv[1:], "hcdt",
@@ -249,7 +247,7 @@ class Main(object):
 
         self.setSignalHandler()
 
-        set_thread_name("PyBitmessage")
+        set_thread_name("pybitmessage")
 
         state.dandelion = config.safeGet('network', 'dandelion')
         # dandelion requires outbound connections, without them,

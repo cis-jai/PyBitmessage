@@ -124,59 +124,40 @@ class singleAPI(StoppableThread):
             errno.WSAEADDRINUSE = errno.EADDRINUSE
         for attempt in range(50):
             try:
-                print('+++++++++++++++++++++++127+++++++++++++++')
                 if attempt > 0:
-                    print('+++++++++++++++++++++++128+++++++++++++++')
                     logger.warning(
                         'Failed to start API listener on port %s', port)
                     port = random.randint(32767, 65535)
-                    print('+++++++++++++++++++++++133+++++++++++++++')
-                print('+++++++++++++++++++++++133+++++++++++++++')
                 se = StoppableXMLRPCServer(
                     (BMConfigParser().get(
                         'bitmessagesettings', 'apiinterface'),
                      port),
                     MySimpleXMLRPCRequestHandler, True, True)
-                print('+++++++++++++++++++++++140+++++++++++++++')
             except socket.error as e:
-                print('+++++++++++++++++++++++142+++++++++++++++')
                 if e.errno in (errno.EADDRINUSE, errno.WSAEADDRINUSE):
-                    print('+++++++++++++++++++++++144+++++++++++++++')
                     continue
             else:
                 if attempt > 0:
-                    print('+++++++++++++++++++++++148+++++++++++++++')
                     logger.warning('Setting apiport to %s', port)
                     BMConfigParser().set(
                         'bitmessagesettings', 'apiport', str(port))
                     BMConfigParser().save()
-                    print('+++++++++++++++++++++++153+++++++++++++++')
                 break
         
-        print('+++++++++++++++++++++++156+++++++++++++++')
         se.register_introspection_functions()
-        print('+++++++++++++++++++++++158+++++++++++++++')
         apiNotifyPath = BMConfigParser().safeGet(
             'bitmessagesettings', 'apinotifypath')
-        print('------------161-------------------')
         if apiNotifyPath:
-            print('------------162-------------------')
             logger.info('Trying to call %s', apiNotifyPath)
-            print('------------165-------------------')
             try:
-                print('------------167-------------------')
                 subprocess.call([apiNotifyPath, "startingUp"])
             except OSError:
-                print('------------170-------------------')
                 logger.warning(
                     'Failed to call %s, removing apinotifypath setting',
                     apiNotifyPath)
                 BMConfigParser().remove_option(
                     'bitmessagesettings', 'apinotifypath')
-        print('------------176-------------------')
         se.serve_forever()
-        print('---------178------------------------')
-        
 
 
 class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
@@ -199,9 +180,6 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         Note: this method is the same as in SimpleXMLRPCRequestHandler,
         just hacked to handle cookies
         """
-        print('post post post post')
-        print('is this method are')
-        print('post post post post')
         # Check that the path is legal
         if not self.is_rpc_path_valid():
             self.report_404()
@@ -1513,10 +1491,6 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
     def _dispatch(self, method, params):
         # pylint: disable=attribute-defined-outside-init
         self.cookies = []
-        print('111111111111111111111')
-        print('inside the _dispatch')
-        print('print the method name are -{}'.format(method))
-        print('1111111111111111111111')
         validuser = self.APIAuthenticateClient()
         if not validuser:
             time.sleep(2)
@@ -1525,13 +1499,10 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         try:
             return self._handle_request(method, params)
         except APIError as e:
-            print('except 11111111111111111111')
             return str(e)
         except varintDecodeError as e:
-            print('except 222222222222222222222')
             logger.error(e)
             return "API Error 0026: Data contains a malformed varint. Some details: %s" % e
         except Exception as e:
-            print('except 333333333333333333333')
             logger.exception(e)
             return "API Error 0021: Unexpected API Failure - %s" % e

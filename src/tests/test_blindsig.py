@@ -8,6 +8,7 @@ from hashlib import sha256
 from pybitmessage.pyelliptic.eccblind import ECCBlind
 from pybitmessage.pyelliptic.eccblindchain import ECCBlindChain
 from pybitmessage.pyelliptic.openssl import OpenSSL
+from pybitmessage.debug import logger
 
 # pylint: disable=protected-access
 
@@ -30,7 +31,7 @@ class TestBlindSig(unittest.TestCase):
         # only 64 byte messages are planned to be used in Bitmessage
         msg = os.urandom(64)
         msg_blinded = requester_obj.create_signing_request(point_r, msg)
-        self.assertEqual(len(msg_blinded), 32)
+        self.assertEqual(len(msg_blinded), 33)
 
         # check
         self.assertNotEqual(sha256(msg).digest(), msg_blinded)
@@ -38,18 +39,18 @@ class TestBlindSig(unittest.TestCase):
         # (3) Signature Generation
         signature_blinded = signer_obj.blind_sign(msg_blinded)
         assert isinstance(signature_blinded, bytes)
-        self.assertEqual(len(signature_blinded), 32)
+        self.assertEqual(len(signature_blinded), 33)
 
         # (4) Extraction
         signature = requester_obj.unblind(signature_blinded)
         assert isinstance(signature, bytes)
-        self.assertEqual(len(signature), 65)
+        self.assertEqual(len(signature), 66)
 
         self.assertNotEqual(signature, signature_blinded)
 
         # (5) Verification
         verifier_obj = ECCBlind(pubkey=signer_obj.pubkey())
-        self.assertTrue(verifier_obj.verify(msg, signature))
+        self.assertTrue(verifier_obj.verify(msg, signature[1:]))
 
     def test_is_odd(self):
         """Test our implementation of BN_is_odd"""

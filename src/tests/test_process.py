@@ -44,17 +44,7 @@ class TestProcessProto(unittest.TestCase):
         time.sleep(5)
         cls.pid = int(cls._get_readline('singleton.lock'))
         cls.process = psutil.Process(cls.pid)
-        #comment
-        # logger.error('~~~$$$$$$$$^^^^&&&&&&&~~~')
-        # logger.info('cls.proccess_pid -{}'.format(
-        #     cls.process.pid))
-        # logger.error('cls.proccess_name -{}'.format(
-        #     cls.process.name))
-        # logger.error('cls.proccess_create_time -{}'.format(
-        #     cls.process._create_time))
-        # logger.error('~~~$$$$$$$$^^^^&&&&&&&~~~')
  
-
     @classmethod
     def _get_readline(cls, pfile):
         pfile = os.path.join(cls.home, pfile)

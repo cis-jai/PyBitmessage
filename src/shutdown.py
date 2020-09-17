@@ -26,7 +26,7 @@ except ModuleNotFoundError:
     from pybitmessage.queues import (
         addressGeneratorQueue, objectProcessorQueue, UISignalQueue, workerQueue)
 
-    from pybitmessage.tests.test_process import TestProcessProto
+
 def doCleanShutdown():
     """
     Used to tell all the treads to finish work and exit.

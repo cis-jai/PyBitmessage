@@ -45,9 +45,6 @@ class TestAPIShutdown(TestAPIProto, TestProcessShutdown):
         self.assertEqual(self.api.shutdown(), 'done')
         for _ in range(5):
             if not self.process.is_running():
-                logger.info('-----------------------------------------')      
-                logger.info('test_shutdown test_shutdown test_shutdown inside the break condition')
-                logger.info('-----------------------------------------')      
                 break
             time.sleep(2)
         else:
