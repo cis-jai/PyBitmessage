@@ -659,7 +659,7 @@ class _OpenSSL(object):
         """
         returns the length of a BN (OpenSSl API)
         """
-        return int((self.BN_num_bits(x) + 7) / 8)
+        return int((self.BN_num_bits(x) + 7) // 8)
 
     def BN_is_odd_compatible(self, x):
         """
@@ -721,15 +721,26 @@ class _OpenSSL(object):
         """
         returns a create_string_buffer (ctypes)
         """
-        buffer_ = None
-        if data != 0:
-            if sys.version_info.major == 3 and isinstance(data, type('')):
-                data = data.encode()
-            buffer_ = self.create_string_buffer(bytes(data), size)
-        else:
-            buffer_ = self.create_string_buffer(bytes(size))
-        return buffer_
+        return self.create_string_buffer_with_bytes(data, size)
 
+
+    def create_string_buffer_with_bytes(self, data, size):
+        buffer_ = None
+        try:
+            if data != 0:
+                if sys.version_info.major == 3 and isinstance(data, type('')):
+                    data = data.encode()
+                buffer_ = self.create_string_buffer(data, size)
+            else:
+                buffer_ = self.create_string_buffer(size)
+        except:
+            if data != 0:
+                if sys.version_info.major == 3 and isinstance(data, type('')):
+                    data = data.encode()
+                buffer_ = self.create_string_buffer(bytes(data), size)
+            else:
+                buffer_ = self.create_string_buffer(bytes(size))
+        return buffer_
 
 def loadOpenSSL():
     """Method find and load the OpenSSL library"""
