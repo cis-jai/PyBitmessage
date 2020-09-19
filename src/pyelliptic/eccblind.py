@@ -149,7 +149,7 @@ class ECCBlind(object):  # pylint: disable=too-many-instance-attributes
             try:
                 bx = OpenSSL.malloc(0, l_)
                 OpenSSL.BN_bn2binpad(x, bx, l_)
-                out = bx.raw
+                out = bx.raw[:l_]
             except AttributeError:
                 # padding manually
                 bx = OpenSSL.malloc(0, OpenSSL.BN_num_bytes(x))
@@ -180,7 +180,7 @@ class ECCBlind(object):  # pylint: disable=too-many-instance-attributes
         try:
             o = OpenSSL.malloc(0, l_)
             OpenSSL.BN_bn2binpad(bn, o, l_)
-            return o.raw
+            return o.raw[:l_]
         except AttributeError:
             o = OpenSSL.malloc(0, OpenSSL.BN_num_bytes(bn))
             OpenSSL.BN_bn2bin(bn, o)

@@ -88,8 +88,6 @@ class singleWorker(StoppableThread):
 
     def run(self):
         # pylint: disable=attribute-defined-outside-init
-
-        logger.error
         while not state.sqlReady and state.shutdown == 0:
             self.stop.wait(2)
         if state.shutdown > 0:                                                                                                                                                                                 

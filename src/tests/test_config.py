@@ -45,8 +45,6 @@ class TestProcessConfig(TestProcessProto):
         """Test settings in the generated config"""
         self._stop_process()
         config = BMConfigParser()
-        print('the value of the self.home')
-        print(self.home)
         config.read(os.path.join(self.home, 'keys.dat'))
         self.assertEqual(config.safeGetInt(
             'bitmessagesettings', 'settingsversion'), 10)

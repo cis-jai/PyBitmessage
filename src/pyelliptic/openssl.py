@@ -721,26 +721,15 @@ class _OpenSSL(object):
         """
         returns a create_string_buffer (ctypes)
         """
-        return self.create_string_buffer_with_bytes(data, size)
-
-
-    def create_string_buffer_with_bytes(self, data, size):
         buffer_ = None
-        try:
-            if data != 0:
-                if sys.version_info.major == 3 and isinstance(data, type('')):
-                    data = data.encode()
-                buffer_ = self.create_string_buffer(data, size)
-            else:
-                buffer_ = self.create_string_buffer(size)
-        except:
-            if data != 0:
-                if sys.version_info.major == 3 and isinstance(data, type('')):
-                    data = data.encode()
-                buffer_ = self.create_string_buffer(bytes(data), size)
-            else:
-                buffer_ = self.create_string_buffer(bytes(size))
+        if data != 0:
+            if sys.version_info.major == 3 and isinstance(data, type('')):
+                data = data.encode()
+            buffer_ = self.create_string_buffer(data, size)
+        else:
+            buffer_ = self.create_string_buffer(size)
         return buffer_
+
 
 def loadOpenSSL():
     """Method find and load the OpenSSL library"""

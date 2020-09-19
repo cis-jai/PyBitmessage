@@ -1058,7 +1058,6 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         """Handle a request to send a broadcast message"""
         if not params:
             raise APIError(0, 'I need parameters!')
-        logger.error('HandleSendBroadcast 1085')
         if len(params) == 3:
             fromAddress, subject, message = params
             encodingType = 2
@@ -1074,9 +1073,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             raise APIError(6, 'The encoding type must be 2 or 3.')
         subject = self._decode(subject.data, "base64").decode()
         message = self._decode(message.data, "base64").decode()
-        logger.error('HandleSendBroadcast 1106')
         if len(subject + message) > (2 ** 18 - 500):
-            logger.error('HandleSendBroadcast 1108')
             raise APIError(27, 'Message is too long.')
         if TTL < 60 * 60:
             TTL = 60 * 60
