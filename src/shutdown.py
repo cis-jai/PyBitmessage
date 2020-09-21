@@ -35,8 +35,13 @@ def doCleanShutdown():
     
     objectProcessorQueue.put(('checkShutdownVariable', 'no data'))
     for thread in threading.enumerate():
+        # if thread.name == 'singleAPI':
         if thread.isAlive() and isinstance(thread, StoppableThread):
+            # logger.error('printing the stop thread -{}'.format(
+            #     thread))
             thread.stopThread()
+        logger.error('thread name -{} thread._is_stopped {}'.format(
+            thread.name, thread._is_stopped))
 
     UISignalQueue.put((
         'updateStatusBar',

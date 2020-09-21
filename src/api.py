@@ -90,11 +90,13 @@ class StoppableXMLRPCServer(SimpleXMLRPCServer):
     # pylint:disable=too-few-public-methods
     allow_reuse_address = True
 
-    def serve_forever(self):
+    def forever(self):
         """Start the SimpleXMLRPCServer"""
         # pylint: disable=arguments-differ
         while state.shutdown == 0:
-            self.handle_request()
+            logger.error('before handle_request')
+            self.serve_forever()
+            logger.error('After handle_request')
 
 
 # This thread, of which there is only one, runs the API.
@@ -106,14 +108,20 @@ class singleAPI(StoppableThread):
     def stopThread(self):
         super(singleAPI, self).stopThread()
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        logger.error('11111111111 stopThread 11111111 ')
         try:
+            logger.error('11111111111 stopThread 113 ')
             s.connect((
                 BMConfigParser().get('bitmessagesettings', 'apiinterface'),
                 BMConfigParser().getint('bitmessagesettings', 'apiport')
             ))
+            logger.error('11111111111 stopThread 118 ')
             s.shutdown(socket.SHUT_RDWR)
+            logger.error('11111111111 stopThread 120 ')
             s.close()
+            logger.error('11111111111 stopThread 122 ')
         except BaseException:
+            logger.error('11111111111 stopThread except BaseException')
             pass
 
     def run(self):        
@@ -157,7 +165,7 @@ class singleAPI(StoppableThread):
                     apiNotifyPath)
                 BMConfigParser().remove_option(
                     'bitmessagesettings', 'apinotifypath')
-        se.serve_forever()
+        se.forever()
 
 
 class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):

@@ -4,7 +4,7 @@ import logging
 import random
 import threading
 from contextlib import contextmanager
-
+from pybitmessage.debug import logger
 
 class StoppableThread(threading.Thread):
     """Base class for application threads with stopThread method"""
@@ -22,6 +22,8 @@ class StoppableThread(threading.Thread):
 
     def stopThread(self):
         """Stop the thread"""
+        if self.name  == 'singleAPI':
+            logger.error('yes inside the the stopthread')
         self._stopped = True
         self.stop.set()
 

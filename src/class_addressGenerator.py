@@ -129,12 +129,10 @@ class addressGenerator(StoppableThread):
             if payloadLengthExtraBytes == 0:
                 payloadLengthExtraBytes = BMConfigParser().getint(
                     'bitmessagesettings', 'defaultpayloadlengthextrabytes')
-            logger.error('createRandomAddress 176')
             if payloadLengthExtraBytes < \
                     defaults.networkDefaultPayloadLengthExtraBytes:
                 payloadLengthExtraBytes = \
                     defaults.networkDefaultPayloadLengthExtraBytes
-            logger.error('createRandomAddress 181')
             if command == 'createRandomAddress':
                 queues.UISignalQueue.put((
                     'updateStatusBar', ""
