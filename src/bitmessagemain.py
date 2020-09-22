@@ -158,7 +158,7 @@ def signal_handler(signum, frame):
     if "PoolWorker" in process.name:
         raise SystemExit
     if thread.name not in ("PyBitmessage", "MainThread"):
-        return  
+        return
     logger.error("Got signal %i", signum)
     # there are possible non-UI variants to run bitmessage
     # which should shutdown especially test-mode
@@ -405,18 +405,20 @@ class Main(object):
         else:
             state.enableGUI = True
             # pylint: disable=relative-import
-            
-            from tests import core as test_core
-            test_core_result = test_core.run()
-            state.enableGUI = True
-            self.stop()
-            test_core.cleanup()
-            sys.exit(
-                'Core tests failed!'
-                if test_core_result.errors or test_core_result.failures
-                else 0
-            )
-            
+            try:
+                from tests import core as test_core
+                test_core_result = test_core.run()
+                state.enableGUI = True
+                self.stop()
+                test_core.cleanup()
+                sys.exit(
+                    'Core tests failed!'
+                    if test_core_result.errors or test_core_result.failures
+                    else 0
+                )
+            except:
+                pass
+
     @staticmethod
     def daemonize():
         """Running as a daemon. Send signal in end."""
