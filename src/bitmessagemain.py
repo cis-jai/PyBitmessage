@@ -162,7 +162,7 @@ def signal_handler(signum, frame):
     logger.error("Got signal %i", signum)
     # there are possible non-UI variants to run bitmessage
     # which should shutdown especially test-mode
-    if state.thisapp.daemon or not state.enableGUI:
+    if state.thisapp.daemon or not state.enableGUI or state.testmode:
         shutdown.doCleanShutdown()
     else:
         print('# Thread: {}({})'.format(thread.name, thread.ident))

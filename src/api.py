@@ -90,12 +90,12 @@ class StoppableXMLRPCServer(SimpleXMLRPCServer):
     # pylint:disable=too-few-public-methods
     allow_reuse_address = True
 
-    def forever(self):
+    def serve_forever(self):
         """Start the SimpleXMLRPCServer"""
         # pylint: disable=arguments-differ
         while state.shutdown == 0:
             logger.error('before handle_request')
-            self.serve_forever()
+            self.handle_request()
             logger.error('After handle_request')
 
 
@@ -165,7 +165,8 @@ class singleAPI(StoppableThread):
                     apiNotifyPath)
                 BMConfigParser().remove_option(
                     'bitmessagesettings', 'apinotifypath')
-        se.forever()
+        # se._stopped = False
+        se.serve_forever()
 
 
 class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
@@ -223,6 +224,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             self.end_headers()
         else:
             # got a valid XML RPC response
+            self.cookies = []
             self.send_response(200)
             self.send_header("Content-type", "text/xml")
             self.send_header("Content-length", str(len(response)))
@@ -1495,7 +1497,6 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
     def _dispatch(self, method, params):
         # pylint: disable=attribute-defined-outside-init
-        self.cookies = []
         validuser = self.APIAuthenticateClient()
         if not validuser:
             time.sleep(2)
