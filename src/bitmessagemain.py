@@ -158,7 +158,7 @@ def signal_handler(signum, frame):
     if "PoolWorker" in process.name:
         raise SystemExit
     if thread.name not in ("PyBitmessage", "MainThread"):
-        return
+        return  
     logger.error("Got signal %i", signum)
     # there are possible non-UI variants to run bitmessage
     # which should shutdown especially test-mode
@@ -405,20 +405,18 @@ class Main(object):
         else:
             state.enableGUI = True
             # pylint: disable=relative-import
-            try:
-                from tests import core as test_core
-                test_core_result = test_core.run()
-                state.enableGUI = True
-                self.stop()
-                test_core.cleanup()
-                sys.exit(
-                    'Core tests failed!'
-                    if test_core_result.errors or test_core_result.failures
-                    else 0
-                )
-            except:
-                pass
-
+            
+            from tests import core as test_core
+            test_core_result = test_core.run()
+            state.enableGUI = True
+            self.stop()
+            test_core.cleanup()
+            sys.exit(
+                'Core tests failed!'
+                if test_core_result.errors or test_core_result.failures
+                else 0
+            )
+            
     @staticmethod
     def daemonize():
         """Running as a daemon. Send signal in end."""
@@ -465,12 +463,9 @@ class Main(object):
             si = open(os.devnull)
             so = open(os.devnull, 'a+')
             se = open(os.devnull, 'a+')
-            try:
-                os.dup2(si.fileno(), sys.stdin.fileno())
-                os.dup2(so.fileno(), sys.stdout.fileno())
-                os.dup2(se.fileno(), sys.stderr.fileno())
-            except:
-                pass
+            os.dup2(si.fileno(), sys.stdin.fileno())
+            os.dup2(so.fileno(), sys.stdout.fileno())
+            os.dup2(se.fileno(), sys.stderr.fileno())
         if parentPid:
             # signal ready
             os.kill(parentPid, signal.SIGTERM)
