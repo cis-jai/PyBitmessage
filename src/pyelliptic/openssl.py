@@ -725,7 +725,7 @@ class _OpenSSL(object):
         if data != 0:
             if sys.version_info.major == 3 and isinstance(data, type('')):
                 data = data.encode()
-            buffer_ = self.create_string_buffer(data, size)
+            buffer_ = self.create_string_buffer(bytes(data), size)
         else:
             buffer_ = self.create_string_buffer(size)
         return buffer_
@@ -734,7 +734,6 @@ class _OpenSSL(object):
 def loadOpenSSL():
     """Method find and load the OpenSSL library"""
     # pylint: disable=global-statement, protected-access, too-many-branches
-
     global OpenSSL
     from os import path, environ
     from ctypes.util import find_library
