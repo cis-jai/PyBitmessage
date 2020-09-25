@@ -4,7 +4,7 @@ Module for tracking objects
 import time
 from threading import RLock
 try:
-    from network.connectionpool import connectionpool
+    from network import connectionpool
     from network.dandelion import Dandelion
     from network.randomtrackingdict import RandomTrackingDict
 except (ModuleNotFoundError,ImportError):
