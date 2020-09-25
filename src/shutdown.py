@@ -37,22 +37,18 @@ def doCleanShutdown():
     for thread in threading.enumerate():
         # if thread.name == 'singleAPI':
         if thread.isAlive() and isinstance(thread, StoppableThread):
-            # logger.error('printing the stop thread -{}'.format(
-            #     thread))
             thread.stopThread()
-        logger.error('thread name -{} thread._is_stopped {}'.format(
-            thread.name, thread._is_stopped))
 
     UISignalQueue.put((
         'updateStatusBar',
         'Saving the knownNodes list of peers to disk...'))
-    logger.error('Saving knownNodes list of peers to disk')
+    logger.info('Saving knownNodes list of peers to disk')
     saveKnownNodes()
-    logger.error('Done saving knownNodes list of peers to disk')
+    logger.info('Done saving knownNodes list of peers to disk')
     UISignalQueue.put((
         'updateStatusBar',
         'Done saving the knownNodes list of peers to disk.'))
-    logger.error('Flushing inventory in memory out to disk...')
+    logger.info('Flushing inventory in memory out to disk...')
     UISignalQueue.put((
         'updateStatusBar',
         'Flushing inventory in memory out to disk.'
@@ -76,14 +72,14 @@ def doCleanShutdown():
             and isinstance(thread, StoppableThread)
             and thread.name != 'SQL'
         ):
-            logger.error("Waiting for thread %s", thread.name)
+            logger.debug("Waiting for thread %s", thread.name)
             thread.join()
 
     # This one last useless query will guarantee that the previous flush
     # committed and that the
     # objectProcessorThread committed before we close the program.
     sqlQuery('SELECT address FROM subscriptions')
-    logger.error('Finished flushing inventory.')
+    logger.info('Finished flushing inventory.')
     sqlStoredProcedure('exit')
 
     # flush queues
@@ -99,10 +95,10 @@ def doCleanShutdown():
     
     try:
         if shared.thisapp.daemon or not state.enableGUI:  # ..fixme:: redundant?
-            logger.error('Clean shutdown complete.')
+            logger.info('Clean shutdown complete.')
             shared.thisapp.cleanup()
             os._exit(0)  # pylint: disable=protected-access
     except AttributeError:
-        logger.error('Core shutdown complete.')
+        logger.info('Core shutdown complete.')
     for thread in threading.enumerate():
-        logger.error('Thread %s still running', thread.name)
+        logger.debug('Thread %s still running', thread.name)

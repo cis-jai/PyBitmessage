@@ -46,7 +46,8 @@ try:
     # Synchronous threads
     from threads import (set_thread_name, printLock,
         addressGenerator, objectProcessor, singleCleaner, singleWorker, sqlThread)
-    
+    from helper_test import TestCoreDummy
+
 except ModuleNotFoundError:
     from pybitmessage import defaults
     from pybitmessage import depends
@@ -73,6 +74,7 @@ except ModuleNotFoundError:
     from pybitmessage.threads import (set_thread_name, printLock,
         addressGenerator, objectProcessor, singleCleaner, 
         singleWorker, sqlThread)
+    from pybitmessage.helper_test import TestCoreDummy
 
 app_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(app_dir)
@@ -393,7 +395,6 @@ class Main(object):
                 # bitmessageqt.run()
         else:
             config.remove_option('bitmessagesettings', 'dontconnect')
-           
         if daemon:
             while state.shutdown == 0:
                 time.sleep(1)
@@ -405,19 +406,24 @@ class Main(object):
         else:
             state.enableGUI = True
             # pylint: disable=relative-import
+            test_core_result = TestCoreDummy(errors = 1,failures = 1)
             try:
                 from tests import core as test_core
                 test_core_result = test_core.run()
-                state.enableGUI = True
-                self.stop()
-                test_core.cleanup()
-                sys.exit(
-                    'Core tests failed!'
-                    if test_core_result.errors or test_core_result.failures
-                    else 0
-                )
             except:
                 pass
+            finally:
+                state.enableGUI = True
+                self.stop()
+            try:
+                test_core.cleanup()
+            except:
+                pass
+            sys.exit(
+                'Core tests failed!'
+                if test_core_result.errors or test_core_result.failures
+                else 0
+            )
 
     @staticmethod
     def daemonize():
@@ -449,10 +455,6 @@ class Main(object):
                 # unlock
                 state.thisapp.cleanup()
                 # wait until child ready
-                
-                # while True:
-                    # print('---------------489-------------------')
-                    # time.sleep(1)
                 os._exit(0)  # pylint: disable=protected-access
         except AttributeError:
             pass

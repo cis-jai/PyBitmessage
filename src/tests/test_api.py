@@ -14,10 +14,6 @@ from pybitmessage.debug import logger
 class TestAPIProto(TestProcessProto):
     """Test case logic for testing API"""
     _process_cmd = ['pybitmessage', '-t']
-    # _files = (
-    #     'keys.dat', 'messages.dat', 'knownnodes.dat',
-    #     '.api_started', 'unittest.lock'
-    # )
 
     @classmethod
     def setUpClass(cls):

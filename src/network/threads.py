@@ -22,8 +22,6 @@ class StoppableThread(threading.Thread):
 
     def stopThread(self):
         """Stop the thread"""
-        if self.name  == 'singleAPI':
-            logger.error('yes inside the the stopthread')
         self._stopped = True
         self.stop.set()
 

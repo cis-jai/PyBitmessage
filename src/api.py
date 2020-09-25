@@ -94,9 +94,7 @@ class StoppableXMLRPCServer(SimpleXMLRPCServer):
         """Start the SimpleXMLRPCServer"""
         # pylint: disable=arguments-differ
         while state.shutdown == 0:
-            logger.error('before handle_request')
             self.handle_request()
-            logger.error('After handle_request')
 
 
 # This thread, of which there is only one, runs the API.
@@ -108,20 +106,14 @@ class singleAPI(StoppableThread):
     def stopThread(self):
         super(singleAPI, self).stopThread()
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        logger.error('11111111111 stopThread 11111111 ')
         try:
-            logger.error('11111111111 stopThread 113 ')
             s.connect((
                 BMConfigParser().get('bitmessagesettings', 'apiinterface'),
                 BMConfigParser().getint('bitmessagesettings', 'apiport')
             ))
-            logger.error('11111111111 stopThread 118 ')
             s.shutdown(socket.SHUT_RDWR)
-            logger.error('11111111111 stopThread 120 ')
             s.close()
-            logger.error('11111111111 stopThread 122 ')
         except BaseException:
-            logger.error('11111111111 stopThread except BaseException')
             pass
 
     def run(self):        
@@ -1497,6 +1489,7 @@ class MySimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
     def _dispatch(self, method, params):
         # pylint: disable=attribute-defined-outside-init
+        self.cookies = []
         validuser = self.APIAuthenticateClient()
         if not validuser:
             time.sleep(2)
