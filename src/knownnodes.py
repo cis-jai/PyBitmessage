@@ -124,9 +124,6 @@ def createDefaultKnownNodes():
 def readKnownNodes():
     """Load knownnodes from filesystem"""
     try:
-        logger.info('~~~~~~~~~~~~~~~~~~~~~~~~~~')
-        logger.info('pppp state.appdata -{} pppp'.format(state.appdata))
-        logger.info('~~~~~~~~~~~~~~~~~~~~~~~~~~')
         with open(state.appdata + 'knownnodes.dat', 'rb') as source:
             with knownNodesLock:
                 try:
