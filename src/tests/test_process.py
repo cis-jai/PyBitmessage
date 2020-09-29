@@ -9,8 +9,6 @@ import tempfile
 import time
 import unittest
 
-from  pybitmessage.debug import logger
-
 try:
     import psutil
 except ModuleNotFoundError:
@@ -37,6 +35,7 @@ class TestProcessProto(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Setup environment and start pybitmessage"""
+        
         cls.home = os.environ['BITMESSAGE_HOME'] = tempfile.gettempdir()
         put_signal_file(cls.home, 'unittest.lock')
         subprocess.call(cls._process_cmd)  # nosec

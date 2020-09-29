@@ -44,7 +44,7 @@ try:
     import helper_startup
     import state
 except ModuleNotFoundError:
-    from pybitmessage import helper_startup, state
+    from pybitmessage import helper_startup
     from pybitmessage import state
 
 helper_startup.loadConfig()
