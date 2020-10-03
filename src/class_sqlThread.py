@@ -95,7 +95,7 @@ class sqlThread(threading.Thread):
         # In the Python3 I am below condition converting into int
         # settingsversion = int(BMConfigParser().get('bitmessagesettings', 'settingsversion') \
         #                       if BMConfigParser().get('bitmessagesettings', 'settingsversion') else 0)
-        settingsversion = BMConfigParser().safeGetInt('bitmessagesettings', 'settingsvesion')
+        settingsversion = BMConfigParser().safeGetInt('bitmessagesettings', 'settingsversion')
         # People running earlier versions of PyBitmessage do not have the
         # usedpersonally field in their pubkeys table. Let's add it.
         if settingsversion == 2:

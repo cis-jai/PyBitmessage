@@ -34,11 +34,8 @@ StoreConfigFilesInSameDirectoryAsProgramByDefault = False
 
 def loadConfig():
     """Load the config"""
-    print('1111111111111111111111111111111111111111')
     config = BMConfigParser()
-
     if state.appdata:
-        print('if loadConfig state.appdata111 -{}'.format(state.appdata))
         config.read(state.appdata + 'keys.dat')
         # state.appdata must have been specified as a startup option.
         needToCreateKeysFile = config.safeGet(
@@ -48,31 +45,19 @@ def loadConfig():
                 'Loading config files from directory specified'
                 ' on startup: %s', state.appdata)
     else:
-        print('else loadConfig state.appdata2222 -{}'.format(
-            state.appdata))
         config.read(paths.lookupExeFolder() + 'keys.dat')
         try:
             config.get('bitmessagesettings', 'settingsversion')
-            print('try bitmessagesettings', 'settingsversion -{}'.format(
-                config.get('bitmessagesettings', 'settingsversion')))
             logger.info('Loading config files from same directory as program.')
             needToCreateKeysFile = False
             state.appdata = paths.lookupExeFolder()
         except:
-            print('load the config except except')
             # Could not load the keys.dat file in the program directory.
             # Perhaps it is in the appdata directory.
             state.appdata = paths.lookupAppdataFolder()
             config.read(state.appdata + 'keys.dat')
             needToCreateKeysFile = config.safeGet(
                 'bitmessagesettings', 'settingsversion') is None
-            print('needToCreateKeysFile -{}'.format(
-                needToCreateKeysFile))
-            if not needToCreateKeysFile:
-                print(
-                    'needToCreateKeysFile is false means settingversion is not empty')
-                print(config.get(
-                    'bitmessagesettings','settingsversion'))
             if not needToCreateKeysFile:
                 logger.info(
                     'Loading existing config files from %s', state.appdata)
@@ -139,10 +124,6 @@ def loadConfig():
         if not sys.platform.startswith('win'):
             os.umask(0o077)
         config.save()
-        print('7777777777777777777777777777777')
-        print('printing the bitmessage settings -{}'.format(config.get(
-            'bitmessagesettings','settingsversion')))
-        print('7777777777777777777777777777777')
     else:
         updateConfig()
 
@@ -150,10 +131,7 @@ def loadConfig():
 def updateConfig():
     """Save the config"""
     config = BMConfigParser()
-    print('222222222222222222222222222222222222222')
-    # Used python2.7
-    # settingsversion = int(BMConfigParser().get('bitmessagesettings', 'settingsversion') \
-    settingsversion = BMConfigParser().safeGetInt('bitmessagesettings', 'settingsvesion')
+    settingsversion = BMConfigParser().safeGetInt('bitmessagesettings', 'settingsversion')
     if settingsversion == 1:
         config.set('bitmessagesettings', 'socksproxytype', 'none')
         config.set('bitmessagesettings', 'sockshostname', 'localhost')
@@ -296,15 +274,8 @@ def updateConfig():
     # whatever the user selects.
     if not config.has_option('bitmessagesettings', 'ttl'):
         config.set('bitmessagesettings', 'ttl', '367200')
-    print(
-        'updateConfig111 congfig.get(bitmessagesettings, settingsversion) -{}'.format(
-         config.get('bitmessagesettings','settingsversion')   
-        ))
+
     config.set('bitmessagesettings', 'settingsversion', str(settingsversion))
-    print(
-    'updateConfig222 congfig.get(bitmessagesettings, settingsversion) -{}'.format(
-        config.get('bitmessagesettings','settingsversion')   
-    ))
     config.save()
 
 
