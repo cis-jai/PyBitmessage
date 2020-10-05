@@ -16,7 +16,7 @@ def inv(a, n):
     lm, hm = 1, 0
     low, high = a % n, n
     while low > 1:
-        r = high / low
+        r = high // low
         nm, new = hm - lm * r, high - low * r
         lm, low, hm, high = nm, new, lm, low
     return lm % n
@@ -96,12 +96,7 @@ def base10_double(a):
         return None
     m = int((3 * a[0] * a[0] + A) * inv(2 * a[1], P)) % P
     x = int(m * m - 2 * a[0]) % P
-    y = int(m * (a[0] - x) - a[1]) % P
-    # print('++++++++++++++++++++++++++++++++')
-    # print('inside the base10_double')
-    # print('the value of x -{}'.format(x))
-    # print('the value of y -{}'.format(y))
-    # print('++++++++++++++++++++++++++++++++')    
+    y = int(m * (a[0] - x) - a[1]) % P   
     return (x, y)
 
 def base10_multiply(a, n):
@@ -111,9 +106,9 @@ def base10_multiply(a, n):
     if n == 1:
         return a
     if (n % 2) == 0:
-        return base10_double(base10_multiply(a, n /2))
+        return base10_double(base10_multiply(a, n //2))
     if (n % 2) == 1:
-        return base10_add(base10_double(base10_multiply(a, n /2)), a)
+        return base10_add(base10_double(base10_multiply(a, n //2)), a)
     return None
 
 

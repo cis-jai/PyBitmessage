@@ -79,7 +79,7 @@ class TestAddresses(unittest.TestCase):
             hexlify(sample_pubsigningkey)
         )
         self.assertEqual(
-            arithmetic.privtopub(sample_privateencryptionkey),
+            arithmetic.privtopub(sample_privateencryptionkey.encode()),
             hexlify(sample_pubencryptionkey)
         )
 
