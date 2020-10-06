@@ -36,9 +36,6 @@ COMPILING = {
     "openSUSE": "gcc-c++ libopenssl-devel python-devel",
     "optional": False,
 }
-print('************************************')
-print('inside the checkdeps')
-print('************************************')
 
 # OS-specific dependencies for optional components listed in EXTRAS_REQUIRE
 EXTRAS_REQUIRE_DEPS = {

@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.7
+#!/usr/bin/env python
 """
 The PyBitmessage startup script
 """
