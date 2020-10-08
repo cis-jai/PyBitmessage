@@ -14,6 +14,8 @@ try:
 except ModuleNotFoundError:
     pass
 
+from pybitmessage.debug import logger
+
 
 def put_signal_file(path, filename):
     """Creates file, presence of which is a signal about some event."""
@@ -35,7 +37,7 @@ class TestProcessProto(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Setup environment and start pybitmessage"""
-        
+        logger.error('Hello I am the setupClass')
         cls.home = os.environ['BITMESSAGE_HOME'] = tempfile.gettempdir()
         put_signal_file(cls.home, 'unittest.lock')
         subprocess.call(cls._process_cmd)  # nosec
@@ -56,6 +58,16 @@ class TestProcessProto(unittest.TestCase):
         cls.process.send_signal(signal.SIGTERM)
         try:
             cls.process.wait(timeout)
+            # import traceback
+            print('55555555555555555')
+            import psutil
+            print('psutil.pid_exists(cls.process.pid)-{}'.format(
+                psutil.pid_exists(cls.process.pid)))      
+            print('55555555555555555')
+            # traceback.print_stack()
+            logger.error('_stop_process')
+            logger.error('this condition are getting killed are not')
+            logger.error('__stop__process')
         except psutil.TimeoutExpired:
             return False
         return True
@@ -72,8 +84,12 @@ class TestProcessProto(unittest.TestCase):
     def tearDownClass(cls):
         """Ensures that pybitmessage stopped and removes files"""
         try:
+            print('is ever called tearDownC')
             if not cls._stop_process():
                 cls.process.kill()
+                logger.error('***********************')
+                logger.error('tearDownClass are successfully killed')
+                logger.error('***********************')
         except (psutil.NoSuchProcess, FileNotFoundError, AttributeError) as e:
             pass
         finally:

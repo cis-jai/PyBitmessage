@@ -23,6 +23,7 @@ import traceback
 from struct import pack
 
 try:
+    print('222222222222222trybitmessagemain testing for the bitmessgemain')
     import defaults
     import depends
     import shared
@@ -49,6 +50,7 @@ try:
     from helper_test import TestCoreDummy
 
 except ModuleNotFoundError:
+    print('333333333333block except bitmessagemain testing for the bitmessgemain')
     from pybitmessage import defaults
     from pybitmessage import depends
     from pybitmessage import shared
@@ -75,6 +77,7 @@ except ModuleNotFoundError:
         addressGenerator, objectProcessor, singleCleaner, 
         singleWorker, sqlThread)
     from pybitmessage.helper_test import TestCoreDummy
+    print('44444444444444444444444444444444444')
 
 app_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(app_dir)
@@ -164,6 +167,15 @@ def signal_handler(signum, frame):
     logger.error("Got signal %i", signum)
     # there are possible non-UI variants to run bitmessage
     # which should shutdown especially test-mode
+    print('09090909090909090909090909090909090')
+    import traceback
+    logger.error(traceback.print_stack())
+    logger.error('010101010101010101')
+    logger.error(' inside the bitmessageamain ')
+    logger.error('state.thisapp.daemon-{}'.format(state.thisapp.daemon))
+    logger.error('state.enableGUI -{}'.format(state.enableGUI))
+    logger.error('state.testmode -{}'.format(state.testmode))
+    logger.error('010101010101010101')  
     if state.thisapp.daemon or not state.enableGUI or state.testmode:
         shutdown.doCleanShutdown()
     else:

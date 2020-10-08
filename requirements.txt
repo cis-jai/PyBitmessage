@@ -6,5 +6,4 @@ fabric-virtualenv
 httplib2
 urllib3
 pythondialog
-stem
 Pillow

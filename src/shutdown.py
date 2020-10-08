@@ -31,6 +31,9 @@ def doCleanShutdown():
     """
     Used to tell all the treads to finish work and exit.
     """
+    logger.error('***********************')
+    logger.error('doCleanShutdown are successfully killed')
+    logger.error('***********************')
     state.shutdown = 1
     
     objectProcessorQueue.put(('checkShutdownVariable', 'no data'))
@@ -100,5 +103,8 @@ def doCleanShutdown():
             os._exit(0)  # pylint: disable=protected-access
     except AttributeError:
         logger.info('Core shutdown complete.')
+    logger.error('777777777777777777777')
+    logger.error(len(threading.enumerate()))
+    logger.error('777777777777777777777')  
     for thread in threading.enumerate():
-        logger.debug('Thread %s still running', thread.name)
+        logger.error('Thread %s still running', thread.name)
