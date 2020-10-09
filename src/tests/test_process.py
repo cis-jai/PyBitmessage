@@ -69,6 +69,9 @@ class TestProcessProto(unittest.TestCase):
             logger.error('this condition are getting killed are not')
             logger.error('__stop__process')
         except psutil.TimeoutExpired:
+            logger.error('#####_stop_process method condition--##')
+            logger.error('self.process -{}'.format(self.process))
+            logger.error('#####_stop_process method condition--##')            
             return False
         return True
 
