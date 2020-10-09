@@ -65,14 +65,16 @@ class TestProcessProto(unittest.TestCase):
                 print('55555555555555555')
             except:
                 pass
-            # import traceback
-            # traceback.print_stack()
             logger.error('_stop_process')
             logger.error('this condition are getting killed are not')
             logger.error('__stop__process')
         except psutil.TimeoutExpired:
             logger.error('#####_stop_process method condition--##')
-            logger.error('self.process -{}'.format(self.process))
+            try:
+                logger.error('cls.process PID -{}'.format(cls.process.pid))
+            except:
+                logger.error('cls.process -{}'.format(cls.process))
+
             logger.error('#####_stop_process method condition--##')            
             return False
         return True
