@@ -58,12 +58,14 @@ class TestProcessProto(unittest.TestCase):
         cls.process.send_signal(signal.SIGTERM)
         try:
             cls.process.wait(timeout)
+            try:
+                print('55555555555555555')
+                print('psutil.pid_exists(cls.process.pid)-{}'.format(
+                    psutil.pid_exists(cls.process.pid)))      
+                print('55555555555555555')
+            except:
+                pass
             # import traceback
-            print('55555555555555555')
-            import psutil
-            print('psutil.pid_exists(cls.process.pid)-{}'.format(
-                psutil.pid_exists(cls.process.pid)))      
-            print('55555555555555555')
             # traceback.print_stack()
             logger.error('_stop_process')
             logger.error('this condition are getting killed are not')
