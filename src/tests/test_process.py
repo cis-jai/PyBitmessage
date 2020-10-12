@@ -31,8 +31,7 @@ class TestProcessProto(unittest.TestCase):
     _threads_count = 15
     _files = (
         'keys.dat', 'messages.dat', 'knownnodes.dat',
-        '.api_started', 'unittest.lock','singleton.lock'
-    )
+        '.api_started', 'unittest.lock','debug.log')
  
     @classmethod
     def setUpClass(cls):
@@ -54,7 +53,7 @@ class TestProcessProto(unittest.TestCase):
             pass
 
     @classmethod
-    def _stop_process(cls, timeout=5):
+    def _stop_process(cls, timeout=60):
         cls.process.send_signal(signal.SIGTERM)
         try:
             cls.process.wait(timeout)
@@ -65,8 +64,6 @@ class TestProcessProto(unittest.TestCase):
                 print('55555555555555555')
             except:
                 pass
-            logger.error('_stop_process')
-            logger.error('this condition are getting killed are not')
             logger.error('__stop__process')
         except psutil.TimeoutExpired:
             logger.error('#####_stop_process method condition--##')
