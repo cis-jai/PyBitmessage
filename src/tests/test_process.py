@@ -31,7 +31,8 @@ class TestProcessProto(unittest.TestCase):
     _threads_count = 15
     _files = (
         'keys.dat', 'messages.dat', 'knownnodes.dat',
-        '.api_started', 'unittest.lock','debug.log')
+        '.api_started', 'unittest.lock','singleton.lock'
+    )
  
     @classmethod
     def setUpClass(cls):
@@ -43,17 +44,19 @@ class TestProcessProto(unittest.TestCase):
         time.sleep(5)
         cls.pid = int(cls._get_readline('singleton.lock'))
         cls.process = psutil.Process(cls.pid)
+        print('')
  
     @classmethod
     def _get_readline(cls, pfile):
         pfile = os.path.join(cls.home, pfile)
         try:
-            return open(pfile, 'rb').readline().strip()
+            with open(pfile, 'rb') as f:
+                return f.readline().strip()
         except (OSError, IOError, FileNotFoundError):
             pass
 
     @classmethod
-    def _stop_process(cls, timeout=60):
+    def _stop_process(cls, timeout=5):
         cls.process.send_signal(signal.SIGTERM)
         try:
             cls.process.wait(timeout)
@@ -64,16 +67,22 @@ class TestProcessProto(unittest.TestCase):
                 print('55555555555555555')
             except:
                 pass
+            logger.error('_stop_process')
+            logger.error('this condition are getting killed are not')
+            print('psutil.pid_exists(cls.process.pid)-{}'.format(
+                    psutil.pid_exists(cls.process.pid)))
+            print('psutil.pid-{}'.format(cls.process.pid))
             logger.error('__stop__process')
         except psutil.TimeoutExpired:
-            logger.error('#####_stop_process method condition--##')
+            print('#####_stop_process method condition--##')
             try:
-                logger.error('cls.process PID -{}'.format(cls.process.pid))
+                print('cls.process PID -{}'.format(cls.process.pid))
             except:
-                logger.error('cls.process -{}'.format(cls.process))
+                print('cls.process -{}'.format(cls.process))
 
-            logger.error('#####_stop_process method condition--##')            
+            print('#####_stop_process method condition--##')            
             return False
+
         return True
 
     @classmethod

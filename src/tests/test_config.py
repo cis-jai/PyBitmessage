@@ -48,6 +48,16 @@ class TestProcessConfig(TestProcessProto):
         config.read(os.path.join(self.home, 'keys.dat'))
         self.assertEqual(config.safeGetInt(
             'bitmessagesettings', 'settingsversion'), 10)
+        if config.safeGetInt(
+            'bitmessagesettings', 'port') != 8444:
+            print('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')
+            import subprocess
+            current_port  ='sudo netstat -nlp | grep :{}'.format(
+                config.safeGetInt(
+            'bitmessagesettings', 'port'))
+            print(subprocess.call(
+                current_port,shell = True))
+            print('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')     
         self.assertEqual(config.safeGetInt(
             'bitmessagesettings', 'port'), 8444)
         # don't connect
