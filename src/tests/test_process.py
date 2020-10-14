@@ -143,8 +143,8 @@ class TestProcessShutdown(TestProcessProto):
         """Send to pybitmessage SIGTERM and ensure it stopped"""
         # longer wait time because it's not a benchmark
         self.assertTrue(
-            self._stop_process(20),
-            '%s has not stopped in 20 sec' % ' '.join(self._process_cmd))
+            self._stop_process(120),
+            '%s has not stopped in 120 sec' % ' '.join(self._process_cmd))
 
     @classmethod
     def tearDownClass(cls):
