@@ -56,7 +56,7 @@ class TestProcessProto(unittest.TestCase):
             pass
 
     @classmethod
-    def _stop_process(cls, timeout=5):
+    def _stop_process(cls, timeout=120):
         cls.process.send_signal(signal.SIGTERM)
         try:
             cls.process.wait(timeout)
