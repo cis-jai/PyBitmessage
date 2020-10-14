@@ -76,6 +76,13 @@ class TestProcessProto(unittest.TestCase):
         except psutil.TimeoutExpired:
             print('#####_stop_process method condition--##')
             try:
+                gone, alive = psutil.wait_procs(cls.process, timeout = 3,
+                                               callback = None)
+                for p in alive:
+                    p.kill()
+                print('***********************')
+                print('tearDownClass are successfully killed')
+                print('***********************')
                 print('cls.process PID -{}'.format(cls.process.pid))
             except:
                 print('cls.process -{}'.format(cls.process))
