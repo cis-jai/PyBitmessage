@@ -100,10 +100,17 @@ class TestProcessProto(unittest.TestCase):
             print('is ever called tearDownC')
             if not cls._stop_process():
                 cls.process.kill()
-                logger.error('***********************')
-                logger.error('tearDownClass are successfully killed')
-                logger.error('***********************')
+                gone, alive = psutil.wait_procs(cls.process, timeout = 3,
+                                               callback = None)
+                for p in alive:
+                    p.kill()
+                print('***********************')
+                print('tearDownClass are successfully killed')
+                print('***********************')
         except (psutil.NoSuchProcess, FileNotFoundError, AttributeError) as e:
+            print('################################')
+            print('TearDownClass except section')
+            print('################################')
             pass
         finally:
             cls._cleanup_files()
