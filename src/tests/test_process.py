@@ -98,11 +98,16 @@ class TestProcessProto(unittest.TestCase):
                 print('6666666666666666666666666666')
                 print('In the tearDownClass ,Process killied ?')
                 print('666666666666666666666666666666')
-        except (psutil.NoSuchProcess, psutil.TimeoutExpired ,FileNotFoundError, AttributeError) as e:
+        except (psutil.NoSuchProcess, FileNotFoundError, AttributeError) as e:
             print('77777777777777777777777777')
-            print('In the tearDownClass ,after sending the kill process are not stopped')
+            print('In the tearDownClass ,psutil.NoSuchProcess,FileNotFoundError, AttributeError')
+            print(str(e))
             print('77777777777777777777777777')
-            pass
+        except psutil.TimeoutExpired as e:
+            print('88888888888888888888888')
+            print('In the tearDownClass ,psutil.TimeoutExpired is occurred')
+            print(str(e))
+            print('888888888888888888888888')
         finally:
             cls._cleanup_files()
 
