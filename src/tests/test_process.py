@@ -59,35 +59,17 @@ class TestProcessProto(unittest.TestCase):
     def _stop_process(cls, timeout=120):
         cls.process.send_signal(signal.SIGTERM)
         try:
+            print('1111111111111111111111111111111111111111')
+            print('In the _stop_process_ method ,after the term signal wait process are started')
+            print('1111111111111111111111111111111111111111')
             cls.process.wait(timeout)
-            try:
-                print('55555555555555555')
-                print('psutil.pid_exists(cls.process.pid)-{}'.format(
-                    psutil.pid_exists(cls.process.pid)))      
-                print('55555555555555555')
-            except:
-                pass
-            logger.error('_stop_process')
-            logger.error('this condition are getting killed are not')
-            print('psutil.pid_exists(cls.process.pid)-{}'.format(
-                    psutil.pid_exists(cls.process.pid)))
-            print('psutil.pid-{}'.format(cls.process.pid))
-            logger.error('__stop__process')
+            print('222222222222222222222222222222222222')
+            print('In the _stop_process_ method ,wait process are completed')
+            print('222222222222222222222222222222222222')
         except psutil.TimeoutExpired:
-            print('#####_stop_process method condition--##')
-            try:
-                gone, alive = psutil.wait_procs(cls.process, timeout = 3,
-                                               callback = None)
-                for p in alive:
-                    p.kill()
-                print('***********************')
-                print('tearDownClass are successfully killed')
-                print('***********************')
-                print('cls.process PID -{}'.format(cls.process.pid))
-            except:
-                print('cls.process -{}'.format(cls.process))
-
-            print('#####_stop_process method condition--##')            
+            print('33333333333333333333333333333333')
+            print('In the _stop_process_ method ,psutil.timoutExpired is occured')
+            print('33333333333333333333333333333333')
             return False
 
         return True
@@ -104,20 +86,22 @@ class TestProcessProto(unittest.TestCase):
     def tearDownClass(cls):
         """Ensures that pybitmessage stopped and removes files"""
         try:
-            print('is ever called tearDownC')
             if not cls._stop_process():
+                print('444444444444444444444444444444')
+                print('In the tearDownClass ,initiating the process Killing')
+                print('44444444444444444444444444444')
                 cls.process.kill()
-                gone, alive = psutil.wait_procs(cls.process, timeout = 3,
-                                               callback = None)
-                for p in alive:
-                    p.kill()
-                print('***********************')
-                print('tearDownClass are successfully killed')
-                print('***********************')
-        except (psutil.NoSuchProcess, FileNotFoundError, AttributeError) as e:
-            print('################################')
-            print('TearDownClass except section')
-            print('################################')
+                print('5555555555555555555555555555555')
+                print('In the tearDownClass ,initiating the process wait')
+                print('55555555555555555555555555555')
+                cls.process.wait(5)
+                print('6666666666666666666666666666')
+                print('In the tearDownClass ,Process killied ?')
+                print('666666666666666666666666666666')
+        except (psutil.NoSuchProcess, psutil.TimeoutExpired ,FileNotFoundError, AttributeError) as e:
+            print('77777777777777777777777777')
+            print('In the tearDownClass ,after sending the kill process are not stopped')
+            print('77777777777777777777777777')
             pass
         finally:
             cls._cleanup_files()
