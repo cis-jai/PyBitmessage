@@ -8,7 +8,7 @@ import subprocess  # nosec
 import tempfile
 import time
 import unittest
-
+import traceback
 try:
     import psutil
 except ModuleNotFoundError:
@@ -44,8 +44,9 @@ class TestProcessProto(unittest.TestCase):
         time.sleep(5)
         cls.pid = int(cls._get_readline('singleton.lock'))
         cls.process = psutil.Process(cls.pid)
-        print('')
- 
+        print('traceback in setupClass')
+        print(traceback.format_stack())
+
     @classmethod
     def _get_readline(cls, pfile):
         pfile = os.path.join(cls.home, pfile)
@@ -59,17 +60,13 @@ class TestProcessProto(unittest.TestCase):
     def _stop_process(cls, timeout=120):
         cls.process.send_signal(signal.SIGTERM)
         try:
-            print('1111111111111111111111111111111111111111')
             print('In the _stop_process_ method ,after the term signal wait process are started')
-            print('1111111111111111111111111111111111111111')
             cls.process.wait(timeout)
-            print('222222222222222222222222222222222222')
             print('In the _stop_process_ method ,wait process are completed')
-            print('222222222222222222222222222222222222')
         except psutil.TimeoutExpired:
-            print('33333333333333333333333333333333')
+            print('traceback in _stop_process')
+            print(traceback.format_stack())
             print('In the _stop_process_ method ,psutil.timoutExpired is occured')
-            print('33333333333333333333333333333333')
             return False
 
         return True
@@ -87,27 +84,20 @@ class TestProcessProto(unittest.TestCase):
         """Ensures that pybitmessage stopped and removes files"""
         try:
             if not cls._stop_process():
-                print('444444444444444444444444444444')
                 print('In the tearDownClass ,initiating the process Killing')
-                print('44444444444444444444444444444')
                 cls.process.kill()
-                print('5555555555555555555555555555555')
                 print('In the tearDownClass ,initiating the process wait')
-                print('55555555555555555555555555555')
                 cls.process.wait(5)
-                print('6666666666666666666666666666')
                 print('In the tearDownClass ,Process killied ?')
-                print('666666666666666666666666666666')
         except (psutil.NoSuchProcess, FileNotFoundError, AttributeError) as e:
-            print('77777777777777777777777777')
             print('In the tearDownClass ,psutil.NoSuchProcess,FileNotFoundError, AttributeError')
+            print('traceback in tearDownClass')
+            traceback.format_stack()
             print(str(e))
-            print('77777777777777777777777777')
         except psutil.TimeoutExpired as e:
-            print('88888888888888888888888')
             print('In the tearDownClass ,psutil.TimeoutExpired is occurred')
+            traceback.format_stack()
             print(str(e))
-            print('888888888888888888888888')
         finally:
             cls._cleanup_files()
 

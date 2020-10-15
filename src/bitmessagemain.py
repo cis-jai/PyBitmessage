@@ -23,7 +23,6 @@ import traceback
 from struct import pack
 
 try:
-    print('222222222222222trybitmessagemain testing for the bitmessgemain')
     import defaults
     import depends
     import shared
@@ -50,7 +49,6 @@ try:
     from helper_test import TestCoreDummy
 
 except ModuleNotFoundError:
-    print('333333333333block except bitmessagemain testing for the bitmessgemain')
     from pybitmessage import defaults
     from pybitmessage import depends
     from pybitmessage import shared
@@ -77,7 +75,6 @@ except ModuleNotFoundError:
         addressGenerator, objectProcessor, singleCleaner, 
         singleWorker, sqlThread)
     from pybitmessage.helper_test import TestCoreDummy
-    print('44444444444444444444444444444444444')
 
 app_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(app_dir)
